@@ -1,0 +1,195 @@
+---
+const cards = [
+  {
+    title: "Step 1. We analyze your current assembly. ",
+    short: "We take your current design and test the baseline performance. ",
+  long: "The first step is developing a deep understanding of your existing assembly. We evaluate the complete system as it is currently designed, including geometry, flow paths, interfaces, and operating conditions. Using simulation and engineering analysis, we establish a performance baseline that quantifies key metrics such as pressure drop, flow distribution, aeration behavior, thermal performance, and structural constraints. This baseline allows us to identify inefficiencies, over-designed features, and potential failure points while preserving the original functional intent of the system. By accurately capturing how the assembly performs today, we create a reliable reference point that guides all future optimization decisions and ensures that improvements are both measurable and technically justified.",
+    imageAlt: "Baseline Deaeration Analysis",
+    imageSrc: "https://pub-fa810e0d43204e26baa3ea906dc3c529.r2.dev/baseline%20-%20Trim.mp4",
+  },
+  {
+    title: "Step 2. Data driven optimization. ",
+    short:
+      "Using machine learning and years of CFD experience, we optimize for performance. ",
+    long:
+      "Live Translation uses advanced AI to translate conversations in real time. It supports multiple languages with on-device processing for privacy.",
+    imageAlt: "Live translation",
+    imageSrc: "https://via.placeholder.com/300x200?text=Live+Translation",
+  },
+  {
+    title: "Step 3. ",
+    short: "Control what you hear. And what you don’t.",
+    long:
+      "Active Noise Cancellation uses outward-facing microphones to counter ambient sound, creating a deeply immersive listening experience.",
+    imageAlt: "Noise cancellation",
+    imageSrc: "https://via.placeholder.com/300x200?text=ANC",
+  },
+    {
+    title: "Step 4. ",
+    short: "Control what you hear. And what you don’t.",
+    long:
+      "Active Noise Cancellation uses outward-facing microphones to counter ambient sound, creating a deeply immersive listening experience.",
+    imageAlt: "Noise cancellation",
+    imageSrc: "https://via.placeholder.com/300x200?text=ANC",
+  },
+];
+---
+
+<section class="container">
+  <h1>Filter Deaeration Optimization Analysis.</h1>
+<h3>We will perform a tank analysis for your machine for optimization. No more rule of thumb or fingers crossed. Pure data, Free of Charge*. </h3>
+  <div class="cards">
+    {cards.map((card) => (
+      <article class="card">
+        <h3>{card.title}</h3>
+        <p class="short">{card.short}</p>
+
+        <div class="image-container">
+          <video src={card.imageSrc} autoplay loop muted />
+
+        </div>
+
+        <p class="long-desc">{card.long}</p>
+
+        <button class="toggle" aria-label="Toggle details">+</button>
+      </article>
+    ))}
+  </div>
+</section>
+
+<script>
+  document.addEventListener("DOMContentLoaded", () => {
+    document.querySelectorAll(".toggle").forEach((button) => {
+      button.addEventListener("click", () => {
+        const card = button.closest(".card");
+        const image = card.querySelector(".image-container");
+        const longDesc = card.querySelector(".long-desc");
+
+        const isOpen = card.classList.toggle("open");
+
+        if (isOpen) {
+          image.style.opacity = "0";
+          setTimeout(() => {
+            image.style.display = "none";
+            longDesc.style.display = "block";
+            longDesc.style.opacity = "1";
+          }, 250);
+        //   button.textContent = "×";
+          button.classList.add("rotated");
+        } else {
+          longDesc.style.opacity = "0";
+          setTimeout(() => {
+            longDesc.style.display = "none";
+            image.style.display = "flex";
+            image.style.opacity = "1";
+          }, 250);
+        //   button.textContent = "+";
+          button.classList.remove("rotated");
+        }
+      });
+    });
+  });
+</script>
+
+<style>
+/* ================================
+   LAYOUT
+================================ */
+.container {
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 40px 20px;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+}
+
+h1 {
+  text-align: center;
+  font-size: 2.5rem;
+  margin-bottom: 32px;
+}
+
+.cards {
+  display: flex;
+  gap: 20px;
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  padding-bottom: 20px;
+  height: 600px;
+}
+
+/* ================================
+   CARD
+================================ */
+.card {
+  flex: 0 0 320px;
+  background: var(--white);
+  border-radius: 20px;
+  padding: 24px;
+  position: relative;
+  scroll-snap-align: start;
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+}
+
+.card h3 {
+  margin-bottom: 8px;
+  font-weight: 500;
+  color: var(--gray4);
+  text-align: left;
+}
+
+.short {
+  font-size: 0.95rem;
+  color: #666;
+  margin-bottom: 20px;
+}
+
+/* ================================
+   IMAGE
+================================ */
+.image-container {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: opacity 0.25s ease;
+}
+
+.image-container video {
+  max-width: 100%;
+  max-height: 100%;
+  object-fit: contain;
+}
+
+/* ================================
+   BACK TEXT
+================================ */
+.long-desc {
+  display: none;
+  opacity: 0;
+  font-size: 0.95rem;
+  line-height: 1.5;
+  transition: opacity 0.25s ease;
+}
+
+/* ================================
+   TOGGLE BUTTON
+================================ */
+.toggle {
+  position: absolute;
+  bottom: 16px;
+  right: 16px;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  background: #1d1d1f;
+  color: white;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+
+.toggle.rotated {
+  transform: rotate(45deg);
+}
+</style>

@@ -1,0 +1,143 @@
+<!-- EMAIL SIGNUP MODAL -->
+<div id="email-modal" class="email-modal">
+  <div class="email-modal-content">
+    <span id="email-modal-close" class="email-modal-close">&times;</span>
+    <h2>Join Our Newsletter</h2>
+    <p>Sign up to receive updates and special offers!</p>
+    <form id="email-form">
+      <input type="email" placeholder="Your email" required />
+      <button type="submit">Subscribe</button>
+    </form>
+  </div>
+</div>
+
+<!-- COLLAPSED SIGNUP BUTTON -->
+<button id="email-minimized" class="email-minimized">
+  Signup
+</button>
+
+
+<style>
+/* Modal overlay */
+.email-modal {
+  position: fixed;
+  inset: 0;
+  display: none;
+  background: rgba(0,0,0,0.6);
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+  color: var(--black);
+}
+
+/* Modal box */
+.email-modal-content {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 12px;
+  max-width: 400px;
+  width: 90%;
+  text-align: center;
+  position: relative;
+  box-shadow: 0 8px 24px rgba(0,0,0,0.2);
+  animation: scaleIn 0.25s ease;
+}
+
+/* Close button */
+.email-modal-close {
+  position: absolute;
+  top: 12px;
+  right: 16px;
+  font-size: 24px;
+  cursor: pointer;
+}
+
+/* Minimized signup pill */
+.email-minimized {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  padding: 12px 24px;
+  border-radius: 999px;
+  background: #000;
+  color: #fff;
+  font-size: 14px;
+  border: none;
+  cursor: pointer;
+  display: none;
+  z-index: 9999;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.25);
+  transition: transform 0.2s ease, background 0.2s ease;
+}
+
+.email-minimized:hover {
+  background: #222;
+  transform: translateY(-2px);
+}
+
+/* Animations */
+@keyframes scaleIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+</style>
+
+<script>
+document.addEventListener("DOMContentLoaded", function () {
+  const modal = document.getElementById("email-modal");
+  const modalContent = document.querySelector(".email-modal-content");
+  const closeBtn = document.getElementById("email-modal-close");
+  const minimizedBtn = document.getElementById("email-minimized");
+  const form = document.getElementById("email-form");
+
+  function minimizeModal() {
+    modal.style.display = "none";
+    minimizedBtn.style.display = "block";
+    localStorage.setItem("emailModalSeen", "true");
+  }
+
+  function openModal() {
+    modal.style.display = "flex";
+    minimizedBtn.style.display = "none";
+  }
+
+  // Initial open (optional)
+  modal.style.display = "flex";
+
+  // Close button
+  closeBtn.addEventListener("click", minimizeModal);
+
+  // Click outside modal content
+  modal.addEventListener("click", (e) => {
+    if (!modalContent.contains(e.target)) {
+      minimizeModal();
+    }
+  });
+
+  // ESC key
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape" && modal.style.display === "flex") {
+      minimizeModal();
+    }
+  });
+
+  // Re-open modal
+  minimizedBtn.addEventListener("click", openModal);
+
+  // Submit
+  form.addEventListener("submit", (e) => {
+    e.preventDefault();
+    modal.style.display = "none";
+    minimizedBtn.style.display = "none";
+    localStorage.setItem("emailModalSeen", "true");
+  });
+});
+</script>
+

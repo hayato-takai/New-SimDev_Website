@@ -1,0 +1,288 @@
+---
+import Layout from '../../layouts/BaseLayout.astro';
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout>
+
+<main>
+    <div class="content border">
+    <div class="header-container">
+      <h1>Oil Property Search</h1>
+      <div class="button-group">
+        <a href={`${BASE_PATH}/helpers/documentation?readme=${BASE_PATH}/scripts/oil_properties/README.md`} target="_blank" rel="noopener noreferrer">
+          <button class="btn btn-docs">See Documentation</button>
+        </a>
+      </div>
+    </div>
+
+    <!-- Fluid Selector & Temperature Range -->
+    <div class="input-panel">
+      <div class="input-row">
+        <div class="input-group">
+          <label for="fluidSelect">Select Fluid:</label>
+          <select id="fluidSelect">
+            <option value="">-- Select --</option>
+          </select>
+        </div>
+        <div class="input-group">
+          <label>Temperature <span class="optional">(optional)</span>:</label>
+          <div class="temp-range-row">
+            <input type="number" id="tempMin" placeholder="Min" step="1" />
+            <span class="range-separator">to</span>
+            <input type="number" id="tempMax" placeholder="Max" step="1" />
+            <select id="inputTempUnitSelect" class="prop-unit-select">
+              <option value="C">°C</option>
+              <option value="K">K</option>
+              <option value="F">°F</option>
+            </select>
+          </div>
+          <small class="input-hint">Enter one value for a single point, two for a range, or leave empty for full range</small>
+        </div>
+        <div class="input-group">
+          <label>Base Volume <span class="optional">(optional)</span>:</label>
+          <div class="temp-range-row">
+            <input type="number" id="baseVolume" placeholder="e.g. 100" step="any" min="0" />
+            <select id="volumeInputUnitSelect" class="prop-unit-select">
+              <option value="L">L</option>
+              <option value="m^3">m³</option>
+              <option value="gal">gal (US)</option>
+            </select>
+          </div>
+          <small class="input-hint">Enter a volume to calculate mass and volume change</small>
+        </div>
+      </div>
+    </div>
+
+    <!-- Calculated Properties -->
+    <div id="properties">
+
+      <!-- Info Cards -->
+      <div class="info-cards">
+        <div class="info-card">
+          <span class="info-label">Volume Change (ΔV/V)</span>
+          <span class="info-value" id="thermalExpansion">—</span>
+          <span class="info-unit"></span>
+        </div>
+        <div class="info-card" id="massCard">
+          <span class="info-label">Mass</span>
+          <div class="info-value-row">
+            <span class="info-value" id="massValue">—</span>
+            <select id="massOutputUnitSelect" class="prop-unit-select">
+              <option value="kg">kg</option>
+              <option value="g">g</option>
+              <option value="lb">lb</option>
+            </select>
+          </div>
+        </div>
+        <div class="info-card" id="volChangeCard">
+          <span class="info-label">Absolute Volume Change (ΔV)</span>
+          <div class="info-value-row">
+            <span class="info-value" id="volChangeValue">—</span>
+            <select id="volOutputUnitSelect" class="prop-unit-select">
+              <option value="L">L</option>
+              <option value="m^3">m³</option>
+              <option value="gal">gal (US)</option>
+            </select>
+          </div>
+        </div>
+      </div>
+
+      <h3>Calculated Properties</h3>
+      <div class="table-container">
+        <table>
+          <thead>
+            <tr>
+              <th>
+                <div class="prop-header-container">
+                  <span>Temperature</span>
+                  <select id="tempUnitSelect" class="prop-unit-select">
+                    <option value="K">K</option>
+                    <option value="C">°C</option>
+                    <option value="F">°F</option>
+                  </select>
+                </div>
+              </th>
+              <th>
+                <div class="prop-header-container">
+                  <span>Kinematic Viscosity</span>
+                  <select id="kinViscUnitSelect" class="prop-unit-select"></select>
+                  <button class="copy-col-btn" data-col="1" title="Copy Temperature & Kinematic Viscosity">📋</button>
+                </div>
+              </th>
+              <th>
+                <div class="prop-header-container">
+                  <span>Density</span>
+                  <select id="densityUnitSelect" class="prop-unit-select"></select>
+                  <button class="copy-col-btn" data-col="2" title="Copy Temperature & Density">📋</button>
+                </div>
+              </th>
+              <th>
+                <div class="prop-header-container">
+                  <span>Dynamic Viscosity</span>
+                  <select id="dynViscUnitSelect" class="prop-unit-select"></select>
+                  <button class="copy-col-btn" data-col="3" title="Copy Temperature & Dynamic Viscosity">📋</button>
+                </div>
+              </th>
+            </tr>
+          </thead>
+          <tbody id="calculatedTableBody"></tbody>
+        </table>
+      </div>
+
+
+    </div>
+    </div>
+  </main>
+  </Layout>
+    <script is:inline>
+      window.BASE_URL = '{BASE_PATH}';
+    </script>
+<script src={`${BASE_PATH}/scripts/unit_converter.js`}></script>
+<script src={`${BASE_PATH}/scripts/oil_properties/getOilProperties.js`}></script>
+<script src={`${BASE_PATH}/scripts/oil_properties/oil_properties.js`}></script>
+
+<style>
+  .input-panel {
+    margin: 20px 0;
+  }
+
+  .input-row {
+    display: flex;
+    gap: 24px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+  }
+
+  .input-group {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    flex: 1;
+    min-width: 220px;
+  }
+
+  .input-group label {
+    font-weight: bold;
+  }
+
+  .input-group select,
+  .input-group input {
+    padding: 6px 10px;
+    font-size: 14px;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+  }
+
+  .temp-range-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .temp-range-row input {
+    flex: 1;
+    min-width: 100px;
+  }
+
+  .range-separator {
+    font-weight: 600;
+    opacity: 0.7;
+  }
+
+  .optional {
+    font-weight: normal;
+    font-size: 0.9em;
+    opacity: 0.7;
+  }
+
+  .input-hint {
+    font-size: 0.85em;
+    opacity: 0.7;
+    font-style: italic;
+  }
+
+  .copy-col-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    cursor: pointer;
+    font-size: 14px;
+    padding: 2px 6px;
+    margin: 0;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+  }
+
+  .copy-col-btn:hover {
+    opacity: 1;
+  }
+
+  .copy-col-btn.copied {
+    opacity: 1;
+    border-color: #28a745;
+  }
+
+  .prop-header-container {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .prop-unit-select {
+    padding: 2px 6px;
+    font-size: 12px;
+    border: 1px solid var(--border-color);
+    border-radius: 3px;
+    background: var(--table-header);
+    color: var(--text-primary);
+    cursor: pointer;
+  }
+
+  .info-cards {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+  }
+
+  .info-card {
+    flex: 1;
+    min-width: 160px;
+    padding: 12px 16px;
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  .info-label {
+    font-size: 0.8em;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+  }
+
+  .info-value {
+    font-size: 1.3em;
+    font-weight: 700;
+  }
+
+  .info-unit {
+    font-size: 0.8em;
+    opacity: 0.6;
+  }
+
+  .info-value-row {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+  }
+
+  .info-value-row .prop-unit-select {
+    font-size: 12px;
+  }
+</style>

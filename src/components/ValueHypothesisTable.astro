@@ -1,0 +1,178 @@
+---
+export interface Props {
+  returnLineFiltersStandard: string;
+  returnLineFiltersSolution: string;
+  oilVolumeStandard: number;
+  oilVolumeSolution: number;
+  tankWeightStandard: number;
+  tankWeightSolution: number;
+  oilTurnoverStandard: number;
+  oilTurnoverSolution: number;
+  oilCostPerGallon: number;
+  tankCostPerLb: number;
+  units?: number;
+}
+
+// Extract props
+const {
+  returnLineFiltersStandard,
+  returnLineFiltersSolution,
+  oilVolumeStandard,
+  oilVolumeSolution,
+  tankWeightStandard,
+  tankWeightSolution,
+  oilTurnoverStandard,
+  oilTurnoverSolution,
+  oilCostPerGallon,
+  tankCostPerLb,
+  units = 1000,
+} = Astro.props;
+
+// Calculate savings dynamically
+const savingsOilNum =
+  (oilVolumeStandard - oilVolumeSolution) * oilCostPerGallon;
+const savingsTankNum =
+  (tankWeightStandard - tankWeightSolution) * tankCostPerLb;
+const totalSavingsPerMachineNum = savingsOilNum + savingsTankNum;
+const totalAnnualSavingsNum = totalSavingsPerMachineNum * units;
+// Format as strings with $ for display
+const savingsOil = `$${savingsOilNum.toFixed(2)}`;
+const savingsTank = `$${savingsTankNum.toFixed(2)}`;
+const totalSavingsPerMachine = `$${totalSavingsPerMachineNum.toFixed(2)}`;
+
+const totalAnnualSavings = `$${totalAnnualSavingsNum.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}`;
+---
+
+<section class="value-hypothesis-section section">
+  <div class="value-hypothesis-container wrapper">
+    <div class="value-hypothesis-title title">
+      <h2>Sample Cost Savings</h2>
+      <span class="value-hypothesis-eau">{units} machines / year</span>
+    </div>
+    <div class="value-hypothesis-card conetent">
+      <table class="value-hypothesis-table">
+        <thead>
+          <tr>
+            <th>Metric</th>
+            <th>Standard Tank Design</th>
+            <th>HYDAC Solution</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Return‑line Filters Used</td>
+            <td>{returnLineFiltersStandard}</td>
+            <td>{returnLineFiltersSolution}</td>
+          </tr>
+          <tr>
+            <td>Oil Volume</td>
+            <td>{oilVolumeStandard} gal</td>
+            <td class="value-hypothesis-highlight">{oilVolumeSolution} gal</td>
+          </tr>
+          <tr>
+            <td>Tank Weight</td>
+            <td>{tankWeightStandard} lbs</td>
+            <td class="value-hypothesis-highlight">{tankWeightSolution} lbs</td>
+          </tr>
+          <tr>
+            <td>Oil Turnover</td>
+            <td>{oilTurnoverStandard}</td>
+            <td class="value-hypothesis-highlight">{oilTurnoverSolution}</td>
+          </tr>
+          <tr>
+            <td>Savings in Oil</td>
+            <td>—</td>
+            <td class="value-hypothesis-highlight">{savingsOil}</td>
+          </tr>
+          <tr>
+            <td>Savings in Tank</td>
+            <td>—</td>
+            <td class="value-hypothesis-highlight">{savingsTank}</td>
+          </tr>
+          <tr>
+            <td>Total Savings per Machine</td>
+            <td>—</td>
+            <td class="value-hypothesis-highlight">{totalSavingsPerMachine}</td>
+          </tr>
+          <tr>
+            <td>Total Annual Savings</td>
+            <td>—</td>
+            <td class="value-hypothesis-highlight">{totalAnnualSavings}</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ----------------------------------
+     Table – Value Hypothesis
+  ---------------------------------- */
+  .value-hypothesis-section {
+    background-color: var(--gray-200);
+  }
+
+  .value-hypothesis-title h2 {
+    margin: 0;
+    text-align: left;
+  }
+
+  .value-hypothesis-title {
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    align-items: center; 
+  }
+  .value-hypothesis-eau {
+    display: inline-block;
+    background: var(--red);
+    color: #fff;
+    padding: 0.3rem 0.6rem;
+    font-size: var(--font-body);
+    border-radius: 8px;
+  }
+  .value-hypothesis-card {
+    width: 100%;
+    background: var(--white);
+    margin: 20px auto 40px auto;
+    border-radius: 16px;
+    padding: 1.5rem;
+      box-sizing: border-box;
+  overflow-x: auto;        /* scroll table on small screens */
+  }
+
+  .value-hypothesis-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 0px;
+  }
+
+  .value-hypothesis-table thead th {
+    background: var(--gray1);
+    color: var(--text-dark1);
+    font-weight: 500;
+    text-align: left;
+    padding: 0.5rem;
+    border-bottom: 1px solid var(--gray1);
+  }
+
+  .value-hypothesis-table tbody td {
+    padding: 0.75rem;
+    border-bottom: 1px solid var(--gray1);
+    color: var(--text-dark1);
+    font-weight: 400;
+  }
+
+  .value-hypothesis-table tbody tr:last-child td {
+    font-weight: 700;
+    background: #fdf1f1;
+    color: var(--text-dark1);
+  }
+
+  .value-hypothesis-highlight {
+    color: var(--red) !important;
+    /* font-weight: 400; */
+  }
+/* \ */
+</style>

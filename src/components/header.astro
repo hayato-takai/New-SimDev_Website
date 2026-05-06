@@ -1,0 +1,160 @@
+---
+/**
+ * Convert filename to human-readable title
+ * Example: "oil_properties.astro" → "Oil Properties"
+ */
+function cleanName(filename) {
+  return filename
+    .replace('.astro', '')
+    .replace(/[-_]/g, ' ')
+    .replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// Load top-level pages from /pages/*.astro
+const sitePages = import.meta.glob('../pages/*.astro');
+const topLevelLinks = Object.keys(sitePages)
+  .filter((path) => !path.endsWith('index.astro'))
+  .filter((path) => !path.endsWith('filter-technology.astro'))
+  .map((path) => {
+    const filename = path.split('/').pop().replace('.astro', '');
+    return {
+      url: `${BASE_PATH}/${filename}`,
+      title: cleanName(filename)
+    };
+  });
+
+// Load /pages/tools/*.astro
+const toolPages = import.meta.glob('../pages/tools/*.astro');
+const toolLinks = Object.keys(toolPages)
+  .map((path) => {
+    const filename = path.split('/').pop().replace('.astro', '');
+    return {
+      url: `${BASE_PATH}/tools/${filename}`,
+      title: cleanName(filename)
+    };
+  });
+---
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
+
+<header class="site-header">
+  <nav class="site-navbar">
+    {topLevelLinks.map((link) => (
+      <a href={link.url} class="nav-link">{link.title}</a>
+    ))}
+
+    <div class="nav-dropdown">
+      <span class="dropdown-trigger">Tools ▼</span>
+      <div class="dropdown-content">
+        {toolLinks.map((tool) => (
+          <a href={tool.url} class="dropdown-link">{tool.title}</a>
+        ))}
+      </div>
+    </div>
+  </nav>
+</header>
+
+<style>
+  /* ============================================
+     HEADER LAYOUT
+     ============================================ */
+  .site-header {
+    height: var(--header-height);
+  }
+
+  .site-navbar {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: var(--header-height);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 20px;
+    padding: 0 20px;
+    background: #2c3e50;
+    color: #ffffff;
+    z-index: 9999;
+    box-sizing: border-box;
+    flex-wrap: wrap;
+    font-family: 'Roboto Flex', system-ui, sans-serif;
+    font-size: 16px;
+  }
+
+  /* ============================================
+     NAVIGATION LINKS
+     ============================================ */
+  .nav-link,
+  .dropdown-trigger {
+    color: #ffffff;
+    text-decoration: none;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: color 0.2s ease;
+  }
+
+  .nav-link:hover,
+  .dropdown-trigger:hover {
+    color: #c60000;
+  }
+
+  /* ============================================
+     DROPDOWN MENU
+     ============================================ */
+  .nav-dropdown {
+    position: relative;
+  }
+
+  .dropdown-content {
+    position: absolute;
+    top: calc(100% - 1px);
+    left: 0;
+    display: none;
+    flex-direction: column;
+    min-width: 180px;
+    padding: 10px 0;
+    background: #34495e;
+    border-radius: 6px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  }
+
+  .nav-dropdown:hover .dropdown-content {
+    display: flex;
+  }
+
+  .dropdown-link {
+    padding: 8px 16px;
+    color: #ffffff;
+    text-decoration: none;
+    transition: background-color 0.2s ease;
+  }
+
+  .dropdown-link:hover {
+    background: #3d566e;
+    color: #c60000;
+  }
+
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+  @media (max-width: 768px) {
+    .site-navbar {
+      justify-content: flex-start;
+      gap: 10px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .site-navbar {
+      flex-direction: column;
+      align-items: flex-start;
+      height: auto;
+      padding: 10px;
+    }
+  }
+</style>

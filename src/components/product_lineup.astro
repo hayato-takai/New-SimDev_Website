@@ -1,0 +1,142 @@
+---
+import RFT400_render from "../images/RFT400_render.png";
+import RFB210_render from "../images/RFB210_render.png";
+import RFB300_render from "../images/RFB300_render.png";
+import RFT210_render from "../images/RFT210_render.png";
+---
+
+<!-- AIR-X LINEUP -->
+<section class="product-lineup-section section">
+  <div class="product-lineup-wrapper wrapper">
+    <div class="title">
+    <h2 class="product-lineup__title">Explore our Air-X lineup</h2>
+</div>
+    <div class="product-lineup__grid content">
+      <article class="product-lineup__card">
+        <span class="product-lineup__badge">Compact – Return from Bottom</span>
+        <div class="product-lineup__image-wrapper">
+          <img src={RFB210_render.src} alt="RFB Compact" />
+        </div>
+        <h3 class="product-lineup__name">RFB Compact</h3>
+        <p class="product-lineup__desc">
+          Small to medium flowrate filter with tank bottom connection.
+        </p>
+      </article>
+
+      <article class="product-lineup__card">
+        <span class="product-lineup__badge">Return from Bottom</span>
+        <div class="product-lineup__image-wrapper">
+          <img src={RFB300_render.src} alt="RFB" />
+        </div>
+        <h3 class="product-lineup__name">RFB</h3>
+        <p class="product-lineup__desc">
+          Medium to large flowrate filter with tank bottom connection.
+        </p>
+      </article>
+
+      <article class="product-lineup__card">
+        <span class="product-lineup__badge">Compact – Return from Top</span>
+        <div class="product-lineup__image-wrapper">
+          <img src={RFT210_render.src} alt="RFT Compact" />
+        </div>
+        <h3 class="product-lineup__name">RFT Compact</h3>
+        <p class="product-lineup__desc">
+          Small to medium flowrate filter with above tank connection.
+        </p>
+      </article>
+
+      <article class="product-lineup__card">
+        <span class="product-lineup__badge">Return from Top</span>
+        <div class="product-lineup__image-wrapper">
+          <img src={RFT400_render.src} alt="RFT" />
+        </div>
+        <h3 class="product-lineup__name">RFT</h3>
+        <p class="product-lineup__desc">
+          Medium to large flowrate filter with above tank connection.
+        </p>
+      </article>
+    </div>
+  </div>
+</section>
+
+
+<style>
+/* ----------------------------------
+   Product Lineup (Grid)
+---------------------------------- */
+
+.product-lineup-section {
+  padding: clamp(48px, 8vw, 96px) 0;
+  background: var(--bg-second);
+  /* color: var(--gray-100); */
+}
+
+/* Grid layout */
+.product-lineup__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: clamp(24px, 4vw, 48px);
+}
+
+/* Card */
+.product-lineup__card {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Badge */
+.product-lineup__badge {
+  font-size: 0.85rem;
+  font-weight: 400;
+  color: var(--text-secondary);
+  margin-bottom: 12px;
+}
+
+/* Image */
+.product-lineup__image-wrapper {
+  width: 100%;
+  aspect-ratio: 1 / 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 24px;
+}
+
+.product-lineup__image-wrapper img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+/* Text */
+.product-lineup__name {
+  font-size: 1.25rem;
+  font-weight: 500;
+  margin-bottom: 8px;
+  color: var(--text-primary);
+}
+
+.product-lineup__desc {
+  font-size: 0.95rem;
+  line-height: 1.6;
+  color: var(--text-secondary);
+}
+
+/* ----------------------------------
+   Tablet
+---------------------------------- */
+@media (max-width: 640px) {
+  .product-lineup__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+/* ----------------------------------
+   Mobile
+---------------------------------- */
+@media (max-width: 640px) {
+
+}
+
+
+</style>

@@ -1,0 +1,249 @@
+---
+
+---
+
+<style>
+@import "../styles/global.css";
+</style>
+
+<div class="cmp-table-container container">
+    <table class="cmp-table">
+      <tr>
+        <td class="cmp-table-left-column">
+          <div class="cmp-table-column cmp-table-column-comp">
+            <h2 class="cmp-table-column-title">Competitor Filter</h2>
+            <div class="cmp-table-video-wrapper">
+              <video src="https://pub-fa810e0d43204e26baa3ea906dc3c529.r2.dev/comp2.mp4" autoplay loop muted playsinline></video>
+            </div>
+          </div>
+        </td>
+
+        <td class="cmp-table-right-column">
+          <div class="cmp-table-column cmp-table-column-airx">
+            <div class="cmp-table-airx-title">
+         <h2 class="cmp-table-column-title">Air-X Filter</h2>
+        </div>
+            <div class="cmp-table-video-wrapper">
+              <video src="https://pub-fa810e0d43204e26baa3ea906dc3c529.r2.dev/airx2.mp4" autoplay loop muted playsinline></video>
+            </div>
+          </div>
+        </td>
+      </tr>
+
+      <tr>
+        <th class="cmp-table-header" colspan="2"><h3>Deaeration Performance</h3></th>
+      </tr>
+
+      <tr class="cmp-table-performance-row">
+        <td colspan="2">
+            <div class="cmp-table-bar-row cmp-table-bar-airx-row">
+          <h4>Air-X</h4>
+          <div class="cmp-table-bar-container">
+            <div class="cmp-table-bar cmp-table-bar-air">
+              <span>Up to 5× less air</span>
+            </div>
+          </div>
+</div>
+            <div class="cmp-table-bar-row cmp-table-bar-comp-row">
+
+          <h4>Competition (Baseline)</h4>
+          <div class="cmp-table-bar-container">
+            <div class="cmp-table-bar cmp-table-bar-baseline"></div>
+          </div>
+            </div>
+        </td>
+      </tr>
+
+      <tr>
+        <th class="cmp-table-header" colspan="2"><h3>Tank Efficiency</h3></th>
+      </tr>
+
+      <tr class="cmp-table-performance-row">
+        <td colspan="2">
+          <h4>Air-X</h4>
+          <div class="cmp-table-bar-container">
+            <div class="cmp-table-bar cmp-table-bar-tank">
+              <span>Up to 3× tank size reduction</span>
+            </div>
+          </div>
+
+          <h4>Competition (Baseline)</h4>
+          <div class="cmp-table-bar-container">
+            <div class="cmp-table-bar cmp-table-bar-baseline"></div>
+          </div>
+        </td>
+      </tr>
+    </table>
+  </div>
+
+  <style>
+
+.cmp-table-container {
+  max-width: var(--max-width);
+  width:70%;
+  margin: auto;
+  background-color: var(--gray2);
+  border-color: var(--white) 1px solid;
+  border-radius: 16px;
+  /* box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1); */
+  padding: 10px 20px;
+  color: var(--gray5);
+  margin-bottom: 50px;
+}
+
+
+.cmp-table-container h2 {
+  text-align: center;
+  font-weight: 500;
+}
+.cmp-table-airx-title {
+    margin: auto;
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.logo {
+display: inline-block;
+
+  height: 55px; /* adj
+  ust as needed */
+  width: auto;
+  margin-top:8px;
+  margin-right: 10px;
+}
+.cmp-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: center;
+}
+
+.cmp-table td {
+  padding: 20px 0 20px 0 ;
+  width:50%;
+}
+
+.cmp-table-column-title{
+  margin: 5px 0 0 0;
+}
+.cmp-table-column {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 10px;
+  border-radius: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  position: relative;
+  overflow: hidden;
+}
+
+/* Only Air-X column gets red styling */
+.cmp-table-column-airx {
+  border: 1px solid var(--red);
+  
+}
+
+.cmp-table-column-airx::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-color: var(--red);
+  opacity: 0.3;
+  z-index: 0;
+}
+
+.cmp-table-column-airx > * {
+  position: relative;
+  z-index: 1;
+}
+
+/* Competitor column stays clean */
+.cmp-table-column-comp {
+  background: none;
+}
+
+.cmp-table-video-wrapper {
+  position: relative;
+  width: 95%;
+  aspect-ratio: 16 / 9;
+  height: auto;
+  overflow: hidden;
+  /* border-radius: 16px; */
+  background-color: #000;
+  margin: auto;
+}
+
+.cmp-table-video-wrapper video {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  /* border-radius: 16px; */
+}
+
+.cmp-table-header h3 {
+text-decoration: underline;
+  text-underline-offset: 6px;
+
+}
+
+/* Performance bar container */
+.cmp-table-performance-row td {
+  padding-top: 0px;
+  /* background-color: var(--black); */
+  height: fit-content;
+  vertical-align: top;
+}
+
+.cmp-table-bar-container {
+  margin: 0 20px;
+  width: 100%;
+  /* background-color: var(--gray6); */
+  border-radius: 10px;
+  height: 24px;
+  position: relative;
+  overflow: hidden;
+}
+.cmp-table-bar-comp-row{
+  margin-top:20px;
+}
+.cmp-table-performance-row h4 {
+  position: relative;
+  text-align: left;
+left:30px;
+margin-bottom: 5px;
+width:fit-content;
+}
+
+.cmp-table-bar {
+  height: 100%;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  padding-right: 10px;
+  color: var(--text-primary);
+  font-size: clamp(1.0rem, 0.7vw, 1rem);
+  font-weight: 300;
+  position: relative;
+}
+
+.cmp-table-bar-air {
+  width: 83.3%;
+  background-color: var(--red);
+}
+
+.cmp-table-bar-baseline {
+  width: 16.7%;
+  background-color: #5c5c5c;
+}
+
+.cmp-table-bar-tank {
+  width: 50%;
+  background-color: var(--red);
+}
+
+  </style>

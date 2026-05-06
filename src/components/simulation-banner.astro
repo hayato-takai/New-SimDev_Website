@@ -1,0 +1,359 @@
+---
+
+---
+  <main>
+    <!-- Main Intro Video -->
+    <div id="video">
+      <video id="mainVideo"  src="https://pub-fa810e0d43204e26baa3ea906dc3c529.r2.dev/comp.mp4" autoplay muted playsinline>
+        Your browser does not support HTML5 video.
+      </video>
+      <div class="video-title">Simulation and Development</div>
+    </div>
+
+    <!-- Split bar with 5 parts -->
+    <div id="video-controls">
+      <div class="video-button active" data-video={videoFilter2.src}>
+        <span>Filter Deaeration Analysis</span>
+        <div class="progress-bar"></div>
+      </div>
+      <div class="video-button" data-video={videoFilter3.src}>
+        <span>Structural and Fatigue Analysis</span>
+        <div class="progress-bar"></div>
+      </div>
+      <div class="video-button" data-video={videoPressureDrop.src}>
+        <span>Pressure Drop Optimization</span>
+        <div class="progress-bar"></div>
+      </div>
+      <div class="video-button" data-video={video4.src}>
+        <span>Topology Optimization</span>
+        <div class="progress-bar"></div>
+      </div>
+      <div class="video-button" data-video={videoZoomOut.src}>
+        <span>Lab Validation</span>
+        <div class="progress-bar"></div>
+      </div>
+    </div>
+
+    <div class="banner"></div>
+
+    <!-- 5 SECTION INFO BLOCKS -->
+    <div class="sim-info">
+      <!-- Section 1 -->
+      <section class="info-section border">
+        <div class="info-image">
+          <img src={imgStar2.src} alt="Filter Analysis" />
+        </div>
+        <div class="info-content">
+          <h3>Tank Size Reduction</h3>
+          <p>
+            Examining bubble formation and separation efficiency through
+            computational simulations and experimental correlation.
+          </p>
+          <button>Learn More</button>
+        </div>
+      </section>
+
+      <!-- Section 2 -->
+      <section class="info-section border">
+        <div class="info-image">
+          <img src={imgFEA.src} alt="Structural Analysis" />
+        </div>
+        <div class="info-content">
+          <h3>Structural and Fatigue Analysis</h3>
+          <p>
+            Performing stress and fatigue testing to ensure long-term durability
+            under cyclic loads.
+          </p>
+          <button>Learn More</button>
+        </div>
+      </section>
+
+      <!-- Section 3 -->
+      <section class="info-section border">
+        <div class="info-image">
+          <video autoplay muted playsinline loop>
+            <source src={videoPressureDrop.src} type="video/mp4" />
+          </video>
+        </div>
+        <div class="info-content">
+          <h3>Pressure Drop Optimization</h3>
+          <p>
+            Optimizing geometry and flow paths to minimize system pressure losses
+            while maintaining filtration performance.
+          </p>
+          <button>Learn More</button>
+        </div>
+      </section>
+
+      <!-- Section 4 -->
+      <section class="info-section border">
+        <div class="info-image">
+          <img src={imgTopology.src} alt="Topology Optimization" />
+        </div>
+        <div class="info-content">
+          <h3>Topology Optimization</h3>
+          <p>
+            Using advanced shape optimization techniques to reduce material mass
+            while maintaining structural integrity.
+          </p>
+          <button>Learn More</button>
+        </div>
+      </section>
+
+      <!-- Section 5 -->
+      <section class="info-section border">
+        <div class="info-image">
+          <video autoplay muted playsinline loop>
+            <source src={videoZoomOut.src} type="video/mp4" />
+          </video>
+        </div>
+        <div class="info-content">
+          <h3>Lab Validation</h3>
+          <p>
+            Verifying computational models through controlled experiments to
+            confirm simulation accuracy.
+          </p>
+          <button>Learn More</button>
+        </div>
+      </section>
+    </div>
+
+
+    
+<style>
+    
+
+    #video {
+      position: relative;
+      height: 800px;
+      width: 100%;
+      height: 80vh;
+      background-color: #000;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: hidden;
+    }
+
+    #mainVideo {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      min-width: 100%;
+      min-height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    /*  Vignette overlay visible above the video */
+    #video::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      /* shorthand for top/right/bottom/left = 0 */
+      z-index: 1;
+      /* sits above the video */
+      pointer-events: none;
+      background: radial-gradient(circle at center,
+          rgba(255, 0, 0, 0.0) 1%,
+          rgba(0, 0, 0, 1) 50%);
+    }
+
+    .video-title {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 5rem;
+      font-weight: 200;
+      text-align: center;
+      text-shadow: 0 4px 12px rgba(0, 0, 0, 0.8);
+      z-index: 3;
+      opacity: 1;
+      animation: fadeInTitle 1.5s ease forwards 0.5s;
+    }
+
+    /* Video selector bar */
+    #video-controls {
+      display: flex;
+      width: 100%;
+      height: 7vh;
+      background: #111;
+    }
+
+    .video-button {
+      flex: 1;
+      position: relative;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: background 0.3s;
+    }
+
+    .video-button:hover {
+      background: #222;
+    }
+
+    .video-button span {
+      position: relative;
+      z-index: 2;
+      font-size: 18px;
+      opacity: 0.8;
+    }
+
+    /* --- Progress bar --- */
+    .progress-bar {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      height: 5px;
+      width: 0%;
+      background: var(--red);
+      transition: width 0.2s linear;
+    }
+
+    .banner {
+      width: 100%;
+      /* height:120px; */
+    }
+
+    /* --- INFO SECTIONS BELOW VIDEO --- */
+    .sim-info {
+      position: relative;
+      display: flex;
+      justify-content: space-evenly;
+      /* even gaps between all cards */
+      align-items: flex-start;
+      /* align tops */
+      flex-wrap: wrap;
+      /* allow wrapping if the screen is smaller */
+      gap: 40px;
+      /* optional — adds visual spacing */
+      padding: 60px 40px;
+      background-color: var(--gray-darker);
+      height: fit-content;
+      /* auto-adjust height */
+    }
+
+    .info-section {
+      flex: 1 1 15%;
+      /* flexible width, roughly 18% minimum */
+      max-width: 18%;
+      min-width: 200px;
+      /* prevents shrinking too small */
+      height: 50vh;
+
+      background: var(--gray-dark);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      border-radius: 10px;
+    }
+
+    .info-section:hover {
+      transform: translateY(-10px);
+      box-shadow: 0 8px 30px rgba(0, 0, 0, 0.4);
+    }
+
+
+    .info-image {
+      flex: 1;
+      width: 100%;
+      overflow: hidden;
+      height: 50%;
+      display: flex;
+      justify-content: center;
+      /* center horizontally */
+      align-items: center;
+      /* center vertically */
+    }
+
+    .info-image img {
+      width: auto;
+      height: 20vh;
+      box-shadow: 0 4px 20px rgba(0, 0, 0, 0.6);
+      display: block;
+
+    }
+
+    .info-content {
+      text-align: center;
+    }
+
+    .info-content h3 {
+   font-size: clamp(1rem, 2.5vw, 1.3rem);
+
+      margin-top:2vh;
+      margin-bottom: 10px;
+      color: var(--red);
+    }
+
+    .info-content p {
+   font-size: clamp(0.5rem, 1.5vw, 1rem);
+      line-height: 1.6;
+      margin-bottom: 10px;
+      color: #ddd;
+      width: 80%;
+      margin: auto;
+    }
+
+    .info-content button {
+      margin-top: 10px;
+         font-size: clamp(0.5rem, 1.5vw, 1rem);
+
+    }
+
+</style>
+<script>
+      const mainVideo = document.getElementById("mainVideo");
+    const buttons = document.querySelectorAll(".video-button");
+    let currentIndex = 0;
+    let progressInterval;
+
+    // --- Function: Load and play a specific video ---
+    function loadVideo(index) {
+      clearInterval(progressInterval);
+      buttons.forEach((btn, i) => {
+        btn.classList.toggle("active", i === index);
+        btn.querySelector(".progress-bar").style.width = "0%";
+      });
+
+      currentIndex = index;
+      mainVideo.src = buttons[index].dataset.video;
+      mainVideo.play();
+
+      startProgress();
+    }
+
+    // --- Function: Animate progress bar smoothly ---
+    function startProgress() {
+      const activeBtn = buttons[currentIndex];
+      const progressBar = activeBtn.querySelector(".progress-bar");
+
+      progressInterval = setInterval(() => {
+        if (mainVideo.duration) {
+          const progress = (mainVideo.currentTime / mainVideo.duration) * 100;
+          progressBar.style.width = progress + "%";
+        }
+      }, 100); // smooth updates
+    }
+
+    // --- Move to next video automatically ---
+    mainVideo.addEventListener("ended", () => {
+      let nextIndex = currentIndex + 1;
+      if (nextIndex >= buttons.length) nextIndex = 0; // loop back
+      loadVideo(nextIndex);
+    });
+
+    // --- Handle manual video selection ---
+    buttons.forEach((btn, i) => {
+      btn.addEventListener("click", () => loadVideo(i));
+    });
+
+    // Start first video progress
+    startProgress();
+</script>

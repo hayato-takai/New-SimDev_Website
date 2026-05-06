@@ -1,0 +1,207 @@
+---
+import contact_img from "../images/contact_img.png";
+---
+
+<section class="contact-cta-section">
+  <div class="contact-cta-card">
+    <div class="contact-cta-image">
+      <img src={contact_img.src} alt="Contact specialist" />
+    </div>
+
+    <div class="contact-cta-content">
+      <p class="contact-cta-eyebrow">Contact Us</p>
+      <h2>Contact a specialist for system-specific recommendations</h2>
+
+      <ul class="contact-cta-benefits">
+        <li>All-in-one solutions</li>
+        <li>Custom designed parts</li>
+        <li>Simulations and lab testing</li>
+        <li>Prototype-to-production support</li>
+        <li>Decades of CFD and on-field performance validation</li>
+      </ul>
+
+      <a href="https://www.hydac.com/en-us/contact-finder/" class="contact-cta-button">
+        Contact us
+      </a>
+    </div>
+  </div>
+</section>
+
+<style>
+  /* ============================================
+     CONTACT CTA SECTION
+     ============================================ */
+  .contact-cta-section {
+    width: 100%;
+    padding: 80px 20px;
+    background: #111111;
+    display: flex;
+    justify-content: center;
+    box-sizing: border-box;
+  }
+
+  .contact-cta-card {
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    max-width: 1800px;
+    min-height: 500px;
+    background: var(--white, #ffffff);
+    border-radius: 12px;
+    overflow: hidden;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+  }
+
+  /* ============================================
+     IMAGE CONTAINER
+     ============================================ */
+  .contact-cta-image {
+    flex: 1 1 auto;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .contact-cta-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform 0.3s ease;
+  }
+
+  .contact-cta-image:hover img {
+    transform: scale(1.02);
+  }
+
+  /* ============================================
+     CONTENT CONTAINER
+     ============================================ */
+  .contact-cta-content {
+    flex: 0 0 35%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    padding: 60px 48px;
+    min-width: 300px;
+    box-sizing: border-box;
+  }
+
+  .contact-cta-eyebrow {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    margin: 0 0 16px 0;
+    color: var(--black, #000000);
+  }
+
+  .contact-cta-content h2 {
+    font-size: 32px;
+    font-weight: 500;
+    line-height: 1.4;
+    margin: 0 0 32px 0;
+    color: var(--black, #000000);
+  }
+
+  /* ============================================
+     BENEFITS LIST
+     ============================================ */
+  .contact-cta-benefits {
+    list-style: none;
+    padding: 0;
+    margin: 0 0 40px 0;
+  }
+
+  .contact-cta-benefits li {
+    position: relative;
+    padding-left: 28px;
+    margin-bottom: 12px;
+    font-size: 14px;
+    color: var(--black, #000000);
+  }
+
+  .contact-cta-benefits li::before {
+    content: "✓";
+    position: absolute;
+    left: 0;
+    top: 0;
+    font-size: 14px;
+    font-weight: bold;
+    color: var(--red, #c60000);
+  }
+
+  /* ============================================
+     CTA BUTTON
+     ============================================ */
+  .contact-cta-button {
+    display: inline-block;
+    align-self: flex-start;
+    padding: 14px 40px;
+    background: var(--black, #000000);
+    color: var(--white, #ffffff);
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 999px;
+    transition: background 0.2s ease, transform 0.2s ease;
+  }
+
+  .contact-cta-button:hover {
+    background: #222222;
+    transform: translateY(-2px);
+  }
+
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+  @media (max-width: 1080px) {
+    .contact-cta-card {
+      flex-direction: column;
+    }
+
+    .contact-cta-image {
+      width: 100%;
+      height: 400px;
+    }
+
+    .contact-cta-content {
+      width: 100%;
+      flex: none;
+      padding: 32px 24px;
+    }
+
+    .contact-cta-content h2 {
+      font-size: 24px;
+    }
+
+    .contact-cta-benefits li {
+      font-size: 13px;
+      padding-left: 24px;
+    }
+
+    .contact-cta-button {
+      width: 100%;
+      text-align: center;
+      padding: 12px 0;
+      font-size: 13px;
+    }
+  }
+
+  @media (max-width: 480px) {
+    .contact-cta-section {
+      padding: 60px 12px;
+    }
+
+    .contact-cta-image {
+      height: 200px;
+    }
+
+    .contact-cta-content h2 {
+      font-size: 20px;
+    }
+
+    .contact-cta-benefits li {
+      font-size: 12px;
+    }
+  }
+</style>

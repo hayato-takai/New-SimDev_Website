@@ -1,0 +1,45 @@
+---
+import Layout from '../layouts/BaseLayout.astro';
+
+
+import Podcast from '../components/podcast.astro';
+import Banner from '../components/simulation-banner.astro';
+import Lineup from '../components/product_lineup.astro';
+
+import Contact from '../components/Contact.astro';
+import Signup from '../components/signup.astro';
+import Testimony from '../components/testimony.astro';
+import TankReduction from '../components/tank-reduction.astro';
+import Comparison from '../components/Comparison.astro';
+
+---
+<Layout>    
+<main>
+<!-- <Signup /> -->
+<!-- <Banner /> -->
+ <h1>Filter Deaeration Analysis</h1>
+
+ <Comparison />
+ <TankReduction />
+
+<Lineup />
+
+<Podcast />
+
+
+
+<!-- <Testimony /> -->
+
+  <Contact />
+
+
+
+
+
+  </main>
+</Layout>
+
+
+<style>
+  h1 {margin-top: 60px;}
+</style>

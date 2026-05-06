@@ -1,0 +1,65 @@
+---
+interface Props {
+  videoId: string;
+  title?: string;
+  autoplay?: boolean;
+}
+
+const {
+  videoId = "29wd8FHuMuo",
+  title = "YouTube video player",
+  autoplay = true
+} = Astro.props;
+
+const autoplayParams = autoplay
+  ? "?autoplay=1&mute=1&playsinline=1&rel=0"
+  : "?rel=0";
+---
+
+<section class="podcast section">
+  <div class="youtube-outer wrapper">
+    <div class="podcast-text title">
+      <h2>Hydac On-Tap: Air, the "Silent-Killer"</h2>
+      <h4>Listen to our Podcast</h4>
+    </div>
+
+    <div class="youtube-embed content">
+      <iframe
+        src={`https://www.youtube.com/embed/${videoId}${autoplayParams}`}
+        title={title}
+        frameborder="0"
+        allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        loading="lazy"
+      ></iframe>
+    </div>
+  </div>
+</section>
+
+<style>
+/* FULL-WIDTH SECTION */
+.podcast {
+  background-color: var(--gray-200);
+}
+
+
+.youtube-embed {
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  overflow: hidden;
+  border-radius: 12px;
+}
+
+.youtube-embed iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+}
+
+/* Mobile */
+@media (max-width: 768px) {
+  .youtube-outer {
+    padding: 32px 16px;
+  }
+}
+</style>

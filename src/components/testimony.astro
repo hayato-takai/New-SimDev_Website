@@ -1,0 +1,197 @@
+    <!-- STAT SECTIONS -->
+<section class="testimony-showcase">
+<h2>See Some of Our Projects</h2>
+  <!-- ROW 1: IMAGE LEFT / TEXT RIGHT -->
+  <div class="testimony-row">
+    <div class="testimony-media">
+      <img src="/images/mobile.jpg" alt="mobile machines">
+    </div>
+
+    <div class="testimony-content">
+      <h3 class="testimony-title">Tank Optimization</h3>
+
+      <p class="testimony-text">
+        In every existing tank system HYDAC sees the opportunity of optimizing and reducing the tank.
+        OEMs and end users can benefit from lower costs thanks to less material demand, smaller oil volume, 
+        environmentally friendly products, and additional space in the engine compartment.
+      </p>
+
+      <div class="testimony-stats">
+        <div class="testimony-stat">
+          Oil Volume Reduced by <span>71%</span>
+        </div>
+        <div class="testimony-stat">
+          Steel Volume Reduced by <span>55%</span>
+        </div>
+        <div class="testimony-stat">
+          Annual Cost Savings: <span>Tens of Thousands</span>
+        </div>
+      </div>
+
+      <a href="../../automotive" class="testimony-button">Learn more</a>
+    </div>
+  </div>
+
+  <!-- ROW 2: TEXT LEFT / IMAGE RIGHT -->
+  <div class="testimony-row testimony-row--reverse">
+    <div class="testimony-content">
+      <h3 class="testimony-title">Performance Gains</h3>
+
+      <p class="testimony-text">
+        Reducing tank complexity not only streamlines manufacturing but also minimizes potential points of failure.
+        Fewer components mean fewer leak paths and lower risk of maintenance issues. By improving deaeration, 
+        cavitation is eliminated, ensuring smoother system operation and longer component life.
+      </p>
+
+      <a href="../../hydraulic-tanks" class="testimony-button">Learn more</a>
+    </div>
+
+    <div class="testimony-media">
+      <img src="/images/consumer-electronics.jpg" alt="Simplified hydraulic tank design">
+    </div>
+  </div>
+
+  <!-- ROW 3: IMAGE LEFT / TEXT RIGHT -->
+  <div class="testimony-row">
+    <div class="testimony-media">
+      <img src="/images/industrial.jpg" alt="topology-optimization image">
+    </div>
+
+    <div class="testimony-content">
+      <h3 class="testimony-title">Topology Optimization</h3>
+
+      <p class="testimony-text">
+        Topology optimization removes unnecessary material, reducing weight, cost, and complexity.
+        Flow path optimization streamlines channels, lowering pressure drop and improving fluid efficiency.
+        Together, they create lighter, simpler, and more cost-effective components without compromising performance.
+      </p>
+
+      <div class="testimony-stats">
+        <div class="testimony-stat">
+          Pressure Drop Reduced by <span>51%</span>
+        </div>
+        <div class="testimony-stat">
+          Material Reduced by <span>69%</span>
+        </div>
+        <div class="testimony-stat">
+          Benefit: <span>Reduced production costs</span>
+        </div>
+      </div>
+
+      <a href="../../industrial" class="testimony-button">Learn more</a>
+    </div>
+  </div>
+
+</section>
+
+    <style>
+/* ================================
+   TESTIMONY SHOWCASE
+   ================================ */
+
+.testimony-showcase {
+  width: 100%;
+  padding: 120px 0;
+  background: var(--gray-300);
+  color: var(--black);
+  display: flex;
+  flex-direction: column;
+  gap: 160px;
+}
+
+/* ROW */
+.testimony-row {
+  max-width: 1200px;
+  height: fit-content;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 1.1fr 0.9fr;
+  gap: 120px;
+  align-items: center;
+}
+
+/* Reverse layout */
+.testimony-row--reverse {
+  grid-template-columns: 0.9fr 1.1fr;
+}
+
+/* MEDIA */
+.testimony-media {
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  background-color: #000;
+}
+
+.testimony-media img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* CONTENT */
+.testimony-content {
+  max-width: 460px;
+}
+
+.testimony-content h3 {
+text-align: left;
+  margin-bottom: 24px;
+}
+
+.testimony-content p {
+  margin-bottom: 36px;
+  text-align: left;
+}
+
+.testimony-stats {
+  display: grid;
+  gap: 0.75rem;
+  margin: 1.5rem 0 2rem;
+}
+
+.testimony-stat {
+  font-size: 0.95rem;
+  letter-spacing: 0.01em;
+}
+
+.testimony-stat span {
+  font-weight: 600;
+}
+
+/* BUTTON */
+.testimony-button {
+  display: inline-block;
+  padding: 10px 28px;
+  border: 1px solid  var(--gray-800);
+  border-radius: 999px;
+  font-size: 13px;
+  font-weight: 500;
+  text-decoration: none;
+  transition: background 0.2s ease, color 0.2s ease;
+}
+
+.testimony-button:hover {
+  background:  var(--gray-400);
+  color: #fff;
+}
+
+/* RESPONSIVE */
+@media (max-width: 900px) {
+  .testimony-showcase {
+    gap: 100px;
+    padding: 80px 0;
+  }
+
+  .testimony-row,
+  .testimony-row--reverse {
+    grid-template-columns: 1fr;
+    gap: 48px;
+  }
+
+  .testimony-content {
+    max-width: 100%;
+  }
+}
+
+    </style>
