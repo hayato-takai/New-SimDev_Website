@@ -492,25 +492,25 @@ function buildCalculatedTable(name, tempMinC, tempMaxC) {
     // Convert density to selected unit (kg/m³ is the base)
     let displayDensity;
     if (currentDensityUnit === 'kg/m^3') {
-      displayDensity = formatValue(density_kgm3, 2);
+      displayDensity = Number.isFinite(density_kgm3) ? density_kgm3.toPrecision(4) : 'N/A';
     } else if (currentDensityUnit === 'g/cm^3') {
       const converted = convertUnit('kg/m^3', 'g/cm^3', density_kgm3);
-      displayDensity = formatValue(converted, 4);
+      displayDensity = Number.isFinite(converted) ? converted.toPrecision(4) : 'N/A';
     } else if (currentDensityUnit === 'lb/ft^3') {
       const converted = convertUnit('kg/m^3', 'lb/ft^3', density_kgm3);
-      displayDensity = formatValue(converted, 2);
+      displayDensity = Number.isFinite(converted) ? converted.toPrecision(4) : 'N/A';
     }
 
     // Convert dynamic viscosity to selected unit (Pa·s is the base)
     let displayDynVisc;
     if (currentDynViscUnit === 'Pa*s') {
-      displayDynVisc = formatValue(dynVisc_Pas, 6);
+      displayDynVisc = Number.isFinite(dynVisc_Pas) ? dynVisc_Pas.toPrecision(5) : 'N/A';
     } else if (currentDynViscUnit === 'mPa*s') {
       const converted = convertUnit('Pa*s', 'mPa*s', dynVisc_Pas);
-      displayDynVisc = formatValue(converted, 3);
+      displayDynVisc = Number.isFinite(converted) ? converted.toPrecision(5) : 'N/A';
     } else if (currentDynViscUnit === 'cP') {
       const converted = convertUnit('Pa*s', 'cP', dynVisc_Pas);
-      displayDynVisc = formatValue(converted, 3);
+      displayDynVisc = Number.isFinite(converted) ? converted.toPrecision(5) : 'N/A';
     }
 
     const tr = createTableRow([
