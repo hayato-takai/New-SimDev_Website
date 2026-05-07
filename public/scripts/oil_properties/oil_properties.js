@@ -349,13 +349,7 @@ function buildThermalExpansionDisplay(name, tempMinC, tempMaxC) {
       expansionEl.textContent = '\u2014';
     }
   } else {
-    // Full range expansion
-    const expansion = OilProps.calcThermalExpansion(name, { tMin: TEMP_RANGE.min + 273.15, tMax: TEMP_RANGE.max + 273.15 });
-    if (Number.isFinite(expansion)) {
-      expansionEl.textContent = (expansion * 100).toFixed(3) + '% (full range)';
-    } else {
-      expansionEl.textContent = '\u2014';
-    }
+    expansionEl.textContent = '\u2014';
   }
 }
 
@@ -399,13 +393,22 @@ function buildVolumeDisplay(name, tempMinC, tempMaxC) {
   // Convert input volume to m³
   const baseVol_m3 = volumeToM3(rawVol, volumeInputUnit);
 
-  // Calculate mass using density at 15°C
-  const density15 = OilProps.getDensityAtTemp(name, 288.15); // kg/m³
+  // Calculate mass using density at min temperature, or 15°C if not provided
+  let tempForMass_K;
+  let tempForMass_C;
+  if (tempMinC !== null) {
+    tempForMass_K = tempMinC + 273.15;
+    tempForMass_C = tempMinC;
+  } else {
+    tempForMass_K = 288.15; // 15°C
+    tempForMass_C = 15;
+  }
+  const densityAtTemp = OilProps.getDensityAtTemp(name, tempForMass_K); // kg/m³
   if (massEl) {
-    if (Number.isFinite(density15)) {
-      const mass_kg = density15 * baseVol_m3;
+    if (Number.isFinite(densityAtTemp)) {
+      const mass_kg = densityAtTemp * baseVol_m3;
       const displayMass = massFromKg(mass_kg, massOutputUnit);
-      massEl.textContent = formatValue(displayMass, 3);
+      massEl.textContent = formatValue(displayMass, 3) + ' (at ' + tempForMass_C.toFixed(0) + '°C)';
     } else {
       massEl.textContent = '\u2014';
     }
@@ -413,17 +416,15 @@ function buildVolumeDisplay(name, tempMinC, tempMaxC) {
 
   // Calculate absolute volume change
   if (volChangeEl) {
-    let expansion = null;
     if (tempMinC !== null && tempMaxC !== null && tempMinC !== tempMaxC) {
-      expansion = OilProps.calcThermalExpansion(name, { tMin: tempMinC + 273.15, tMax: tempMaxC + 273.15 });
-    } else {
-      expansion = OilProps.calcThermalExpansion(name, { tMin: TEMP_RANGE.min + 273.15, tMax: TEMP_RANGE.max + 273.15 });
-    }
-
-    if (Number.isFinite(expansion)) {
-      const deltaV_m3 = baseVol_m3 * expansion;
-      const displayDeltaV = m3ToVolume(deltaV_m3, volOutputUnit);
-      volChangeEl.textContent = formatValue(displayDeltaV, 4);
+      const expansion = OilProps.calcThermalExpansion(name, { tMin: tempMinC + 273.15, tMax: tempMaxC + 273.15 });
+      if (Number.isFinite(expansion)) {
+        const deltaV_m3 = baseVol_m3 * expansion;
+        const displayDeltaV = m3ToVolume(deltaV_m3, volOutputUnit);
+        volChangeEl.textContent = formatValue(displayDeltaV, 4);
+      } else {
+        volChangeEl.textContent = '\u2014';
+      }
     } else {
       volChangeEl.textContent = '\u2014';
     }
