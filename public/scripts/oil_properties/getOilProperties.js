@@ -22,7 +22,12 @@ async function loadFluidData() {
       if (typeof window !== "undefined" && typeof fetch !== "undefined") {
         // Browser mode - determine base path from current location
         const pathParts = window.location.pathname.split('/');
-        const BASE_PATH = pathParts.includes('simdev_website') ? '/simdev_website' : '';
+        let BASE_PATH = '';
+        if (pathParts.includes('New-SimDev_Website')) {
+          BASE_PATH = '/New-SimDev_Website';
+        } else if (pathParts.includes('simdev_website')) {
+          BASE_PATH = '/simdev_website';
+        }
         const FLUID_DATA_PATH = `${BASE_PATH}/components/fluid_data.json`;
         const response = await fetch(FLUID_DATA_PATH);
         if (!response.ok) {

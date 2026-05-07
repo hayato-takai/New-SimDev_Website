@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
+import '../../styles/oil_properties.css';
 const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
@@ -137,6 +138,11 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
   </Layout>
     <script is:inline>
       window.BASE_URL = '{BASE_PATH}';
+      document.addEventListener('wheel', function(e) {
+        if (e.target.tagName === 'SELECT' || (e.target.tagName === 'INPUT' && e.target.type === 'number')) {
+          e.target.blur();
+        }
+      }, { passive: true });
     </script>
 <script src={`${BASE_PATH}/scripts/unit_converter.js`}></script>
 <script src={`${BASE_PATH}/scripts/oil_properties/getOilProperties.js`}></script>
@@ -168,10 +174,10 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   .input-group select,
   .input-group input {
-    padding: 6px 10px;
+    padding: 8px 12px;
     font-size: 14px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
   }
 
   .temp-range-row {
@@ -204,8 +210,8 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   .copy-col-btn {
     background: none;
-    border: 1px solid var(--border-color);
-    border-radius: 3px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
     cursor: pointer;
     font-size: 14px;
     padding: 2px 6px;
@@ -232,12 +238,12 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
   }
 
   .prop-unit-select {
-    padding: 2px 6px;
+    padding: 4px 8px;
     font-size: 12px;
-    border: 1px solid var(--border-color);
-    border-radius: 3px;
-    background: var(--table-header);
-    color: var(--text-primary);
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    background: var(--table-header, #f5f5f5);
+    color: var(--text-primary, inherit);
     cursor: pointer;
   }
 
@@ -252,8 +258,8 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
     flex: 1;
     min-width: 160px;
     padding: 12px 16px;
-    border: 1px solid var(--border-color);
-    border-radius: 6px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
     display: flex;
     flex-direction: column;
     gap: 4px;
