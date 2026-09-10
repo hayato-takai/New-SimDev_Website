@@ -1,10 +1,14 @@
 ---
 import "../styles/global.css";
+import "../styles/tools.css";
 import BaseHead from '../components/header.astro';
 import Footer from '../components/footer.astro';
-import { Image } from 'astro:assets';
 
-const { title } = Astro.props;
+interface Props {
+  title?: string;
+}
+
+const { title = 'Simulation and Development' } = Astro.props;
 ---
 <html lang="en">
 	<head>
@@ -12,7 +16,13 @@ const { title } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/favicon.svg`} />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>Astro</title>
+		<link rel="preconnect" href="https://fonts.googleapis.com" />
+		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+		<link
+			rel="stylesheet"
+			href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
+		/>
+		<title>{title}</title>
 	</head>
 	<body>
   		<BaseHead />
@@ -26,7 +36,33 @@ const { title } = Astro.props;
 	body {
 		margin: 0;
 		width: 100%;
-overflow: auto;
+	}
+
+	/* Always reserve the vertical scrollbar's width. Without this the content
+	   box widens by the scrollbar when a page doesn't scroll, which shifts
+	   every centred element (the navbar, .wrap, .footer-content) sideways and
+	   makes the layout jump between short and long pages.
+	   Fallback keeps a permanent scrollbar; the @supports block upgrades to a
+	   reserved gutter with no visible track. */
+	html {
+		overflow-y: scroll;
+	}
+
+	@supports (scrollbar-gutter: stable) {
+		html {
+			overflow-y: auto;
+			scrollbar-gutter: stable;
+		}
+	}
+
+	/* Column layout so a short page still pushes the footer to the bottom of
+	   the viewport: the footer claims the leftover space with margin-top:auto
+	   (see footer.astro). dvh keeps mobile browser chrome from overflowing it. */
+	body {
+		display: flex;
+		flex-direction: column;
+		min-height: 100vh;
+		min-height: 100dvh;
 	}
 </style>
  

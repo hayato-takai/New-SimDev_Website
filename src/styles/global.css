@@ -1,0 +1,677 @@
+/* ===============================================================
+   Site-wide styles. Imported once, by BaseLayout.
+
+   Layered the way sample.css is:
+
+     1. Reset
+     2. Tokens      motion, palette, surfaces, borders, text, elevation
+     3. Base        element defaults
+     4. Layout      .section / .wrapper / .title, dividers, grids
+     5. Typography  display helpers
+     6. Components  buttons, cards, fields
+     7. Utilities
+     8. Reduced motion
+
+   Colours are unchanged — the palette below is the same one the
+   components already reference. What is new is the semantic naming
+   on top of it (--surface, --border, --text …), the motion and
+   elevation scales, and the component classes.
+
+   Components keep their own scoped <style> blocks. Those are more
+   specific, so anything here is a default they can override.
+   =============================================================== */
+
+/* ---------------------------------------------------------------
+   1. Reset
+
+   Margins only. sample.css also zeroes padding on *, which here
+   would flatten the signup modal's email input (the one form control
+   on the site with no padding rule of its own) and any list that
+   hasn't opted out. Padding is left to the elements that own it.
+   --------------------------------------------------------------- */
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+}
+*{
+border: 1px solid red;
+}
+/* ---------------------------------------------------------------
+   2. Tokens
+   --------------------------------------------------------------- */
+
+:root {
+  /* ── Easing ── */
+  --ease-enter:    cubic-bezier(0, 0, 0.2, 1);
+  --ease-exit:     cubic-bezier(0.4, 0, 1, 1);
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+
+  /* ── Durations ── */
+  --duration-micro:    80ms;
+  --duration-fast:     120ms;
+  --duration-standard: 200ms;
+  --duration-moderate: 280ms;
+  --duration-slow:     400ms;
+
+  /* ── Transition shorthands ── */
+  --transition-color:   color var(--duration-micro) var(--ease-standard),
+                        background-color var(--duration-fast) var(--ease-standard);
+  --transition-shadow:  box-shadow var(--duration-fast) var(--ease-standard);
+  --transition-lift:    transform var(--duration-fast) var(--ease-spring),
+                        box-shadow var(--duration-fast) var(--ease-standard);
+  --transition-opacity: opacity var(--duration-fast) var(--ease-standard);
+  --transition-enter:   opacity var(--duration-standard) var(--ease-enter),
+                        transform var(--duration-standard) var(--ease-enter);
+  --transition-exit:    opacity var(--duration-fast) var(--ease-exit),
+                        transform var(--duration-fast) var(--ease-exit);
+
+  /* ── Palette (unchanged) ── */
+  --red: #c60000;
+  --white: #ffffff;
+  --black: #000000;
+
+  /* Numbered gray ramp (Advantages, ValueHypothesisTable, simulation-lineup) */
+  --gray1: #f5f5f7;
+  --gray2: #d2d2d7;
+  --gray3: #a1a1a6;
+  --gray4: #6e6e73;
+  --gray5: #1d1d1f;
+
+  /* Hyphenated gray ramp (podcast, testimony, template) */
+  --gray-100: #fafafa;
+  --gray-200: #f5f5f7;
+  --gray-300: #ededed;
+  --gray-400: #a1a1a6;
+  --gray-500: #8e8e93;
+  --gray-600: #6e6e73;
+  --gray-700: #48484a;
+  --gray-800: #2c2c2e;
+
+  /* Dark surfaces (simulation-banner) */
+  --gray-dark: #1e1e1e;
+  --gray-darker: #111111;
+
+  /* ── Brand & accent ── */
+  --brand:       #2c3e50;                     /* the site header */
+  --brand-hover: #1f2d3a;
+  --accent:      var(--red);
+  --accent-soft: rgba(198, 0, 0, 0.07);
+  --accent-mid:  rgba(198, 0, 0, 0.18);
+  --accent-glow: rgba(198, 0, 0, 0.25);
+
+  /* ── Surfaces ── */
+  --page-bg:   var(--white);
+  --surface:   #ffffff;
+  --surface-2: #f5f5f7;
+  --surface-3: #ededed;
+  --bg-second: #f5f5f7;
+  --bg-third:  #f5f5f5;
+
+  /* ── Borders ── */
+  --border:        #e3e7ec;
+  --border-strong: #c8cfd8;
+  --border-focus:  rgba(198, 0, 0, 0.3);
+  --border-color:  #cccccc;
+
+  /* ── Text ── */
+  --text:             #1d1d1f;
+  --text-2:           #48484a;
+  --text-muted:       #6e6e73;
+  --text-inverse:     #ffffff;
+  --text-placeholder: #a1a1a6;
+  --text-primary:     #1d1d1f;
+  --text-secondary:   #6e6e73;
+  --text-dark1:       #1d1d1f;
+
+  /* ── Elevation. Neutral-tinted, matching the existing shadows
+        rather than sample.css's warm brown. ── */
+  --shadow-sm:   0 1px 2px rgba(16, 24, 40, 0.05), 0 0 0 1px rgba(16, 24, 40, 0.04);
+  --shadow-md:   0 4px 16px rgba(16, 24, 40, 0.08), 0 1px 4px rgba(16, 24, 40, 0.05);
+  --shadow-lg:   0 12px 40px rgba(16, 24, 40, 0.11), 0 2px 8px rgba(16, 24, 40, 0.06);
+  --shadow-lift: 0 8px 28px rgba(16, 24, 40, 0.13), 0 2px 6px rgba(16, 24, 40, 0.07);
+
+  /* ── Status ── */
+  --success-color: #28a745;
+
+  /* ── Tables (oil_properties.css) ── */
+  --table-header: #f5f5f5;
+  --table-odd:    #ffffff;
+  --table-even:   #fafafa;
+
+  /* ── Type. Both families load in BaseLayout's <head>.
+        --font-body is a size, not a stack: ValueHypothesisTable already
+        used it as `font-size: var(--font-body)`. ── */
+  --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --font-body: 15px;
+  /* Chrome — nav, menus, buttons. sample.css sizes .nav-item and .btn at 13px
+     against its 15px body; the header was using the body size. */
+  --font-ui: 13px;
+
+  /* ── Rhythm. sample.css's numbers: 80/48/120 page padding, 72px between
+        sections, 36px under a section label, 14px grid gap. ── */
+  --page-width: 900px;
+  --max-width: 1200px;
+  --gutter: 48px;
+  --space-section: 72px;
+  --space-block: 36px;
+  --grid-gap: 14px;
+
+  --radius-sm: 6px;
+  --radius: 10px;
+}
+
+/* ---------------------------------------------------------------
+   3. Base
+   --------------------------------------------------------------- */
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: var(--font-sans);
+  font-size: var(--font-body);
+  line-height: 1.65;
+  color: var(--text);
+  background: var(--page-bg);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* sample.css styles headings only through .page-title / .card-title, but the
+   site marks up bare h1–h6 everywhere, so the scale below is interpolated
+   from its two fixed points: 42px display and 17px card title.
+
+   Headings inherit their colour deliberately. Pinning it would turn the
+   footer's <h6> copy near-black on its #111 background, and the same for
+   any other dark section. */
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  margin-bottom: 8px;
+  font-weight: 500;
+  line-height: 1.3;
+  letter-spacing: -0.015em;
+  text-wrap: balance;
+}
+
+h1 {
+  font-size: 42px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+h2 {
+  font-size: 26px;
+  letter-spacing: -0.03em;
+  line-height: 1.2;
+}
+
+h3 {
+  font-size: 17px;
+}
+
+h4 {
+  color: var(--text-muted);
+  font-size: 14px;
+  font-weight: 400;
+  letter-spacing: 0;
+  line-height: 1.6;
+}
+
+h5,
+h6 {
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0;
+}
+
+/* sample.css sizes its own body copy per component and never runs long-form
+   prose, so this is the one metric with no counterpart to copy. */
+p {
+  margin-bottom: 16px;
+}
+
+/* Not in sample.css, which has no responsive rules at all. Without these a
+   42px display heading dominates a phone screen, and the 48px side gutter
+   eats a quarter of a 375px viewport. */
+@media (max-width: 720px) {
+  :root {
+    --gutter: 20px;
+  }
+
+  h1 { font-size: 32px; }
+  h2 { font-size: 22px; }
+}
+
+a {
+  color: var(--accent);
+  text-decoration: none;
+  transition: var(--transition-color);
+}
+
+a:hover {
+  text-decoration: underline;
+}
+
+/* Media never overflows its column. No `height`, so object-fit layouts
+   that size their own images are left alone. */
+img,
+video,
+svg,
+canvas {
+  max-width: 100%;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+button {
+  cursor: pointer;
+}
+
+code,
+pre,
+kbd,
+samp {
+  font-family: var(--font-mono);
+}
+
+:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------
+   4. Layout
+
+   The section pattern the components already mark up:
+
+     <section class="… section">     full-bleed band, vertical rhythm
+       <div class="… wrapper">       centred, max-width, side gutters
+         <div class="title"> … </div>
+         <div class="… content"> … </div>
+       </div>
+     </section>
+   --------------------------------------------------------------- */
+
+/* BaseLayout makes <body> a min-height:100dvh column. Growing <main>
+   means its background reaches the footer on short pages instead of
+   leaving a strip of bare body. Not scoped, because <main> comes from
+   each page rather than from a component. */
+body > main {
+  flex: 1 0 auto;
+}
+
+/* sample.css's reading container, exactly as it defines it. */
+.page {
+  max-width: var(--page-width);
+  margin-inline: auto;
+  padding: 80px var(--gutter) 120px;
+}
+
+@media (max-width: 720px) {
+  .page {
+    padding: 48px var(--gutter) 72px;
+  }
+}
+
+.section {
+  padding-block: var(--space-section);
+}
+
+/* The site's own full-width container. Wider than .page because the
+   four-column product grid and the testimony rows need the room. */
+.wrapper {
+  width: min(var(--max-width), 100% - var(--gutter) * 2);
+  margin-inline: auto;
+}
+
+.title {
+  margin-bottom: var(--space-block);
+}
+
+/* The heading block's last line shouldn't add to the gap below it. */
+.title > :last-child {
+  margin-bottom: 0;
+}
+
+.divider {
+  width: 100%;
+  height: 1px;
+  background: var(--border);
+  margin-block: var(--space-section);
+  border: 0;
+}
+
+.grid-2,
+.grid-3,
+.grid-4 {
+  display: grid;
+  gap: var(--grid-gap);
+}
+
+.grid-2 { grid-template-columns: repeat(2, 1fr); }
+.grid-3 { grid-template-columns: repeat(3, 1fr); }
+.grid-4 { grid-template-columns: repeat(4, 1fr); }
+
+@media (max-width: 720px) {
+  .grid-2,
+  .grid-3,
+  .grid-4 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ---------------------------------------------------------------
+   5. Typography helpers
+   --------------------------------------------------------------- */
+
+.page-eyebrow {
+  margin-bottom: 12px;
+  color: var(--text-muted);
+  font-size: 10.5px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+/* Plus Jakarta Sans is loaded from 400 up, so the light display weight
+   is 400 rather than sample.css's 300. */
+.page-title {
+  margin-bottom: 6px;
+  font-size: 42px;
+  font-weight: 400;
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+.page-title strong {
+  font-weight: 600;
+}
+
+.page-sub {
+  max-width: 440px;
+  margin-top: 12px;
+  color: var(--text-muted);
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+/* Small caps label with a rule running out to the right. */
+.section-label {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  margin-bottom: var(--space-block);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.section-label::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+
+.mono {
+  color: var(--text-muted);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  line-height: 1.5;
+}
+
+/* ---------------------------------------------------------------
+   6. Components
+   --------------------------------------------------------------- */
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border: 1px solid transparent;
+  border-radius: var(--radius-sm);
+  font-size: var(--font-ui);
+  font-weight: 500;
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.btn:hover {
+  text-decoration: none;
+}
+
+.btn-primary {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: var(--text-inverse);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-color), var(--transition-lift);
+}
+
+.btn-primary:hover {
+  background: #a30000;
+  border-color: #a30000;
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-1px);
+}
+
+.btn-primary:active {
+  box-shadow: var(--shadow-sm);
+  transform: translateY(2px);
+  transition-duration: 60ms;
+}
+
+.btn-secondary {
+  background: var(--surface);
+  border-color: var(--border-strong);
+  color: var(--text-2);
+  box-shadow: var(--shadow-sm);
+  transition: var(--transition-color), var(--transition-lift);
+}
+
+.btn-secondary:hover {
+  background: var(--surface-2);
+  border-color: var(--text-muted);
+  box-shadow: var(--shadow-md);
+  transform: translateY(-1px);
+}
+
+.btn-secondary:active {
+  box-shadow: none;
+  transform: translateY(2px);
+  transition-duration: 60ms;
+}
+
+.btn-ghost {
+  background: transparent;
+  color: var(--text-2);
+  transition: var(--transition-color);
+}
+
+.btn-ghost:hover {
+  background: var(--surface-2);
+  color: var(--text);
+}
+
+.btn-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text-muted);
+  transition: var(--transition-color), transform var(--duration-fast) var(--ease-spring);
+}
+
+.btn-icon:hover {
+  background: var(--surface-2);
+  border-color: var(--border-strong);
+  color: var(--text);
+}
+
+.btn-icon:active {
+  transform: scale(0.92);
+  transition-duration: 60ms;
+}
+
+.btn-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+.card {
+  padding: 24px;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: var(--surface);
+  box-shadow: var(--shadow-md);
+  transition: var(--transition-lift), border-color var(--duration-fast) var(--ease-standard);
+}
+
+.card:hover {
+  border-color: var(--border-strong);
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-3px);
+}
+
+.card-eyebrow {
+  margin-bottom: 10px;
+  color: var(--text-muted);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.card-title {
+  margin-bottom: 8px;
+  font-size: 17px;
+  font-weight: 500;
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
+.card-body {
+  color: var(--text-2);
+  font-size: 13px;
+  line-height: 1.65;
+}
+
+.card-badge {
+  display: inline-block;
+  margin-top: 18px;
+  padding: 3px 10px;
+  border: 1px solid var(--accent-mid);
+  border-radius: 4px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  font-size: 10px;
+  font-weight: 600;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.field-label {
+  color: var(--text-2);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.01em;
+}
+
+.input {
+  width: 100%;
+  padding: 10px 14px;
+  border: 1px solid var(--border-strong);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
+  color: var(--text);
+  font-size: 14px;
+  outline: none;
+  transition: border-color var(--duration-fast) var(--ease-standard),
+              box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.input::placeholder {
+  color: var(--text-placeholder);
+}
+
+.input:hover {
+  border-color: var(--text-muted);
+}
+
+.input:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px var(--accent-soft);
+}
+
+/* ---------------------------------------------------------------
+   7. Utilities
+   --------------------------------------------------------------- */
+
+.border {
+  border: 1px solid var(--border-color);
+  border-radius: var(--radius);
+}
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  margin: -1px;
+  padding: 0;
+  overflow: hidden;
+  clip-path: inset(50%);
+  white-space: nowrap;
+}
+
+/* ---------------------------------------------------------------
+   8. Reduced motion
+   --------------------------------------------------------------- */
+
+@media (prefers-reduced-motion: reduce) {
+  html {
+    scroll-behavior: auto;
+  }
+
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}

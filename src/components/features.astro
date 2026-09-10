@@ -260,10 +260,10 @@
 
     </style>
     <script>
-     const slides = document.querySelectorAll('.slide');
-        const sidebuttons = document.querySelectorAll('.nav-btn');
-        const leftArrow = document.querySelector('.arrow.left');
-        const rightArrow = document.querySelector('.arrow.right');
+     const slides = Array.from(document.querySelectorAll<HTMLElement>('.slide'));
+        const sidebuttons = Array.from(document.querySelectorAll<HTMLElement>('.nav-btn'));
+        const leftArrow = document.querySelector<HTMLElement>('.arrow.left');
+        const rightArrow = document.querySelector<HTMLElement>('.arrow.right');
 
         let index = 0;
         let animating = false;
@@ -274,8 +274,10 @@
         const inactiveHeight = 50;
         const expandedWidth = 420;
 
-        function measureExpandedHeight(btn) {
-            const clone = btn.cloneNode(true);
+        const descOf = (btn: HTMLElement) => btn.querySelector<HTMLElement>('.desc');
+
+        function measureExpandedHeight(btn: HTMLElement) {
+            const clone = btn.cloneNode(true) as HTMLElement;
             clone.style.width = expandedWidth + 'px';
             clone.style.position = 'absolute';
             clone.style.visibility = 'hidden';
@@ -290,29 +292,31 @@
 
         function adjustButtonHeight() {
             sidebuttons.forEach(btn => {
-                const desc = btn.querySelector('.desc');
+                const desc = descOf(btn);
                 if (btn.classList.contains('active')) {
-                    const fullHeight = measureExpandedHeight(btn);
-                    btn.style.height = fullHeight + 'px';
+                    btn.style.height = measureExpandedHeight(btn) + 'px';
                 } else {
                     btn.style.height = inactiveHeight + 'px';
-                    desc.style.opacity = 0;
+                    if (desc) desc.style.opacity = '0';
                 }
             });
         }
 
-        function showSlide(newIndex) {
+        function showSlide(newIndex: number) {
             if (animating || newIndex === index) return;
             animating = true;
 
             const currentSlide = slides[index];
             const nextSlide = slides[newIndex];
+            // Slides may hold no <video> yet, so both of these can be null.
             const currentVideo = currentSlide.querySelector('video');
             const nextVideo = nextSlide.querySelector('video');
 
             // Stop and reset current video
-            currentVideo.pause();
-            currentVideo.currentTime = 0;
+            if (currentVideo) {
+                currentVideo.pause();
+                currentVideo.currentTime = 0;
+            }
 
             currentSlide.classList.add('exit-left');
             currentSlide.classList.remove('active');
@@ -327,8 +331,10 @@
                 nextSlide.classList.remove('enter-right');
 
                 // Restart next video
-                nextVideo.currentTime = 0;
-                nextVideo.play();
+                if (nextVideo) {
+                    nextVideo.currentTime = 0;
+                    nextVideo.play();
+                }
 
                 setTimeout(() => {
                     index = newIndex;
@@ -337,30 +343,34 @@
             }, slideDelay);
 
             sidebuttons.forEach((btn, i) => {
-                const desc = btn.querySelector('.desc');
+                const desc = descOf(btn);
                 btn.classList.toggle('active', i === newIndex);
-                if (i !== newIndex) desc.style.opacity = 0;
+                if (i !== newIndex && desc) desc.style.opacity = '0';
             });
 
             adjustButtonHeight();
 
-  const activeDesc = sidebuttons[newIndex].querySelector('.desc');
-  setTimeout(() => {
-    activeDesc.style.opacity = 0.9;
-  }, expandDuration);
+            const activeDesc = descOf(sidebuttons[newIndex]);
+            setTimeout(() => {
+                if (activeDesc) activeDesc.style.opacity = '0.9';
+            }, expandDuration);
         }
 
-        sidebuttons.forEach(btn => btn.addEventListener('click', () => showSlide(parseInt(btn.dataset.index))));
-        leftArrow.addEventListener('click', () => showSlide((index - 1 + slides.length) % slides.length));
-        rightArrow.addEventListener('click', () => showSlide((index + 1) % slides.length));
+        sidebuttons.forEach(btn => btn.addEventListener('click', () => showSlide(Number(btn.dataset.index))));
+        leftArrow?.addEventListener('click', () => showSlide((index - 1 + slides.length) % slides.length));
+        rightArrow?.addEventListener('click', () => showSlide((index + 1) % slides.length));
 
         window.addEventListener('load', () => {
+            if (sidebuttons.length === 0 || slides.length === 0) return;
+
             sidebuttons.forEach(btn => btn.classList.remove('active'));
             slides.forEach(slide => slide.classList.remove('active'));
             sidebuttons[0].classList.add('active');
             slides[0].classList.add('active');
-            const firstDesc = sidebuttons[0].querySelector('.desc');
-            firstDesc.style.opacity = 0.9;
+
+            const firstDesc = descOf(sidebuttons[0]);
+            if (firstDesc) firstDesc.style.opacity = '0.9';
+
             requestAnimationFrame(() => setTimeout(adjustButtonHeight, 150));
         });
 

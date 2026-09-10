@@ -1,0 +1,717 @@
+---
+import Layout from '../../layouts/BaseLayout.astro';
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout>
+<style>
+  /* ── Page wrapper ──────────────────────────────────────── */
+  /* Width, gutters and vertical rhythm come from .tool-shell in tools.css. */
+
+  /* Page header and subtitle come from .tool-header in tools.css. */
+
+  /* ── Cards ─────────────────────────────────────────────── */
+  /* Card surface comes from .tool-page .pm-card in tools.css. */
+
+  /* Panel labels come from .tool-page h2 in tools.css. */
+
+  /* ── Docs button ───────────────────────────────────────── */
+  /* Colour, border and radius come from .tool-page .btn-docs in tools.css.
+     What stays here is only how this one sits in the header row. */
+  .btn-docs {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    transition: background 0.2s;
+    white-space: nowrap;
+    flex-shrink: 0;
+  }
+
+
+  /* ── Oil properties grid ───────────────────────────────── */
+  /* start, not end: Density and Dynamic Viscosity carry a .hint under their
+     input and the other fields do not, so bottom-aligning a row pushed the
+     hintless inputs down by the height of that hint. Aligning tops lands every
+     input on the same line and lets the hints hang below. */
+  .props-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+    gap: 14px 20px;
+    align-items: start;
+  }
+
+  .pm-field {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .pm-field label {
+    font-size: var(--tool-fs-base);
+    font-weight: var(--tool-fw-medium);
+    color: var(--text-primary);
+    margin: 0;
+  }
+
+  .pm-field .hint {
+    font-size: var(--tool-fs-base);
+    color: var(--text-tertiary);
+  }
+
+  /* The pair occupies two grid columns and splits them evenly, so each field
+     comes out the same width as Temperature and Length beside it. Spanning
+     keeps the two together on one line instead of letting the auto-fill grid
+     break them across rows. */
+  .pm-autofill {
+    grid-column: span 2;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .pm-autofill .hint {
+    font-size: var(--tool-fs-base);
+    color: var(--text-tertiary);
+  }
+
+  .pm-autofill-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px; /* matches the column gap of .props-grid */
+  }
+
+  /* Once .props-grid is down to a single column, a two-column span would
+     create an implicit extra column, so the pair stacks instead. */
+  @media (max-width: 480px) {
+    .pm-autofill {
+      grid-column: 1 / -1;
+    }
+
+    .pm-autofill-row {
+      grid-template-columns: 1fr;
+      gap: 14px;
+    }
+  }
+
+  .pm-input-row {
+    display: flex;
+    gap: 6px;
+    align-items: center;
+  }
+
+  .pm-input-row input { flex: 1; min-width: 0; }
+
+  input[type="number"],
+  select {
+    box-sizing: border-box;
+    width: 100%;
+  }
+
+  /* ── Method layout: table left, chart right ────────────── */
+  .method-body {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    align-items: start;
+  }
+
+  @media (max-width: 760px) {
+    .method-body { grid-template-columns: 1fr; }
+  }
+
+  /* ── Data tables ───────────────────────────────────────── */
+  .data-table-wrap {
+    overflow-x: auto;
+  }
+
+  .data-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .data-table th {
+    background: var(--tool-accent);
+    color: var(--tool-accent-ink);
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .data-table td {
+    border: 1px solid var(--border-color);
+  }
+
+  .data-table input[type="number"] {
+    border: none;
+    background: transparent;
+    width: 100%;
+    box-shadow: none;
+    color: var(--text-primary);
+  }
+
+  .data-table input[type="number"]:focus {
+    outline: 2px solid var(--tool-accent);
+    outline-offset: -2px;
+    border-radius: 3px;
+    box-shadow: none;
+  }
+
+  .data-table input[readonly] {
+    color: var(--text-tertiary);
+    font-style: italic;
+  }
+
+  /* ── Buttons ───────────────────────────────────────────── */
+  .btn-group {
+    display: flex;
+    gap: 8px;
+    margin-top: 12px;
+    flex-wrap: wrap;
+  }
+
+  /* .btn-primary takes the shared .tool-page button styling as-is.
+     .btn-secondary is the quiet variant. */
+  .btn-secondary {
+    border-color: var(--tool-line-strong);
+    background: var(--tool-panel);
+    color: var(--tool-ink);
+    transition: background 0.2s;
+  }
+
+  .btn-secondary:hover {
+    border-color: var(--tool-accent);
+    background: var(--tool-accent-soft);
+    color: var(--tool-accent);
+  }
+
+  /* ── Results grid ──────────────────────────────────────── */
+  .results-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+    margin-top: 14px;
+  }
+
+  .result-stat {
+    background: var(--bg-third, #f9fafb);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 10px 14px;
+  }
+
+  .result-stat .rs-label {
+    font-size: var(--tool-fs-sm);
+    font-weight: var(--tool-fw-bold);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    color: var(--text-tertiary);
+  }
+
+  .result-stat .rs-value {
+    font-size: var(--tool-fs-lg);
+    /* Capped at 500: JetBrains Mono is only loaded at 400 and 500. */
+    font-weight: var(--tool-fw-medium);
+    color: var(--text-primary);
+    margin-top: 3px;
+    font-family: var(--font-mono);
+  }
+
+  /* ── Chart panel ───────────────────────────────────────── */
+  /* Definite height, not min-height: with maintainAspectRatio:false Chart.js
+     sizes the canvas to fill this box, and a min-height would leave the height
+     depending on the canvas that depends on it. */
+  .chart-panel {
+    background: var(--bg-second);
+    border: 1px solid var(--border-color);
+    border-radius: 6px;
+    padding: 14px;
+    position: relative;
+    height: 360px;
+  }
+
+  .chart-placeholder {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    position: absolute;
+    inset: 0;
+    pointer-events: none;
+    border-radius: 6px;
+    z-index: 2;
+  }
+
+  .chart-placeholder span {
+    font-size: var(--tool-fs-base);
+    color: var(--text-tertiary);
+    background: var(--bg-second);
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid var(--border-color);
+  }
+
+  .chart-placeholder.hidden { display: none; }
+
+  /* Chart.js owns the canvas dimensions — it sets the backing store for the
+     device pixel ratio and the CSS box to match. Forcing width:100% !important
+     and capping max-height here made the browser rescale that bitmap into a
+     different shape, which is what looked stretched and pixelated. */
+  canvas {
+    display: block;
+  }
+
+  /* ── Section description ───────────────────────────────── */
+  .pm-desc {
+    font-size: var(--tool-fs-base);
+    color: var(--text-secondary);
+    margin: 0 0 18px;
+    line-height: 1.6;
+  }
+
+  .pm-divider {
+    border: none;
+    border-top: 1px solid var(--border-color);
+    margin: 0 0 18px;
+  }
+
+  /* ── Unit selects inside table headers ─────────────────── */
+  .unit-select {
+    display: inline-block;
+    width: auto;
+    font-weight: var(--tool-fw-medium);
+    border: 1px solid rgba(255, 255, 255, 0.35);
+    border-radius: 4px;
+    background: rgba(255, 255, 255, 0.14);
+    color: #fff;
+    cursor: pointer;
+    margin-left: 6px;
+    vertical-align: middle;
+    box-sizing: border-box;
+  }
+
+  .unit-select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 255, 255, 0.45);
+    border-color: rgba(255, 255, 255, 0.7);
+  }
+
+  .unit-select option {
+    background: var(--bg-main, #fff);
+    color: var(--text-primary);
+    font-weight: var(--tool-fw-medium);
+  }
+</style>
+
+<main class="tool-page">
+<div class="tool-shell">
+
+  <!-- ── Header ─────────────────────────────────────────── -->
+  <header class="tool-header">
+  <div class="tool-header-row">
+    <h1>Porous Media Property Calculator</h1>
+    <a class="btn-docs"
+       href={`${BASE_PATH}/helpers/documentation?readme=${BASE_PATH}/scripts/porous_media/README.md`}
+       target="_blank" rel="noopener noreferrer">
+      Documentation
+    </a>
+  </div>
+  <p class="tool-subtitle">
+    Calculate Darcy–Forchheimer porous media coefficients from velocity or flow-rate data.
+  </p>
+  </header>
+
+  <!-- ── Oil & Fluid Properties ─────────────────────────── -->
+  <div class="tool-card pm-card">
+    <h2>Fluid Properties</h2>
+    <div class="props-grid">
+
+      <div class="pm-field" style="grid-column: span 2">
+        <label for="oilTypeSelect">Oil Type</label>
+        <!-- loadOil() appends the fluids after this. The blank option gives the
+             cleared state something to show when a property is typed by hand. -->
+        <select id="oilTypeSelect" style="max-width:320px">
+          <option value="">-- Select --</option>
+        </select>
+      </div>
+
+      <div class="pm-field">
+        <label for="operatingTempInput">Temperature</label>
+        <div class="pm-input-row">
+          <input type="number" id="operatingTempInput" placeholder="e.g. 40" />
+          <select id="operatingTempUnitSelect" style="width:72px">
+            <option value="C">°C</option>
+            <option value="F">°F</option>
+            <option value="K">K</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="pm-field">
+        <label for="lengthInput">Length (L)</label>
+        <div class="pm-input-row">
+          <input type="number" id="lengthInput" placeholder="e.g. 0.05" />
+          <span style="font-size:12px;color:var(--text-tertiary);white-space:nowrap">m</span>
+        </div>
+      </div>
+
+      <!-- Density and viscosity share one caption, so they travel as a pair
+           rather than flowing separately through the auto-fill grid. -->
+      <div class="pm-autofill">
+        <span class="hint">Auto-filled from oil selection</span>
+        <div class="pm-autofill-row">
+
+          <div class="pm-field">
+            <label for="densityInput">Density (ρ)</label>
+            <div class="pm-input-row">
+              <input type="number" id="densityInput" step="any" placeholder="Auto from oil" />
+              <span style="font-size:12px;color:var(--text-tertiary);white-space:nowrap">kg/m³</span>
+            </div>
+          </div>
+
+          <div class="pm-field">
+            <label for="viscosityInput">Dynamic Viscosity (μ)</label>
+            <div class="pm-input-row">
+              <input type="number" id="viscosityInput" step="any" placeholder="Auto from oil" />
+              <span style="font-size:12px;color:var(--text-tertiary);white-space:nowrap">Pa·s</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ── Combined Chart ──────────────────────────────────── -->
+  <div class="tool-card pm-card">
+    <h2>Pressure Loss vs Velocity — Combined Chart</h2>
+    <p class="pm-desc">
+      Both methods are plotted on the same axes. Calculate from either method below to update the chart.
+      <span style="color:#2563eb;font-weight:700">●</span> Method 1 (velocity input) &nbsp;
+      <span style="color:#16a34a;font-weight:700">●</span> Method 2 (flow rate input).
+    </p>
+    <div class="chart-panel">
+      <div class="chart-placeholder" id="combinedPlaceholder">
+        <span>Enter data in a method below and click Calculate</span>
+      </div>
+      <canvas id="combinedPlot"></canvas>
+    </div>
+  </div>
+
+  <!-- ── Method 1: Velocity ──────────────────────────────── -->
+  <div class="tool-card pm-card">
+    <h2>Method 1 — Velocity vs Pressure Loss</h2>
+    <p class="pm-desc">
+      Enter measured velocity and pressure-loss pairs to fit the Darcy–Forchheimer equation
+      <strong>ΔP = A·u + B·u²</strong> and extract the permeability and inertial coefficients.
+    </p>
+    <hr class="pm-divider" />
+
+    <div class="data-table-wrap">
+      <table class="data-table" id="dataTable">
+        <thead>
+          <tr>
+            <th>Velocity u
+              <select id="velUnitSelect" class="unit-select">
+                <option value="m">m/s</option>
+                <option value="cm">cm/s</option>
+                <option value="mm">mm/s</option>
+                <option value="ft">ft/s</option>
+              </select>
+            </th>
+            <th>Pressure Loss ΔP
+              <select id="dpUnitSelect1" class="unit-select">
+                <option value="Pa">Pa</option>
+                <option value="kPa">kPa</option>
+                <option value="bar">bar</option>
+                <option value="psi">psi</option>
+              </select>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="number" step="any" /></td>
+            <td><input type="number" step="any" /></td>
+          </tr>
+          <tr>
+            <td><input type="number" step="any" /></td>
+            <td><input type="number" step="any" /></td>
+          </tr>
+          <tr>
+            <td><input type="number" step="any" /></td>
+            <td><input type="number" step="any" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-secondary" onclick="addRow()">+ Add Row</button>
+      <button class="btn-primary" onclick="calculateAll()">Calculate</button>
+    </div>
+
+    <div id="results" class="results-grid" style="display:none"></div>
+  </div>
+
+  <!-- ── Method 2: Flow Rate ─────────────────────────────── -->
+  <div class="tool-card pm-card">
+    <h2>Method 2 — Flow Rate vs Pressure Loss</h2>
+    <p class="pm-desc">
+      Enter flow-rate and pressure-loss pairs. Velocity is auto-calculated from the
+      cross-sectional area using <strong>u = Q / A<sub>c</sub></strong>.
+    </p>
+    <hr class="pm-divider" />
+
+    <div class="pm-field" style="max-width:280px; margin-bottom:18px">
+      <label for="areaInput">Cross-Sectional Area (A<sub>c</sub>)</label>
+      <div class="pm-input-row">
+        <input type="number" id="areaInput" step="any" placeholder="e.g. 0.002" />
+        <span style="font-size:12px;color:var(--text-tertiary);white-space:nowrap">m²</span>
+      </div>
+    </div>
+
+    <div class="data-table-wrap">
+      <table class="data-table" id="flowDataTable">
+        <thead>
+          <tr>
+            <th>Flow Rate Q
+              <select id="flowUnitSelect" class="unit-select">
+                <option value="m^3/s">m³/s</option>
+                <option value="L/s">L/s</option>
+                <option value="L/min">L/min</option>
+                <option value="gpm">gpm</option>
+              </select>
+            </th>
+            <th>Pressure Loss ΔP
+              <select id="dpUnitSelect2" class="unit-select">
+                <option value="Pa">Pa</option>
+                <option value="kPa">kPa</option>
+                <option value="bar">bar</option>
+                <option value="psi">psi</option>
+              </select>
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><input type="number" step="any" /></td>
+            <td><input type="number" step="any" /></td>
+          </tr>
+          <tr>
+            <td><input type="number" step="any" /></td>
+            <td><input type="number" step="any" /></td>
+          </tr>
+          <tr>
+            <td><input type="number" step="any" /></td>
+            <td><input type="number" step="any" /></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-secondary" onclick="addFlowRow()">+ Add Row</button>
+      <button class="btn-primary" onclick="calculateFromFlow()">Calculate</button>
+    </div>
+
+    <div id="flowResults" class="results-grid" style="display:none"></div>
+  </div>
+
+</div>
+</main>
+</Layout>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" is:inline></script>
+<script src={`${BASE_PATH}/scripts/oil_properties/getOilProperties.js`}></script>
+<script src={`${BASE_PATH}/scripts/unit_converter.js`}></script>
+<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" is:inline></script>
+<script src={`${BASE_PATH}/scripts/porous_media/porous_media.js`}></script>
+<script src={`${BASE_PATH}/scripts/curve_fitting/curve_fitting.js`}></script>
+
+<script is:inline>
+// ── Shared chart state ───────────────────────────────────
+const chartState = { method1: null, method2: null };
+
+// ── Results renderer ────────────────────────────────────
+function renderResults(containerId, A, B, dynVisc, dens, d, f) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = `
+    <div class="result-stat"><div class="rs-label">A (Darcy term)</div><div class="rs-value">${A.toExponential(4)}</div></div>
+    <div class="result-stat"><div class="rs-label">B (Forchheimer term)</div><div class="rs-value">${B.toExponential(4)}</div></div>
+    <div class="result-stat"><div class="rs-label">Dynamic Viscosity μ</div><div class="rs-value">${dynVisc.toExponential(4)} Pa·s</div></div>
+    <div class="result-stat"><div class="rs-label">Density ρ</div><div class="rs-value">${dens.toExponential(4)} kg/m³</div></div>
+    <div class="result-stat"><div class="rs-label">Permeability coeff d</div><div class="rs-value">${d.toExponential(4)}</div></div>
+    <div class="result-stat"><div class="rs-label">Inertial coeff f</div><div class="rs-value">${f.toExponential(4)}</div></div>
+  `;
+  el.style.display = 'grid';
+}
+
+// ── Chart helpers ────────────────────────────────────────
+function destroyChart(canvasId) {
+  if (window.Chart && Chart.getChart) {
+    const existing = Chart.getChart(canvasId);
+    if (existing) existing.destroy();
+  }
+}
+
+// ── Combined chart ───────────────────────────────────────
+function drawCombinedChart() {
+  destroyChart('combinedPlot');
+  const datasets = [];
+
+  function addMethodDatasets(state, pointColor, label) {
+    const { x, y, A, B } = state;
+    const xMin = Math.min(...x), xMax = Math.max(...x);
+    const xFit = Array.from({ length: 60 }, (_, i) => xMin + (i / 59) * (xMax - xMin));
+    const yFit = xFit.map(v => A * v + B * v * v);
+    datasets.push({
+      label: label + ' — Measured',
+      data: x.map((v, i) => ({ x: v, y: y[i] })),
+      type: 'scatter',
+      pointBackgroundColor: pointColor,
+      pointBorderColor: pointColor,
+      pointRadius: 5,
+      pointHoverRadius: 7,
+    });
+    datasets.push({
+      label: label + ' — Curve fit',
+      data: xFit.map((v, i) => ({ x: v, y: yFit[i] })),
+      type: 'line',
+      borderColor: pointColor,
+      borderDash: [5, 3],
+      borderWidth: 2,
+      pointRadius: 0,
+      fill: false,
+      tension: 0.3,
+    });
+  }
+
+  if (chartState.method1) addMethodDatasets(chartState.method1, '#2563eb', 'Method 1');
+  if (chartState.method2) addMethodDatasets(chartState.method2, '#16a34a', 'Method 2');
+  if (!datasets.length) return;
+
+  document.getElementById('combinedPlaceholder').classList.add('hidden');
+  const ctx = document.getElementById('combinedPlot').getContext('2d');
+  new Chart(ctx, {
+    type: 'scatter',
+    data: { datasets },
+    options: {
+      responsive: true,
+      // Fill .chart-panel instead of holding Chart.js's default 2:1 ratio,
+      // which is what the CSS was fighting.
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 12 }, boxWidth: 14 } },
+        tooltip: { callbacks: { label: c => `(${c.parsed.x.toExponential(3)}, ${c.parsed.y.toExponential(3)})` } }
+      },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'Velocity u (m/s)', font: { size: 12 } }, grid: { color: 'rgba(0,0,0,0.07)' } },
+        y: { title: { display: true, text: 'Pressure Loss ΔP (Pa)', font: { size: 12 } }, grid: { color: 'rgba(0,0,0,0.07)' } }
+      }
+    }
+  });
+}
+
+// ── Override functions after all scripts load ────────────
+window.addEventListener('load', () => {
+
+  // Neutralise updateVelocities — velocity column no longer exists in Method 2
+  window.updateVelocities = function() {};
+
+  // Override addFlowRow: 2-column (Q + ΔP only)
+  window.addFlowRow = function() {
+    const tbody = document.querySelector('#flowDataTable tbody');
+    const row = tbody.insertRow();
+    row.innerHTML = `
+      <td><input type="number" step="any" /></td>
+      <td><input type="number" step="any" /></td>`;
+  };
+
+  // Override calculateAll with unit conversion
+  window.calculateAll = async function() {
+    const velLengthUnit = document.getElementById('velUnitSelect').value;  // 'm','cm','mm','ft'
+    const dpUnit1       = document.getElementById('dpUnitSelect1').value;  // 'Pa','kPa','bar','psi'
+
+    const rows = document.querySelectorAll('#dataTable tbody tr');
+    const x = [], y = [];
+    rows.forEach(r => {
+      const raw_u  = parseFloat(r.cells[0].querySelector('input').value);
+      const raw_dp = parseFloat(r.cells[1].querySelector('input').value);
+      if (!isNaN(raw_u) && !isNaN(raw_dp)) {
+        // velocity: convertUnit treats length unit / s, so cm→m gives the right m/s factor
+        x.push(convertUnit(velLengthUnit, 'm', raw_u));
+        y.push(convertUnit(dpUnit1, 'Pa', raw_dp));
+      }
+    });
+
+    if (x.length < 3) { alert('Enter at least 3 valid data points.'); return; }
+    const { A, B } = fitCurve(x, y);
+
+    const oilType   = document.getElementById('oilTypeSelect').value;
+    const tempInput = parseFloat(document.getElementById('operatingTempInput').value);
+    const tempUnit  = document.getElementById('operatingTempUnitSelect').value;
+    const L         = parseFloat(document.getElementById('lengthInput').value);
+    const tK = convertUnit(tempUnit, 'K', tempInput);
+    // With no oil selected the fields are the only source, so require them
+    // rather than asking OilProps for a fluid named "".
+    const densRaw    = parseFloat(document.getElementById('densityInput').value);
+    const dynViscRaw = parseFloat(document.getElementById('viscosityInput').value);
+    if (!oilType && (isNaN(densRaw) || isNaN(dynViscRaw))) {
+      alert('Select an oil type, or enter both density and dynamic viscosity.');
+      return;
+    }
+    const dens    = densRaw    || OilProps.getDensityAtTemp(oilType, tK);
+    const dynVisc = dynViscRaw || OilProps.getDynViscAtTemp(oilType, tK);
+    const { d, f } = calcDarcyForchheimer(A, B, dynVisc, dens, L);
+
+    renderResults('results', A, B, dynVisc, dens, d, f);
+    chartState.method1 = { x, y, A, B };
+    drawCombinedChart();
+  };
+
+  // Override calculateFromFlow with unit conversion (no velocity column)
+  window.calculateFromFlow = async function() {
+    const area = parseFloat(document.getElementById('areaInput').value);
+    if (!area || area <= 0) { alert('Enter a valid cross-sectional area.'); return; }
+
+    const flowUnit = document.getElementById('flowUnitSelect').value;  // 'm^3/s','L/s','L/min','gpm'
+    const dpUnit2  = document.getElementById('dpUnitSelect2').value;   // 'Pa','kPa','bar','psi'
+
+    const rows = document.querySelectorAll('#flowDataTable tbody tr');
+    const x = [], y = [];
+    rows.forEach(r => {
+      const raw_q  = parseFloat(r.cells[0].querySelector('input').value);
+      const raw_dp = parseFloat(r.cells[1].querySelector('input').value);
+      if (!isNaN(raw_q) && !isNaN(raw_dp)) {
+        const q_si = convertUnit(flowUnit, 'm^3/s', raw_q);  // → m³/s
+        x.push(q_si / area);                                  // → velocity m/s
+        y.push(convertUnit(dpUnit2, 'Pa', raw_dp));           // → Pa
+      }
+    });
+
+    if (x.length < 3) { alert('Enter at least 3 valid data points.'); return; }
+    const { A, B } = fitCurve(x, y);
+
+    const oilType   = document.getElementById('oilTypeSelect').value;
+    const tempInput = parseFloat(document.getElementById('operatingTempInput').value);
+    const tempUnit  = document.getElementById('operatingTempUnitSelect').value;
+    const L         = parseFloat(document.getElementById('lengthInput').value);
+    const tK = convertUnit(tempUnit, 'K', tempInput);
+    // With no oil selected the fields are the only source, so require them
+    // rather than asking OilProps for a fluid named "".
+    const densRaw    = parseFloat(document.getElementById('densityInput').value);
+    const dynViscRaw = parseFloat(document.getElementById('viscosityInput').value);
+    if (!oilType && (isNaN(densRaw) || isNaN(dynViscRaw))) {
+      alert('Select an oil type, or enter both density and dynamic viscosity.');
+      return;
+    }
+    const dens    = densRaw    || OilProps.getDensityAtTemp(oilType, tK);
+    const dynVisc = dynViscRaw || OilProps.getDynViscAtTemp(oilType, tK);
+    const { d, f } = calcDarcyForchheimer(A, B, dynVisc, dens, L);
+
+    renderResults('flowResults', A, B, dynVisc, dens, d, f);
+    chartState.method2 = { x, y, A, B };
+    drawCombinedChart();
+  };
+});
+</script>
+

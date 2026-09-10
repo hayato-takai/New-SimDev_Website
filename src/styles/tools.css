@@ -1,0 +1,392 @@
+/* ===============================================================
+   Shared look for every page under /tools.
+
+   Each tool keeps its own layout CSS — grids, charts, bar tracks,
+   tables are all tool-specific. What lives here is the surface
+   language they now share: page background, type, panels, fields,
+   buttons and focus.
+
+   Wiring a tool in:
+     <main class="<tool> tool-page">
+       <div class="<shell> tool-shell"> … </div>
+     </main>
+
+   Tools that already worked in custom properties (--panel, --line,
+   --radius …) just point those at the --tool-* values below, so
+   their existing rules pick up the shared look without being
+   rewritten or fought on specificity.
+   =============================================================== */
+
+:root {
+  --tool-page-bg: #f4f6f8;
+  --tool-panel: #ffffff;
+
+  --tool-ink: #1d1d1f;
+  --tool-muted: #6e6e73;
+
+  --tool-line: #e3e7ec;
+  --tool-line-strong: #c8cfd8;
+
+  --tool-field-bg: #f8fafc;
+
+  /* Brand red, the same accent the site header hovers to. */
+  --tool-accent: #c60000;
+  --tool-accent-ink: #ffffff;
+  --tool-accent-soft: #fdeceb;
+  --tool-focus: rgba(198, 0, 0, 0.2);
+
+  /* ── Type scale ──
+     Four sizes, no more. Each is a sample.css value:
+
+       --tool-fs-title  42px  .page-title    page title
+       --tool-fs-lg     17px  .card-title    sub-headings, numeric readouts
+       --tool-fs-base   13px  .card-body     body, controls, labels, cells,
+                                             buttons, hints
+       --tool-fs-sm     10px  .card-eyebrow  uppercase panel labels, table
+                                             headers, units, badges
+
+     Everything below 17px used to be spread over 14 / 13 / 12 / 11 / 10,
+     which read as noise rather than hierarchy. Rank now comes from weight
+     and colour instead: a hint is base size in --tool-muted, a label is
+     base size at medium, body is base at regular. */
+  --tool-fs-title: 42px;
+  --tool-fs-lg:    17px;
+  --tool-fs-base:  13px;
+  --tool-fs-sm:    10px;
+
+  --tool-fw-regular:  400;
+  --tool-fw-medium:   500;
+  --tool-fw-semibold: 600;
+  --tool-fw-bold:     700;
+
+  /* Structure comes from global.css so the tools and the rest of the site
+     share one set. Only the colours above stay tool-local. */
+  --tool-radius: var(--radius);
+  --tool-radius-sm: var(--radius-sm);
+  --tool-shadow: var(--shadow-md);
+
+  /* Names the newer tools already reference but that were never defined
+     anywhere, so they were resolving to nothing (an unset colour inherits, an
+     unset background goes transparent). Pointed at the shared palette. */
+  --text-tertiary: var(--tool-muted);
+  --input-bg: var(--tool-panel);
+  --primary-color: var(--tool-accent);
+  --bg-main: var(--tool-page-bg);
+}
+
+/* ---------------------------------------------------------------
+   Page and shell
+   --------------------------------------------------------------- */
+
+.tool-page {
+  background: var(--tool-page-bg);
+  color: var(--tool-ink);
+  font-family: var(--font-sans);
+  font-size: var(--tool-fs-base);
+  line-height: 1.65;
+}
+
+.tool-shell {
+  width: min(var(--max-width), 100% - var(--gutter) * 2);
+  margin-inline: auto;
+  padding: 80px 0 120px;
+}
+
+/* ---------------------------------------------------------------
+   Type
+   --------------------------------------------------------------- */
+
+.tool-page h1 {
+  margin: 0 0 6px;
+  font-size: var(--tool-fs-title);
+  font-weight: var(--tool-fw-regular);
+  letter-spacing: -0.04em;
+  line-height: 1.1;
+}
+
+/* Panel headings: small, uppercase, muted — the label above a group
+   of controls rather than a display heading. */
+.tool-page h2 {
+  margin: 0 0 14px;
+  color: var(--tool-muted);
+  font-size: var(--tool-fs-sm);
+  font-weight: var(--tool-fw-semibold);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.tool-page h3 {
+  margin: 0 0 8px;
+  font-size: var(--tool-fs-lg);
+  font-weight: var(--tool-fw-medium);
+  letter-spacing: -0.015em;
+  line-height: 1.3;
+}
+
+/* ---------------------------------------------------------------
+   Page header
+
+   Every tool opens the same way:
+
+     <header class="tool-header">
+       <div class="tool-header-row">
+         <h1>…</h1>
+         <a class="btn-docs" …>Documentation</a>   (optional)
+       </div>
+       <p class="tool-subtitle">…</p>              (optional)
+     </header>
+   --------------------------------------------------------------- */
+
+.tool-page .tool-header {
+  margin-bottom: var(--space-block);
+}
+
+.tool-page .tool-header-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.tool-page .tool-header-row h1 {
+  margin: 0;
+}
+
+.tool-page .tool-subtitle {
+  max-width: 70ch;
+  margin: 12px 0 0;
+  color: var(--tool-muted);
+}
+
+/* ---------------------------------------------------------------
+   Panels
+
+   Each tool's existing panel class is listed rather than renamed in
+   the markup, so this file is the single place the surface is set.
+   --------------------------------------------------------------- */
+
+.tool-page .tool-card,
+.tool-page .pm-card,
+.tool-page .card {
+  margin-bottom: var(--grid-gap);
+  padding: 24px;
+  border: 1px solid var(--tool-line);
+  border-radius: var(--tool-radius);
+  background: var(--tool-panel);
+  box-shadow: var(--tool-shadow);
+}
+
+/* global.css gives .card a hover lift. These panels hold inputs and results,
+   so they stay put — a control surface that rises under the pointer reads as
+   clickable and makes the values harder to track. */
+.tool-page .tool-card:hover,
+.tool-page .pm-card:hover,
+.tool-page .card:hover {
+  border-color: var(--tool-line);
+  box-shadow: var(--tool-shadow);
+  transform: none;
+}
+
+/* ---------------------------------------------------------------
+   Fields
+   --------------------------------------------------------------- */
+
+/* sample.css's .input treatment — 10px 14px, 6px radius, hover and focus — at
+   the base size. Set here once: every tool used to size and pad its own
+   controls, which is most of why they looked like different applications. */
+/* Type applies to every control, including the ones nested in table cells and
+   composed unit widgets that the padded rule below deliberately skips. */
+.tool-page input,
+.tool-page select,
+.tool-page textarea {
+  font-family: inherit;
+  font-size: var(--tool-fs-base);
+  font-variant-numeric: tabular-nums;
+}
+
+/* <option> does not reliably inherit from its <select>, so an open dropdown
+   list can render at the UA default while the closed control shows the size
+   above. Stated explicitly to keep the two the same. */
+.tool-page option {
+  font-family: inherit;
+  font-size: var(--tool-fs-base);
+}
+
+.tool-page input[type="number"],
+.tool-page input[type="text"],
+.tool-page input[type="email"],
+.tool-page select,
+.tool-page textarea {
+  padding: 10px 14px;
+  border: 1px solid var(--tool-line-strong);
+  border-radius: var(--tool-radius-sm);
+  background: var(--tool-panel);
+  color: var(--tool-ink);
+  font-family: inherit;
+  font-size: var(--tool-fs-base);
+  font-variant-numeric: tabular-nums;
+  outline: none;
+  transition: border-color var(--duration-fast) var(--ease-standard),
+              box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.tool-page input:hover,
+.tool-page select:hover,
+.tool-page textarea:hover {
+  border-color: var(--tool-muted);
+}
+
+.tool-page input:focus,
+.tool-page select:focus,
+.tool-page textarea:focus {
+  border-color: var(--tool-accent);
+  box-shadow: 0 0 0 3px var(--tool-focus);
+}
+
+.tool-page input[type="number"]:focus-visible,
+.tool-page input[type="text"]:focus-visible,
+.tool-page select:focus-visible,
+.tool-page button:focus-visible {
+  outline: 3px solid var(--tool-focus);
+  outline-offset: 1px;
+  border-color: var(--tool-accent);
+}
+
+.tool-page label {
+  color: var(--tool-muted);
+  font-size: var(--tool-fs-base);
+  font-weight: var(--tool-fw-medium);
+  letter-spacing: 0.01em;
+}
+
+.tool-page .hint,
+.tool-page .input-hint {
+  color: var(--tool-muted);
+  font-size: var(--tool-fs-base);
+}
+
+/* ---------------------------------------------------------------
+   Buttons
+   --------------------------------------------------------------- */
+
+.tool-page button,
+.tool-page .btn,
+.tool-page .btn-docs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 20px;
+  border: 1px solid var(--tool-accent);
+  border-radius: var(--tool-radius-sm);
+  background: var(--tool-accent);
+  color: var(--tool-accent-ink);
+  box-shadow: var(--shadow-sm);
+  font-family: inherit;
+  font-size: var(--tool-fs-base);
+  font-weight: var(--tool-fw-medium);
+  letter-spacing: 0.005em;
+  white-space: nowrap;
+  text-decoration: none;
+  cursor: pointer;
+  transition: var(--transition-color), var(--transition-lift);
+}
+
+.tool-page button:hover,
+.tool-page .btn:hover,
+.tool-page .btn-docs:hover {
+  background: #a30000;
+  border-color: #a30000;
+  color: var(--tool-accent-ink);
+  box-shadow: var(--shadow-lift);
+  transform: translateY(-1px);
+  text-decoration: none;
+}
+
+/* Quiet variant for secondary actions (copy, reset, small icons). */
+.tool-page .btn-quiet,
+.tool-page .copy-col-btn {
+  border-color: var(--tool-line-strong);
+  background: var(--tool-panel);
+  color: var(--tool-muted);
+}
+
+.tool-page .btn-quiet:hover,
+.tool-page .copy-col-btn:hover {
+  border-color: var(--tool-accent);
+  background: var(--tool-accent-soft);
+  color: var(--tool-accent);
+}
+
+/* ---------------------------------------------------------------
+   Tables
+   --------------------------------------------------------------- */
+
+.tool-page table {
+  width: 100%;
+  border-collapse: collapse;
+  font-variant-numeric: tabular-nums;
+}
+
+/* One size and one padding for every cell in every tool. Tools used to set
+   these themselves — 8×12, 9×12, 11×10, 8×10 and 4×6 across five files, with
+   cells variously at 17px and 13px. Emphasis is weight and colour now, not
+   size. */
+.tool-page th,
+.tool-page td {
+  padding: 10px 12px;
+  font-size: var(--tool-fs-base);
+}
+
+.tool-page thead th {
+  color: var(--tool-muted);
+  font-size: var(--tool-fs-sm);
+  font-weight: var(--tool-fw-bold);
+  letter-spacing: 0.05em;
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--tool-line-strong);
+}
+
+/* Row label vs data, the same in every tool. Tools had these at bold, semibold
+   and regular in different combinations. */
+.tool-page tbody th {
+  font-weight: var(--tool-fw-semibold);
+}
+
+.tool-page tbody td {
+  font-weight: var(--tool-fw-regular);
+}
+
+/* A control inside a cell sits tight to it rather than adding a second layer
+   of the standalone 10×14 padding. */
+.tool-page td input,
+.tool-page td select,
+.tool-page th input,
+.tool-page th select {
+  padding: 4px 8px;
+}
+
+/* Compact unit pickers and unit suffixes, wherever a tool puts them. */
+.tool-page .prop-unit-select,
+.tool-page .unit-select {
+  padding: 2px 6px;
+}
+
+.tool-page .prop-unit-select,
+.tool-page .unit-select,
+.tool-page .input-unit > span,
+.tool-page .u {
+  font-size: var(--tool-fs-sm);
+}
+
+.tool-page tbody td,
+.tool-page tbody th {
+  border-bottom: 1px solid var(--tool-line);
+}
+
+/* Horizontal scroll for wide tables, so a page never scrolls sideways. */
+.tool-page .table-wrap,
+.tool-page .table-container,
+.tool-page .scroll {
+  overflow-x: auto;
+}

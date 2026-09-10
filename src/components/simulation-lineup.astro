@@ -62,8 +62,9 @@ const cards = [
     document.querySelectorAll(".toggle").forEach((button) => {
       button.addEventListener("click", () => {
         const card = button.closest(".card");
-        const image = card.querySelector(".image-container");
-        const longDesc = card.querySelector(".long-desc");
+        const image = card?.querySelector<HTMLElement>(".image-container");
+        const longDesc = card?.querySelector<HTMLElement>(".long-desc");
+        if (!card || !image || !longDesc) return;
 
         const isOpen = card.classList.toggle("open");
 
@@ -99,7 +100,7 @@ const cards = [
   max-width: 1600px;
   margin: 0 auto;
   padding: 40px 20px;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  font-family: var(--font-sans);
 }
 
 h1 {

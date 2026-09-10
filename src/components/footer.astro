@@ -16,6 +16,10 @@
      FOOTER LAYOUT
      ============================================ */
   .site-footer {
+    /* Soaks up the leftover height in BaseLayout's column, so the footer sits
+       at the bottom of the viewport on short pages and directly after the
+       content on tall ones. */
+    margin-top: auto;
     min-height: 10vh;
     display: flex;
     align-items: center;
@@ -23,7 +27,7 @@
     padding: clamp(24px, 4vw, 48px) 20px;
     background: #111111;
     color: #dddddd;
-    font-family: system-ui, sans-serif;
+    font-family: var(--font-sans);
   }
 
   .footer-content {

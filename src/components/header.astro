@@ -1,45 +1,28 @@
 ---
-/**
- * Convert filename to human-readable title
- * Example: "oil_properties.astro" → "Oil Properties"
- */
-function cleanName(filename) {
-  return filename
-    .replace('.astro', '')
-    .replace(/[-_]/g, ' ')
-    .replace(/\b\w/g, (c) => c.toUpperCase());
-}
-
 const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 
-// Load top-level pages from /pages/*.astro
-const sitePages = import.meta.glob('../pages/*.astro');
-const topLevelLinks = Object.keys(sitePages)
-  .filter((path) => !path.endsWith('index.astro'))
-  .filter((path) => !path.endsWith('filter-technology.astro'))
-  .map((path) => {
-    const filename = path.split('/').pop().replace('.astro', '');
-    return {
-      url: `${BASE_PATH}/${filename}`,
-      title: cleanName(filename)
-    };
-  });
+/** Page slugs that exist but should not appear in the navbar. */
+const HIDDEN_PAGES = ['index', 'filter-technology'];
 
-// Load /pages/tools/*.astro
-const toolPages = import.meta.glob('../pages/tools/*.astro');
-const toolLinks = Object.keys(toolPages)
-  .map((path) => {
-    const filename = path.split('/').pop().replace('.astro', '');
-    return {
-      url: `${BASE_PATH}/tools/${filename}`,
-      title: cleanName(filename)
-    };
-  });
+/** "oil_properties" -> "Oil Properties" */
+function cleanName(slug: string): string {
+  return slug.replace(/[-_]/g, ' ').replace(/\b\w/g, (c) => c.toUpperCase());
+}
+
+/** Turn an `import.meta.glob` result into nav links rooted at `urlPrefix`. */
+function toLinks(modules: Record<string, unknown>, urlPrefix: string) {
+  return Object.keys(modules)
+    .map((path) => path.split('/').pop()!.replace('.astro', ''))
+    .filter((slug) => !HIDDEN_PAGES.includes(slug))
+    .map((slug) => ({
+      url: `${BASE_PATH}${urlPrefix}/${slug}`,
+      title: cleanName(slug)
+    }));
+}
+
+const topLevelLinks = toLinks(import.meta.glob('../pages/*.astro'), '');
+const toolLinks = toLinks(import.meta.glob('../pages/tools/*.astro'), '/tools');
 ---
-
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Roboto+Flex:opsz,wght@8..144,100..1000&display=swap" rel="stylesheet">
 
 <header class="site-header">
   <nav class="site-navbar">
@@ -48,7 +31,7 @@ const toolLinks = Object.keys(toolPages)
     ))}
 
     <div class="nav-dropdown">
-      <span class="dropdown-trigger">Tools ▼</span>
+      <button type="button" class="dropdown-trigger">Tools ▼</button>
       <div class="dropdown-content">
         {toolLinks.map((tool) => (
           <a href={tool.url} class="dropdown-link">{tool.title}</a>
@@ -59,39 +42,43 @@ const toolLinks = Object.keys(toolPages)
 </header>
 
 <style>
-  /* ============================================
-     HEADER LAYOUT
-     ============================================ */
   .site-header {
+    --header-height: 56px;
+    --header-bg: #2c3e50;
+    --header-fg: #ffffff;
+    --header-accent: #c60000;
+    --dropdown-bg: #34495e;
+    --dropdown-hover-bg: #3d566e;
+
+    /* Holds open the space that the fixed navbar below takes out of flow.
+       flex:none keeps that exact height as a flex item in BaseLayout's column. */
+    flex: none;
     height: var(--header-height);
   }
 
   .site-navbar {
     position: fixed;
     top: 0;
+    right: 0;
     left: 0;
-    width: 100%;
+    z-index: 9999;
     height: var(--header-height);
+
     display: flex;
     justify-content: center;
     align-items: center;
     gap: 20px;
     padding: 0 20px;
-    background: #2c3e50;
-    color: #ffffff;
-    z-index: 9999;
-    box-sizing: border-box;
-    flex-wrap: wrap;
-    font-family: 'Roboto Flex', system-ui, sans-serif;
-    font-size: 16px;
+
+    background: var(--header-bg);
+    color: var(--header-fg);
+    font-family: var(--font-sans);
+    font-size: var(--font-ui);
   }
 
-  /* ============================================
-     NAVIGATION LINKS
-     ============================================ */
   .nav-link,
   .dropdown-trigger {
-    color: #ffffff;
+    color: var(--header-fg);
     text-decoration: none;
     cursor: pointer;
     white-space: nowrap;
@@ -100,61 +87,60 @@ const toolLinks = Object.keys(toolPages)
 
   .nav-link:hover,
   .dropdown-trigger:hover {
-    color: #c60000;
+    color: var(--header-accent);
   }
 
-  /* ============================================
-     DROPDOWN MENU
-     ============================================ */
+  /* Strip the UA button styling so the trigger matches the plain nav links. */
+  .dropdown-trigger {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+  }
+
   .nav-dropdown {
     position: relative;
   }
 
   .dropdown-content {
     position: absolute;
+    /* 1px overlap so the menu survives the pointer crossing the seam. */
     top: calc(100% - 1px);
     left: 0;
     display: none;
     flex-direction: column;
     min-width: 180px;
     padding: 10px 0;
-    background: #34495e;
+    background: var(--dropdown-bg);
     border-radius: 6px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
   }
 
-  .nav-dropdown:hover .dropdown-content {
+  .nav-dropdown:hover .dropdown-content,
+  .nav-dropdown:focus-within .dropdown-content {
     display: flex;
   }
 
+  /* Stated rather than inherited from .site-navbar, so the menu keeps its
+     size if the bar's ever changes. */
   .dropdown-link {
     padding: 8px 16px;
-    color: #ffffff;
+    color: var(--header-fg);
+    font-size: var(--font-ui);
     text-decoration: none;
     transition: background-color 0.2s ease;
   }
 
   .dropdown-link:hover {
-    background: #3d566e;
-    color: #c60000;
+    background: var(--dropdown-hover-bg);
+    color: var(--header-accent);
   }
 
-  /* ============================================
-     RESPONSIVE
-     ============================================ */
   @media (max-width: 768px) {
     .site-navbar {
       justify-content: flex-start;
-      gap: 10px;
-    }
-  }
-
-  @media (max-width: 480px) {
-    .site-navbar {
-      flex-direction: column;
-      align-items: flex-start;
-      height: auto;
-      padding: 10px;
+      gap: 12px;
+      padding: 0 12px;
     }
   }
 </style>

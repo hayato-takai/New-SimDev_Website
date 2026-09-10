@@ -1,0 +1,461 @@
+---
+import Layout from '../../layouts/BaseLayout.astro';
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout>
+<style>
+  /* ============================================
+     LAYOUT
+     ============================================ */
+  /* The page frame (width, gutters, background, font) comes from .tool-page
+     and .tool-shell in tools.css; this is just the two-column split. */
+  .uc-layout {
+    display: flex;
+    flex-direction: row;
+    gap: 20px;
+  }
+
+  .conversions,
+  .calculator {
+    flex: 1;
+    overflow-y: auto;
+  }
+
+  /* ============================================
+     TYPOGRAPHY
+     ============================================ */
+  h3 {
+    width: 200px;
+    margin: 0 0 12px 0;
+  }
+
+  /* ============================================
+     MEASUREMENT SELECTOR
+     ============================================ */
+  .measurement-selector {
+    margin-bottom: 16px;
+  }
+
+  .measurement-selector label {
+    margin-right: 8px;
+  }
+
+  .measurement-selector select {
+    width: auto;
+  }
+
+  /* ============================================
+     CONVERTER PANEL (FROM / TO)
+     ============================================ */
+  .converter-panel {
+    display: flex;
+    gap: 24px;
+  }
+
+  .converter-side {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .converter-side label {
+    font-weight: var(--tool-fw-medium);
+    font-size: var(--tool-fs-base);
+  }
+
+  .converter-side input {
+    width: 100%;
+  }
+
+  .converter-side select {
+    width: 100%;
+    box-sizing: border-box;
+  }
+
+  .converter-side select option {
+    padding: 4px 6px;
+  }
+
+  /* ============================================
+     SWAP BUTTON
+     ============================================ */
+  .swap-btn-container {
+    display: flex;
+    align-items: center;
+    padding-top: 30px; /* offset for From/To labels */
+  }
+
+  .swap-btn {
+    background: none;
+    border: 1px solid var(--border-color);
+    border-radius: 4px;
+    padding: 6px 10px;
+    font-size: var(--tool-fs-lg);
+    cursor: pointer;
+    color: var(--text-secondary);
+    transition: border-color 0.2s ease, color 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .swap-btn:hover {
+    border-color: var(--primary-color);
+    color: var(--primary-color);
+  }
+
+  @media (max-width: 900px) {
+    .swap-btn-container {
+      padding-top: 0;
+      justify-content: center;
+    }
+  }
+
+  /* ============================================
+     REYNOLDS FLOW STATUS BADGE
+     ============================================ */
+  .re-flow-status {
+    display: inline-block;
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-weight: var(--tool-fw-semibold);
+    font-size: var(--tool-fs-base);
+    min-width: 100px;
+    text-align: center;
+    border: 1px solid transparent;
+  }
+
+  .re-flow-status.laminar {
+    background: #d4edda;
+    color: #155724;
+    border-color: #c3e6cb;
+  }
+
+  .re-flow-status.transitional {
+    background: #fff3cd;
+    color: #856404;
+    border-color: #ffeeba;
+  }
+
+  .re-flow-status.turbulent {
+    background: #f8d7da;
+    color: #721c24;
+    border-color: #f5c6cb;
+  }
+
+  /* ============================================
+     CONVERSION ROWS (for calculators)
+     ============================================ */
+  .unit-row {
+    display: flex;
+    gap: 16px;
+    margin-bottom: 8px;
+    flex-wrap: wrap;
+    align-items: center;
+  }
+
+  .row-inline {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .row-inline label {
+    width: 130px;
+    text-align: left;
+    flex-shrink: 0;
+    font-weight: var(--tool-fw-medium);
+  }
+
+  /* ============================================
+     FORM ELEMENTS
+     ============================================ */
+  /* The value field gives up the room. It is the flexible one, so widening the
+     unit select below takes the space from here automatically. */
+  .value {
+    flex: 1;
+    min-width: 80px;
+  }
+
+  /* 80px left a 50px content box once the shared 10px/14px padding and border
+     were taken off, and the native dropdown arrow claimed ~20px of that — so
+     the widest labels (lb/ft^3, gal(US), mm^2/s) were clipped. flex-shrink:0
+     stops the row squeezing it back. */
+  .unit {
+    width: 116px;
+    flex-shrink: 0;
+  }
+
+  /* ============================================
+     RESPONSIVE
+     ============================================ */
+  @media (max-width: 900px) {
+    .uc-layout {
+      flex-direction: column;
+    }
+
+    .converter-panel {
+      flex-direction: column;
+    }
+  }
+</style>
+
+<main class="tool-page">
+<div class="tool-shell">
+
+  <header class="tool-header">
+    <div class="tool-header-row">
+      <h1>Unit Conversion</h1>
+    </div>
+    <p class="tool-subtitle">
+      Convert between engineering units, and size pipe velocity, Reynolds number and related quantities.
+    </p>
+  </header>
+
+<div class="uc-layout">
+ <!-- Left: Unit Conversions -->
+  <div class="conversions">
+    <h2>Engineering Unit Converter</h2>
+
+    <div class="tool-card">
+      <!-- Measurement type selector -->
+      <div class="measurement-selector">
+        <label for="measurementType">Measurement:</label>
+        <select id="measurementType"></select>
+      </div>
+
+      <!-- From / To converter panel -->
+      <div class="converter-panel">
+        <div class="converter-side">
+          <label for="fromValue">From:</label>
+          <input id="fromValue" type="number" value="1" step="any" />
+          <select id="fromUnit" size="10"></select>
+        </div>
+
+        <div class="swap-btn-container">
+          <button class="swap-btn" id="swapBtn" title="Swap units and values">⇄</button>
+        </div>
+
+        <div class="converter-side">
+          <label for="toValue">To:</label>
+          <input id="toValue" type="number" value="" step="any" />
+          <select id="toUnit" size="10"></select>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right: Calculators -->
+  <div class="calculator">
+    <h2>Calculators</h2>
+
+    <!-- Pipe Velocity -->
+    <div class="tool-card">
+      <h3>Pipe Velocity</h3>
+      <div class="row-inline">
+        <label>Diameter:</label>
+        <input id="pipeDiameter" class="value" type="number" value="1.0" step="any" min="0"/>
+        <select id="pipeDiameterUnit" class="unit"></select>
+      </div>
+      <div class="row-inline">
+        <label>Flow Rate:</label>
+        <input id="pipeFlow" class="value" type="number" value="1.0" step="any" min="0"/>
+        <select id="pipeFlowUnit" class="unit"></select>
+      </div>
+      <div class="row-inline">
+        <label>Velocity:</label>
+        <input id="pipeVelocity" class="value" type="number" value="0" step="any" min="0"/>
+        <select id="pipeVelocityUnit" class="unit"></select>
+      </div>
+    </div>
+
+    <!-- Circle Area -->
+    <div class="tool-card">
+      <h3>Circle Area</h3>
+      <div class="row-inline">
+        <label>Diameter:</label>
+        <input id="circleDiameter" class="value" type="number" value="1" step="any" min="0"/>
+        <select id="circleDiameterUnit" class="unit"></select>
+      </div>
+      <div class="row-inline">
+        <label>Area:</label>
+        <input id="circleArea" class="value" type="number" value="1" step="any" min="0"/>
+        <select id="circleAreaUnit" class="unit"></select>
+      </div>
+    </div>
+<!-- Reynolds Number -->
+<div class="tool-card">
+  <h3>Reynolds Number</h3>
+
+  <div class="row-inline">
+    <label>Density (ρ):</label>
+    <input id="reDensity" class="value" type="number" value="1000" step="any" min="0"/>
+    <select id="reDensityUnit" class="unit"></select>
+  </div>
+
+  <div class="row-inline">
+    <label>Velocity (V):</label>
+    <input id="reVelocity" class="value" type="number" value="1" step="any" min="0"/>
+    <select id="reVelocityUnit" class="unit"></select>
+  </div>
+
+  <div class="row-inline">
+    <label>Diameter (D):</label>
+    <input id="reDiameter" class="value" type="number" value="0.05" step="any" min="0"/>
+    <select id="reDiameterUnit" class="unit"></select>
+  </div>
+
+  <div class="row-inline">
+    <label>Dyn. Viscosity (μ):</label>
+    <input id="reDynVisc" class="value" type="number" value="0.001" step="any" min="0"/>
+    <select id="reDynViscUnit" class="unit"></select>
+  </div>
+
+  <div class="row-inline">
+    <label>Reynolds No.:</label>
+    <input id="reValue" class="value" type="number" value="0" readonly/>
+  </div>
+
+  <div class="row-inline">
+    <label>Flow Regime:</label>
+    <span id="reFlowStatus" class="re-flow-status"></span>
+  </div>
+</div>
+
+    <!-- Percent Change -->
+    <div class="tool-card">
+      <h3>Percent Change</h3>
+      <div class="row-inline">
+        <label>Original Value:</label>
+        <input id="pctOriginal" class="value" type="number" step="any" placeholder="e.g. 50"/>
+      </div>
+      <div class="row-inline">
+        <label>New Value:</label>
+        <input id="pctNew" class="value" type="number" step="any" placeholder="e.g. 75"/>
+      </div>
+      <div class="row-inline">
+        <label>% Change:</label>
+        <input id="pctResult" class="value" type="text" readonly placeholder="---"/>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+</div>
+</main>
+
+<script src={`${BASE_PATH}/scripts/unit_converter.js`}></script>
+<script src={`${BASE_PATH}/scripts/calculators.js`}></script>
+
+<script>
+// ========== CONSTANTS ==========
+const DECIMAL_PLACES = 5;
+
+// ========== DOM REFS ==========
+const measurementSelect = document.getElementById('measurementType');
+const fromValue = document.getElementById('fromValue');
+const toValue   = document.getElementById('toValue');
+const fromUnit  = document.getElementById('fromUnit');
+const toUnit    = document.getElementById('toUnit');
+
+// ========== POPULATE MEASUREMENT DROPDOWN ==========
+const measurements = getAvailableMeasurements();
+
+measurements.forEach(m => {
+  const opt = new Option(m.displayName, m.key);
+  measurementSelect.add(opt);
+});
+
+/**
+ * Populate From and To unit listboxes based on the selected measurement.
+ * Resets to defaults for the selected measurement category.
+ */
+function populateUnitLists() {
+  const key = measurementSelect.value;
+  const meas = measurements.find(m => m.key === key);
+  const units = getAvailableUnits(meas.unitType);
+
+  fromUnit.innerHTML = '';
+  toUnit.innerHTML   = '';
+
+  units.forEach(u => {
+    const label = getUnitDisplayName(u);
+    fromUnit.add(new Option(label, u));
+    toUnit.add(new Option(label, u));
+  });
+
+  fromUnit.value = getFromDefault(key) || units[0];
+  toUnit.value   = getToDefault(key)   || (units.length > 1 ? units[1] : units[0]);
+}
+
+// ========== CONVERSION LOGIC ==========
+let isUpdating = false;
+
+function convertFromTo() {
+  if (isUpdating) return;
+  isUpdating = true;
+
+  const value = parseFloat(fromValue.value);
+  if (Number.isFinite(value)) {
+    try {
+      const result = convertUnit(fromUnit.value, toUnit.value, value);
+      toValue.value = result.toFixed(DECIMAL_PLACES);
+    } catch (e) {
+      toValue.value = 'Error';
+    }
+  } else {
+    toValue.value = '';
+  }
+
+  isUpdating = false;
+}
+
+function convertToFrom() {
+  if (isUpdating) return;
+  isUpdating = true;
+
+  const value = parseFloat(toValue.value);
+  if (Number.isFinite(value)) {
+    try {
+      const result = convertUnit(toUnit.value, fromUnit.value, value);
+      fromValue.value = result.toFixed(DECIMAL_PLACES);
+    } catch (e) {
+      fromValue.value = 'Error';
+    }
+  } else {
+    fromValue.value = '';
+  }
+
+  isUpdating = false;
+}
+
+// ========== EVENT LISTENERS ==========
+measurementSelect.addEventListener('change', () => {
+  populateUnitLists();
+  fromValue.value = 1;
+  convertFromTo();
+});
+
+fromValue.addEventListener('input', convertFromTo);
+toValue.addEventListener('input', convertToFrom);
+fromUnit.addEventListener('change', convertFromTo);
+toUnit.addEventListener('change', convertFromTo);
+
+document.getElementById('swapBtn').addEventListener('click', () => {
+  const tmpUnit = fromUnit.value;
+  const tmpVal  = fromValue.value;
+  fromUnit.value  = toUnit.value;
+  fromValue.value = toValue.value;
+  toUnit.value  = tmpUnit;
+  toValue.value = tmpVal;
+  convertFromTo();
+});
+
+// ========== INIT ==========
+populateUnitLists();
+convertFromTo();
+
+</script>
+</Layout>

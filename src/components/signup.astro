@@ -97,26 +97,34 @@ document.addEventListener("DOMContentLoaded", function () {
   const minimizedBtn = document.getElementById("email-minimized");
   const form = document.getElementById("email-form");
 
+  if (!modal || !modalContent || !closeBtn || !minimizedBtn || !form) return;
+
+  const SEEN_KEY = "emailModalSeen";
+
   function minimizeModal() {
-    modal.style.display = "none";
-    minimizedBtn.style.display = "block";
-    localStorage.setItem("emailModalSeen", "true");
+    modal!.style.display = "none";
+    minimizedBtn!.style.display = "block";
+    localStorage.setItem(SEEN_KEY, "true");
   }
 
   function openModal() {
-    modal.style.display = "flex";
-    minimizedBtn.style.display = "none";
+    modal!.style.display = "flex";
+    minimizedBtn!.style.display = "none";
   }
 
-  // Initial open (optional)
-  modal.style.display = "flex";
+  // Only greet first-time visitors; afterwards start collapsed.
+  if (localStorage.getItem(SEEN_KEY) === "true") {
+    modal.style.display = "none";
+    minimizedBtn.style.display = "block";
+  } else {
+    openModal();
+  }
 
-  // Close button
   closeBtn.addEventListener("click", minimizeModal);
 
-  // Click outside modal content
+  // Click outside the modal box
   modal.addEventListener("click", (e) => {
-    if (!modalContent.contains(e.target)) {
+    if (e.target instanceof Node && !modalContent.contains(e.target)) {
       minimizeModal();
     }
   });
@@ -128,15 +136,13 @@ document.addEventListener("DOMContentLoaded", function () {
     }
   });
 
-  // Re-open modal
   minimizedBtn.addEventListener("click", openModal);
 
-  // Submit
   form.addEventListener("submit", (e) => {
     e.preventDefault();
     modal.style.display = "none";
     minimizedBtn.style.display = "none";
-    localStorage.setItem("emailModalSeen", "true");
+    localStorage.setItem(SEEN_KEY, "true");
   });
 });
 </script>

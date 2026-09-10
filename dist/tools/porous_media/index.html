@@ -1,0 +1,213 @@
+<!DOCTYPE html><html lang="en" data-astro-cid-37fxchfa> <head><meta charset="utf-8"><link rel="icon" type="image/svg+xml" href="/New-SimDev_Website/favicon.svg"><meta name="viewport" content="width=device-width"><meta name="generator" content="Astro v5.18.1"><link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"><title>Simulation and Development</title><link rel="stylesheet" href="/New-SimDev_Website/_astro/filter-deaeration-analysis.B0GJ6pgG.css">
+<link rel="stylesheet" href="/New-SimDev_Website/_astro/porous_media.CCLNiBvq.css">
+<link rel="stylesheet" href="/New-SimDev_Website/_astro/MP_Media_Calculator.BkH7Ts40.css">
+<link rel="stylesheet" href="/New-SimDev_Website/_astro/Value_Hypothesis_Calculator.CEpW9kl7.css">
+<style>.fluid-select-container{display:flex;flex-direction:column;align-items:center;margin:20px 0;gap:8px}.fluid-select-container label{margin-bottom:5px}#fluidSelect,#tempInput{min-width:250px}.optional{font-weight:var(--tool-fw-regular);font-size:var(--tool-fs-base);opacity:.7}.input-hint{font-size:var(--tool-fs-base);opacity:.7;font-style:italic;margin-top:-4px;text-align:center}#oilTitle{text-align:center;font-weight:var(--tool-fw-bold);margin:15px 0 20px}select,button{margin:10px 0}.prop-unit-select{border-radius:var(--tool-radius-sm)}#properties{width:80%;max-width:800px;margin:auto}table{border-radius:var(--tool-radius-sm);border-collapse:collapse;margin:10px auto;width:100%;overflow:hidden}th,td{border:none;border-left:1px solid var(--tool-line-strong);border-right:1px solid var(--tool-line-strong);text-align:center}th:first-child,td:first-child{border-left:none}th:last-child,td:last-child{border-right:none}thead th{background:var(--table-header);color:var(--text-primary);position:sticky;top:0}tbody tr{transition:background-color .2s ease}tbody tr:hover{background:var(--bg-third)}tbody td:nth-child(2n){background:var(--table-even)}tbody td:nth-child(odd){background:var(--table-odd)}tbody tr:hover td{opacity:.9}tr.updated{animation:highlightRow .5s ease}@keyframes highlightRow{0%,to{background-color:transparent}50%{background-color:var(--success-color)}}.hidden{display:none}.input-panel[data-astro-cid-kvtkkrda]{margin:20px 0}.input-row[data-astro-cid-kvtkkrda]{display:flex;gap:24px;align-items:flex-start;flex-wrap:wrap}.input-group[data-astro-cid-kvtkkrda]{display:flex;flex-direction:column;gap:6px;flex:1;min-width:220px}.temp-range-row[data-astro-cid-kvtkkrda]{display:flex;align-items:center;gap:8px}.temp-range-row[data-astro-cid-kvtkkrda] input[data-astro-cid-kvtkkrda]{flex:1;min-width:100px}.range-separator[data-astro-cid-kvtkkrda]{font-weight:var(--tool-fw-semibold);opacity:.7}.optional[data-astro-cid-kvtkkrda]{font-weight:var(--tool-fw-regular);font-size:var(--tool-fs-base);opacity:.7}.input-hint[data-astro-cid-kvtkkrda]{font-size:var(--tool-fs-base);opacity:.7;font-style:italic}.copy-col-btn[data-astro-cid-kvtkkrda]{min-height:0;min-width:4.5em;font-size:var(--tool-fs-base);padding:3px 8px;margin:0;opacity:.7;transition:opacity .2s}.copy-col-btn[data-astro-cid-kvtkkrda]:hover{opacity:1}.copy-col-btn[data-astro-cid-kvtkkrda].copied{opacity:1;border-color:var(--success-color)}.prop-header-container[data-astro-cid-kvtkkrda]{display:flex;align-items:center;justify-content:center;gap:6px;flex-wrap:wrap}.prop-unit-select[data-astro-cid-kvtkkrda]{border:1px solid #ccc;border-radius:8px;background:var(--table-header, #f5f5f5);color:var(--text-primary, inherit);cursor:pointer}.info-cards[data-astro-cid-kvtkkrda]{display:flex;gap:16px;margin-bottom:20px;flex-wrap:wrap}.info-card[data-astro-cid-kvtkkrda]{flex:1;min-width:160px;padding:12px 16px;border:1px solid #ccc;border-radius:8px;display:flex;flex-direction:column;gap:4px}.info-label[data-astro-cid-kvtkkrda]{font-size:var(--tool-fs-sm);opacity:.7;text-transform:uppercase;letter-spacing:.03em}.info-value[data-astro-cid-kvtkkrda]{font-size:var(--tool-fs-lg);font-family:var(--font-mono);font-weight:var(--tool-fw-medium)}.info-unit[data-astro-cid-kvtkkrda]{font-size:var(--tool-fs-sm);opacity:.6}.info-value-row[data-astro-cid-kvtkkrda]{display:flex;align-items:baseline;gap:8px}
+.uc-layout[data-astro-cid-s7sci5f6]{display:flex;flex-direction:row;gap:20px}.conversions[data-astro-cid-s7sci5f6],.calculator[data-astro-cid-s7sci5f6]{flex:1;overflow-y:auto}h3[data-astro-cid-s7sci5f6]{width:200px;margin:0 0 12px}.measurement-selector[data-astro-cid-s7sci5f6]{margin-bottom:16px}.measurement-selector[data-astro-cid-s7sci5f6] label[data-astro-cid-s7sci5f6]{margin-right:8px}.measurement-selector[data-astro-cid-s7sci5f6] select[data-astro-cid-s7sci5f6]{width:auto}.converter-panel[data-astro-cid-s7sci5f6]{display:flex;gap:24px}.converter-side[data-astro-cid-s7sci5f6]{flex:1;display:flex;flex-direction:column;gap:8px}.converter-side[data-astro-cid-s7sci5f6] label[data-astro-cid-s7sci5f6]{font-weight:var(--tool-fw-medium);font-size:var(--tool-fs-base)}.converter-side[data-astro-cid-s7sci5f6] input[data-astro-cid-s7sci5f6]{width:100%}.converter-side[data-astro-cid-s7sci5f6] select[data-astro-cid-s7sci5f6]{width:100%;box-sizing:border-box}.converter-side[data-astro-cid-s7sci5f6] select[data-astro-cid-s7sci5f6] option[data-astro-cid-s7sci5f6]{padding:4px 6px}.swap-btn-container[data-astro-cid-s7sci5f6]{display:flex;align-items:center;padding-top:30px}.swap-btn[data-astro-cid-s7sci5f6]{background:none;border:1px solid var(--border-color);border-radius:4px;padding:6px 10px;font-size:var(--tool-fs-lg);cursor:pointer;color:var(--text-secondary);transition:border-color .2s ease,color .2s ease;white-space:nowrap}.swap-btn[data-astro-cid-s7sci5f6]:hover{border-color:var(--primary-color);color:var(--primary-color)}@media(max-width:900px){.swap-btn-container[data-astro-cid-s7sci5f6]{padding-top:0;justify-content:center}}.re-flow-status[data-astro-cid-s7sci5f6]{display:inline-block;padding:4px 12px;border-radius:4px;font-weight:var(--tool-fw-semibold);font-size:var(--tool-fs-base);min-width:100px;text-align:center;border:1px solid transparent}.re-flow-status[data-astro-cid-s7sci5f6].laminar{background:#d4edda;color:#155724;border-color:#c3e6cb}.re-flow-status[data-astro-cid-s7sci5f6].transitional{background:#fff3cd;color:#856404;border-color:#ffeeba}.re-flow-status[data-astro-cid-s7sci5f6].turbulent{background:#f8d7da;color:#721c24;border-color:#f5c6cb}.unit-row[data-astro-cid-s7sci5f6]{display:flex;gap:16px;margin-bottom:8px;flex-wrap:wrap;align-items:center}.row-inline[data-astro-cid-s7sci5f6]{display:flex;align-items:center;gap:8px;margin-bottom:8px}.row-inline[data-astro-cid-s7sci5f6] label[data-astro-cid-s7sci5f6]{width:130px;text-align:left;flex-shrink:0;font-weight:var(--tool-fw-medium)}.value[data-astro-cid-s7sci5f6]{flex:1;min-width:80px}.unit[data-astro-cid-s7sci5f6]{width:116px;flex-shrink:0}@media(max-width:900px){.uc-layout[data-astro-cid-s7sci5f6],.converter-panel[data-astro-cid-s7sci5f6]{flex-direction:column}}
+</style></head> <body data-astro-cid-37fxchfa> <header class="site-header" data-astro-cid-hpnw4vwy> <nav class="site-navbar" data-astro-cid-hpnw4vwy> <a href="/New-SimDev_Website/filter-deaeration-analysis" class="nav-link" data-astro-cid-hpnw4vwy>Filter Deaeration Analysis</a> <div class="nav-dropdown" data-astro-cid-hpnw4vwy> <button type="button" class="dropdown-trigger" data-astro-cid-hpnw4vwy>Tools ▼</button> <div class="dropdown-content" data-astro-cid-hpnw4vwy> <a href="/New-SimDev_Website/tools/MP_Media_Calculator" class="dropdown-link" data-astro-cid-hpnw4vwy>MP Media Calculator</a><a href="/New-SimDev_Website/tools/Value_Hypothesis_Calculator" class="dropdown-link" data-astro-cid-hpnw4vwy>Value Hypothesis Calculator</a><a href="/New-SimDev_Website/tools/oil_properties" class="dropdown-link" data-astro-cid-hpnw4vwy>Oil Properties</a><a href="/New-SimDev_Website/tools/porous_media" class="dropdown-link" data-astro-cid-hpnw4vwy>Porous Media</a><a href="/New-SimDev_Website/tools/unit_conversion" class="dropdown-link" data-astro-cid-hpnw4vwy>Unit Conversion</a> </div> </div> </nav> </header>    <main class="tool-page" data-astro-cid-4thncdv7> <div class="tool-shell" data-astro-cid-4thncdv7> <!-- ── Header ─────────────────────────────────────────── --> <header class="tool-header" data-astro-cid-4thncdv7> <div class="tool-header-row" data-astro-cid-4thncdv7> <h1 data-astro-cid-4thncdv7>Porous Media Property Calculator</h1> <a class="btn-docs" href="/New-SimDev_Website/helpers/documentation?readme=/New-SimDev_Website/scripts/porous_media/README.md" target="_blank" rel="noopener noreferrer" data-astro-cid-4thncdv7>
+Documentation
+</a> </div> <p class="tool-subtitle" data-astro-cid-4thncdv7>
+Calculate Darcy–Forchheimer porous media coefficients from velocity or flow-rate data.
+</p> </header> <!-- ── Oil & Fluid Properties ─────────────────────────── --> <div class="tool-card pm-card" data-astro-cid-4thncdv7> <h2 data-astro-cid-4thncdv7>Fluid Properties</h2> <div class="props-grid" data-astro-cid-4thncdv7> <div class="pm-field" style="grid-column: span 2" data-astro-cid-4thncdv7> <label for="oilTypeSelect" data-astro-cid-4thncdv7>Oil Type</label> <!-- loadOil() appends the fluids after this. The blank option gives the
+             cleared state something to show when a property is typed by hand. --> <select id="oilTypeSelect" style="max-width:320px" data-astro-cid-4thncdv7> <option value="" data-astro-cid-4thncdv7>-- Select --</option> </select> </div> <div class="pm-field" data-astro-cid-4thncdv7> <label for="operatingTempInput" data-astro-cid-4thncdv7>Temperature</label> <div class="pm-input-row" data-astro-cid-4thncdv7> <input type="number" id="operatingTempInput" placeholder="e.g. 40" data-astro-cid-4thncdv7> <select id="operatingTempUnitSelect" style="width:72px" data-astro-cid-4thncdv7> <option value="C" data-astro-cid-4thncdv7>°C</option> <option value="F" data-astro-cid-4thncdv7>°F</option> <option value="K" data-astro-cid-4thncdv7>K</option> </select> </div> </div> <div class="pm-field" data-astro-cid-4thncdv7> <label for="lengthInput" data-astro-cid-4thncdv7>Length (L)</label> <div class="pm-input-row" data-astro-cid-4thncdv7> <input type="number" id="lengthInput" placeholder="e.g. 0.05" data-astro-cid-4thncdv7> <span style="font-size:12px;color:var(--text-tertiary);white-space:nowrap" data-astro-cid-4thncdv7>m</span> </div> </div> <!-- Density and viscosity share one caption, so they travel as a pair
+           rather than flowing separately through the auto-fill grid. --> <div class="pm-autofill" data-astro-cid-4thncdv7> <span class="hint" data-astro-cid-4thncdv7>Auto-filled from oil selection</span> <div class="pm-autofill-row" data-astro-cid-4thncdv7> <div class="pm-field" data-astro-cid-4thncdv7> <label for="densityInput" data-astro-cid-4thncdv7>Density (ρ)</label> <div class="pm-input-row" data-astro-cid-4thncdv7> <input type="number" id="densityInput" step="any" placeholder="Auto from oil" data-astro-cid-4thncdv7> <span style="font-size:12px;color:var(--text-tertiary);white-space:nowrap" data-astro-cid-4thncdv7>kg/m³</span> </div> </div> <div class="pm-field" data-astro-cid-4thncdv7> <label for="viscosityInput" data-astro-cid-4thncdv7>Dynamic Viscosity (μ)</label> <div class="pm-input-row" data-astro-cid-4thncdv7> <input type="number" id="viscosityInput" step="any" placeholder="Auto from oil" data-astro-cid-4thncdv7> <span style="font-size:12px;color:var(--text-tertiary);white-space:nowrap" data-astro-cid-4thncdv7>Pa·s</span> </div> </div> </div> </div> </div> </div> <!-- ── Combined Chart ──────────────────────────────────── --> <div class="tool-card pm-card" data-astro-cid-4thncdv7> <h2 data-astro-cid-4thncdv7>Pressure Loss vs Velocity — Combined Chart</h2> <p class="pm-desc" data-astro-cid-4thncdv7>
+Both methods are plotted on the same axes. Calculate from either method below to update the chart.
+<span style="color:#2563eb;font-weight:700" data-astro-cid-4thncdv7>●</span> Method 1 (velocity input) &nbsp;
+<span style="color:#16a34a;font-weight:700" data-astro-cid-4thncdv7>●</span> Method 2 (flow rate input).
+</p> <div class="chart-panel" data-astro-cid-4thncdv7> <div class="chart-placeholder" id="combinedPlaceholder" data-astro-cid-4thncdv7> <span data-astro-cid-4thncdv7>Enter data in a method below and click Calculate</span> </div> <canvas id="combinedPlot" data-astro-cid-4thncdv7></canvas> </div> </div> <!-- ── Method 1: Velocity ──────────────────────────────── --> <div class="tool-card pm-card" data-astro-cid-4thncdv7> <h2 data-astro-cid-4thncdv7>Method 1 — Velocity vs Pressure Loss</h2> <p class="pm-desc" data-astro-cid-4thncdv7>
+Enter measured velocity and pressure-loss pairs to fit the Darcy–Forchheimer equation
+<strong data-astro-cid-4thncdv7>ΔP = A·u + B·u²</strong> and extract the permeability and inertial coefficients.
+</p> <hr class="pm-divider" data-astro-cid-4thncdv7> <div class="data-table-wrap" data-astro-cid-4thncdv7> <table class="data-table" id="dataTable" data-astro-cid-4thncdv7> <thead data-astro-cid-4thncdv7> <tr data-astro-cid-4thncdv7> <th data-astro-cid-4thncdv7>Velocity u
+<select id="velUnitSelect" class="unit-select" data-astro-cid-4thncdv7> <option value="m" data-astro-cid-4thncdv7>m/s</option> <option value="cm" data-astro-cid-4thncdv7>cm/s</option> <option value="mm" data-astro-cid-4thncdv7>mm/s</option> <option value="ft" data-astro-cid-4thncdv7>ft/s</option> </select> </th> <th data-astro-cid-4thncdv7>Pressure Loss ΔP
+<select id="dpUnitSelect1" class="unit-select" data-astro-cid-4thncdv7> <option value="Pa" data-astro-cid-4thncdv7>Pa</option> <option value="kPa" data-astro-cid-4thncdv7>kPa</option> <option value="bar" data-astro-cid-4thncdv7>bar</option> <option value="psi" data-astro-cid-4thncdv7>psi</option> </select> </th> </tr> </thead> <tbody data-astro-cid-4thncdv7> <tr data-astro-cid-4thncdv7> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> </tr> <tr data-astro-cid-4thncdv7> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> </tr> <tr data-astro-cid-4thncdv7> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> </tr> </tbody> </table> </div> <div class="btn-group" data-astro-cid-4thncdv7> <button class="btn-secondary" onclick="addRow()" data-astro-cid-4thncdv7>+ Add Row</button> <button class="btn-primary" onclick="calculateAll()" data-astro-cid-4thncdv7>Calculate</button> </div> <div id="results" class="results-grid" style="display:none" data-astro-cid-4thncdv7></div> </div> <!-- ── Method 2: Flow Rate ─────────────────────────────── --> <div class="tool-card pm-card" data-astro-cid-4thncdv7> <h2 data-astro-cid-4thncdv7>Method 2 — Flow Rate vs Pressure Loss</h2> <p class="pm-desc" data-astro-cid-4thncdv7>
+Enter flow-rate and pressure-loss pairs. Velocity is auto-calculated from the
+      cross-sectional area using <strong data-astro-cid-4thncdv7>u = Q / A<sub data-astro-cid-4thncdv7>c</sub></strong>.
+</p> <hr class="pm-divider" data-astro-cid-4thncdv7> <div class="pm-field" style="max-width:280px; margin-bottom:18px" data-astro-cid-4thncdv7> <label for="areaInput" data-astro-cid-4thncdv7>Cross-Sectional Area (A<sub data-astro-cid-4thncdv7>c</sub>)</label> <div class="pm-input-row" data-astro-cid-4thncdv7> <input type="number" id="areaInput" step="any" placeholder="e.g. 0.002" data-astro-cid-4thncdv7> <span style="font-size:12px;color:var(--text-tertiary);white-space:nowrap" data-astro-cid-4thncdv7>m²</span> </div> </div> <div class="data-table-wrap" data-astro-cid-4thncdv7> <table class="data-table" id="flowDataTable" data-astro-cid-4thncdv7> <thead data-astro-cid-4thncdv7> <tr data-astro-cid-4thncdv7> <th data-astro-cid-4thncdv7>Flow Rate Q
+<select id="flowUnitSelect" class="unit-select" data-astro-cid-4thncdv7> <option value="m^3/s" data-astro-cid-4thncdv7>m³/s</option> <option value="L/s" data-astro-cid-4thncdv7>L/s</option> <option value="L/min" data-astro-cid-4thncdv7>L/min</option> <option value="gpm" data-astro-cid-4thncdv7>gpm</option> </select> </th> <th data-astro-cid-4thncdv7>Pressure Loss ΔP
+<select id="dpUnitSelect2" class="unit-select" data-astro-cid-4thncdv7> <option value="Pa" data-astro-cid-4thncdv7>Pa</option> <option value="kPa" data-astro-cid-4thncdv7>kPa</option> <option value="bar" data-astro-cid-4thncdv7>bar</option> <option value="psi" data-astro-cid-4thncdv7>psi</option> </select> </th> </tr> </thead> <tbody data-astro-cid-4thncdv7> <tr data-astro-cid-4thncdv7> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> </tr> <tr data-astro-cid-4thncdv7> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> </tr> <tr data-astro-cid-4thncdv7> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> <td data-astro-cid-4thncdv7><input type="number" step="any" data-astro-cid-4thncdv7></td> </tr> </tbody> </table> </div> <div class="btn-group" data-astro-cid-4thncdv7> <button class="btn-secondary" onclick="addFlowRow()" data-astro-cid-4thncdv7>+ Add Row</button> <button class="btn-primary" onclick="calculateFromFlow()" data-astro-cid-4thncdv7>Calculate</button> </div> <div id="flowResults" class="results-grid" style="display:none" data-astro-cid-4thncdv7></div> </div> </div> </main>  <footer class="site-footer" data-astro-cid-k2f5zb5c> <div class="footer-content" data-astro-cid-k2f5zb5c> <div class="footer-info" data-astro-cid-k2f5zb5c> <h6 data-astro-cid-k2f5zb5c>The copyrights and industrial property rights to the content published here are reserved by HYDAC International GmbH.</h6> </div> <div class="footer-contact" data-astro-cid-k2f5zb5c> <h6 data-astro-cid-k2f5zb5c>Email: hayato.takai@hydacusa.com</h6> </div> </div> </footer>  </body></html> <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script> <script src="/New-SimDev_Website/scripts/oil_properties/getOilProperties.js"></script> <script src="/New-SimDev_Website/scripts/unit_converter.js"></script> <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script> <script src="/New-SimDev_Website/scripts/porous_media/porous_media.js"></script> <script src="/New-SimDev_Website/scripts/curve_fitting/curve_fitting.js"></script> <script>
+// ── Shared chart state ───────────────────────────────────
+const chartState = { method1: null, method2: null };
+
+// ── Results renderer ────────────────────────────────────
+function renderResults(containerId, A, B, dynVisc, dens, d, f) {
+  const el = document.getElementById(containerId);
+  el.innerHTML = `
+    <div class="result-stat"><div class="rs-label">A (Darcy term)</div><div class="rs-value">${A.toExponential(4)}</div></div>
+    <div class="result-stat"><div class="rs-label">B (Forchheimer term)</div><div class="rs-value">${B.toExponential(4)}</div></div>
+    <div class="result-stat"><div class="rs-label">Dynamic Viscosity μ</div><div class="rs-value">${dynVisc.toExponential(4)} Pa·s</div></div>
+    <div class="result-stat"><div class="rs-label">Density ρ</div><div class="rs-value">${dens.toExponential(4)} kg/m³</div></div>
+    <div class="result-stat"><div class="rs-label">Permeability coeff d</div><div class="rs-value">${d.toExponential(4)}</div></div>
+    <div class="result-stat"><div class="rs-label">Inertial coeff f</div><div class="rs-value">${f.toExponential(4)}</div></div>
+  `;
+  el.style.display = 'grid';
+}
+
+// ── Chart helpers ────────────────────────────────────────
+function destroyChart(canvasId) {
+  if (window.Chart && Chart.getChart) {
+    const existing = Chart.getChart(canvasId);
+    if (existing) existing.destroy();
+  }
+}
+
+// ── Combined chart ───────────────────────────────────────
+function drawCombinedChart() {
+  destroyChart('combinedPlot');
+  const datasets = [];
+
+  function addMethodDatasets(state, pointColor, label) {
+    const { x, y, A, B } = state;
+    const xMin = Math.min(...x), xMax = Math.max(...x);
+    const xFit = Array.from({ length: 60 }, (_, i) => xMin + (i / 59) * (xMax - xMin));
+    const yFit = xFit.map(v => A * v + B * v * v);
+    datasets.push({
+      label: label + ' — Measured',
+      data: x.map((v, i) => ({ x: v, y: y[i] })),
+      type: 'scatter',
+      pointBackgroundColor: pointColor,
+      pointBorderColor: pointColor,
+      pointRadius: 5,
+      pointHoverRadius: 7,
+    });
+    datasets.push({
+      label: label + ' — Curve fit',
+      data: xFit.map((v, i) => ({ x: v, y: yFit[i] })),
+      type: 'line',
+      borderColor: pointColor,
+      borderDash: [5, 3],
+      borderWidth: 2,
+      pointRadius: 0,
+      fill: false,
+      tension: 0.3,
+    });
+  }
+
+  if (chartState.method1) addMethodDatasets(chartState.method1, '#2563eb', 'Method 1');
+  if (chartState.method2) addMethodDatasets(chartState.method2, '#16a34a', 'Method 2');
+  if (!datasets.length) return;
+
+  document.getElementById('combinedPlaceholder').classList.add('hidden');
+  const ctx = document.getElementById('combinedPlot').getContext('2d');
+  new Chart(ctx, {
+    type: 'scatter',
+    data: { datasets },
+    options: {
+      responsive: true,
+      // Fill .chart-panel instead of holding Chart.js's default 2:1 ratio,
+      // which is what the CSS was fighting.
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { position: 'bottom', labels: { font: { size: 12 }, boxWidth: 14 } },
+        tooltip: { callbacks: { label: c => `(${c.parsed.x.toExponential(3)}, ${c.parsed.y.toExponential(3)})` } }
+      },
+      scales: {
+        x: { type: 'linear', title: { display: true, text: 'Velocity u (m/s)', font: { size: 12 } }, grid: { color: 'rgba(0,0,0,0.07)' } },
+        y: { title: { display: true, text: 'Pressure Loss ΔP (Pa)', font: { size: 12 } }, grid: { color: 'rgba(0,0,0,0.07)' } }
+      }
+    }
+  });
+}
+
+// ── Override functions after all scripts load ────────────
+window.addEventListener('load', () => {
+
+  // Neutralise updateVelocities — velocity column no longer exists in Method 2
+  window.updateVelocities = function() {};
+
+  // Override addFlowRow: 2-column (Q + ΔP only)
+  window.addFlowRow = function() {
+    const tbody = document.querySelector('#flowDataTable tbody');
+    const row = tbody.insertRow();
+    row.innerHTML = `
+      <td><input type="number" step="any" /></td>
+      <td><input type="number" step="any" /></td>`;
+  };
+
+  // Override calculateAll with unit conversion
+  window.calculateAll = async function() {
+    const velLengthUnit = document.getElementById('velUnitSelect').value;  // 'm','cm','mm','ft'
+    const dpUnit1       = document.getElementById('dpUnitSelect1').value;  // 'Pa','kPa','bar','psi'
+
+    const rows = document.querySelectorAll('#dataTable tbody tr');
+    const x = [], y = [];
+    rows.forEach(r => {
+      const raw_u  = parseFloat(r.cells[0].querySelector('input').value);
+      const raw_dp = parseFloat(r.cells[1].querySelector('input').value);
+      if (!isNaN(raw_u) && !isNaN(raw_dp)) {
+        // velocity: convertUnit treats length unit / s, so cm→m gives the right m/s factor
+        x.push(convertUnit(velLengthUnit, 'm', raw_u));
+        y.push(convertUnit(dpUnit1, 'Pa', raw_dp));
+      }
+    });
+
+    if (x.length < 3) { alert('Enter at least 3 valid data points.'); return; }
+    const { A, B } = fitCurve(x, y);
+
+    const oilType   = document.getElementById('oilTypeSelect').value;
+    const tempInput = parseFloat(document.getElementById('operatingTempInput').value);
+    const tempUnit  = document.getElementById('operatingTempUnitSelect').value;
+    const L         = parseFloat(document.getElementById('lengthInput').value);
+    const tK = convertUnit(tempUnit, 'K', tempInput);
+    // With no oil selected the fields are the only source, so require them
+    // rather than asking OilProps for a fluid named "".
+    const densRaw    = parseFloat(document.getElementById('densityInput').value);
+    const dynViscRaw = parseFloat(document.getElementById('viscosityInput').value);
+    if (!oilType && (isNaN(densRaw) || isNaN(dynViscRaw))) {
+      alert('Select an oil type, or enter both density and dynamic viscosity.');
+      return;
+    }
+    const dens    = densRaw    || OilProps.getDensityAtTemp(oilType, tK);
+    const dynVisc = dynViscRaw || OilProps.getDynViscAtTemp(oilType, tK);
+    const { d, f } = calcDarcyForchheimer(A, B, dynVisc, dens, L);
+
+    renderResults('results', A, B, dynVisc, dens, d, f);
+    chartState.method1 = { x, y, A, B };
+    drawCombinedChart();
+  };
+
+  // Override calculateFromFlow with unit conversion (no velocity column)
+  window.calculateFromFlow = async function() {
+    const area = parseFloat(document.getElementById('areaInput').value);
+    if (!area || area <= 0) { alert('Enter a valid cross-sectional area.'); return; }
+
+    const flowUnit = document.getElementById('flowUnitSelect').value;  // 'm^3/s','L/s','L/min','gpm'
+    const dpUnit2  = document.getElementById('dpUnitSelect2').value;   // 'Pa','kPa','bar','psi'
+
+    const rows = document.querySelectorAll('#flowDataTable tbody tr');
+    const x = [], y = [];
+    rows.forEach(r => {
+      const raw_q  = parseFloat(r.cells[0].querySelector('input').value);
+      const raw_dp = parseFloat(r.cells[1].querySelector('input').value);
+      if (!isNaN(raw_q) && !isNaN(raw_dp)) {
+        const q_si = convertUnit(flowUnit, 'm^3/s', raw_q);  // → m³/s
+        x.push(q_si / area);                                  // → velocity m/s
+        y.push(convertUnit(dpUnit2, 'Pa', raw_dp));           // → Pa
+      }
+    });
+
+    if (x.length < 3) { alert('Enter at least 3 valid data points.'); return; }
+    const { A, B } = fitCurve(x, y);
+
+    const oilType   = document.getElementById('oilTypeSelect').value;
+    const tempInput = parseFloat(document.getElementById('operatingTempInput').value);
+    const tempUnit  = document.getElementById('operatingTempUnitSelect').value;
+    const L         = parseFloat(document.getElementById('lengthInput').value);
+    const tK = convertUnit(tempUnit, 'K', tempInput);
+    // With no oil selected the fields are the only source, so require them
+    // rather than asking OilProps for a fluid named "".
+    const densRaw    = parseFloat(document.getElementById('densityInput').value);
+    const dynViscRaw = parseFloat(document.getElementById('viscosityInput').value);
+    if (!oilType && (isNaN(densRaw) || isNaN(dynViscRaw))) {
+      alert('Select an oil type, or enter both density and dynamic viscosity.');
+      return;
+    }
+    const dens    = densRaw    || OilProps.getDensityAtTemp(oilType, tK);
+    const dynVisc = dynViscRaw || OilProps.getDynViscAtTemp(oilType, tK);
+    const { d, f } = calcDarcyForchheimer(A, B, dynVisc, dens, L);
+
+    renderResults('flowResults', A, B, dynVisc, dens, d, f);
+    chartState.method2 = { x, y, A, B };
+    drawCombinedChart();
+  };
+});
+</script>
