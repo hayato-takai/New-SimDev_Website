@@ -86,8 +86,11 @@ import Layout from '../../layouts/BaseLayout.astro';
   margin: 0;
   letter-spacing: 0;
 }
+/* No max-width. The 520px cap was written when this title was 2rem, where the
+   text needed ~449px and fit; at the shared 42px it needs ~590px and was being
+   forced onto a second line. The header row is flex, so the title takes the
+   width it needs and wraps only when the row genuinely runs out. */
 .vh-calc h1 {
-  max-width: 520px;
   font-size: var(--tool-fs-title);
   line-height: 1.08;
 }
