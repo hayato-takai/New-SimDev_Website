@@ -290,6 +290,13 @@ samp {
   font-family: var(--font-mono);
 }
 
+/* Author-level rather than relying on the UA stylesheet: any author rule that
+   sets display — .tool-page button is inline-flex, for one — beats the UA's
+   [hidden] no matter how unspecific it is, leaving the element on screen. */
+[hidden] {
+  display: none !important;
+}
+
 :focus-visible {
   outline: 3px solid var(--border-focus);
   outline-offset: 2px;

@@ -129,9 +129,15 @@ import Layout from '../../layouts/BaseLayout.astro';
   gap: 14px;
   align-items: center;
 }
+/* The frame is an inset outline, not a border. A border sits outside the
+   content box, so the table inside came out 2px narrower than the rate fields
+   and the note beside it in the same card. An outline takes no layout space,
+   and outline-offset:-1px draws it just inside the edge where it still follows
+   the border-radius — same frame, table now exactly as wide as its siblings. */
 .vh-calc .tank-compare-wrap {
   overflow-x: auto;
-  border: 1px solid var(--line);
+  outline: 1px solid var(--line);
+  outline-offset: -1px;
   border-radius: var(--tool-radius);
   background: var(--surface);
 }
@@ -148,7 +154,10 @@ import Layout from '../../layouts/BaseLayout.astro';
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--muted);
-  background: rgba(23, 32, 34, 0.045);
+  /* 0.045 landed only 10 shades off white while the Air-X tint beside it is 24,
+     so these cells read as unshaded next to it. 0.08 gives them weight without
+     competing with the red. */
+  background: rgba(23, 32, 34, 0.08);
 }
 /* Air-X column is called out in red; its values stay black and only the
    reduction text carries a colour. */
@@ -182,7 +191,10 @@ import Layout from '../../layouts/BaseLayout.astro';
 .vh-calc .tank-compare tr.compare-total th,
 .vh-calc .tank-compare tr.compare-total td {
   border-top: 1px solid var(--line);
-  background: rgba(23, 32, 34, 0.045);
+  /* 0.045 landed only 10 shades off white while the Air-X tint beside it is 24,
+     so these cells read as unshaded next to it. 0.08 gives them weight without
+     competing with the red. */
+  background: rgba(23, 32, 34, 0.08);
 }
 .vh-calc .tank-compare tr.compare-total td {
   font-weight: var(--tool-fw-bold);
@@ -1215,7 +1227,9 @@ import Layout from '../../layouts/BaseLayout.astro';
                 data-show="Show table"
                 data-hide="Hide table"
               >Show table</button>
-              <button id="downloadCsv" type="button">Export CSV</button>
+              <!-- Hidden, not removed: downloadCsv() and its listener are left
+                   intact below, so dropping this `hidden` brings it back. -->
+              <button id="downloadCsv" type="button" hidden>Export CSV</button>
             </div>
           </div>
 
@@ -2210,7 +2224,11 @@ document.querySelectorAll(".table-toggle").forEach((button) => {
     button.textContent = open ? button.dataset.hide : button.dataset.show;
   });
 });
-elements.downloadCsv.addEventListener("click", downloadCsv);
+// Guarded so the export keeps working if the button is un-hidden, and the rest
+// of the script still runs if it is ever deleted outright rather than hidden.
+if (elements.downloadCsv) {
+  elements.downloadCsv.addEventListener("click", downloadCsv);
+}
 
 // Resize only needs the chart re-measured, and only once per frame.
 let resizeFrame = null;

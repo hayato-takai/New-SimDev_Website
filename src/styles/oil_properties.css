@@ -1,112 +1,102 @@
 /* Surface comes from .tool-card in styles/tools.css. */
 
   /* Center the fluid select */
-  .fluid-select-container {
+  .oil-tool .fluid-select-container {
     display: flex;
     flex-direction: column;
     align-items: center;
     margin: 20px 0;
     gap: 8px;
   }
-  .fluid-select-container label {
+.oil-tool .fluid-select-container label {
     margin-bottom: 5px;
   }
-  #fluidSelect {
+.oil-tool #fluidSelect {
     min-width: 250px;
   }
-  #tempInput {
+.oil-tool #tempInput {
     min-width: 250px;
   }
-  .optional {
+.oil-tool .optional {
     font-weight: var(--tool-fw-regular);
     font-size: var(--tool-fs-base);
     opacity: 0.7;
   }
-  .input-hint {
+.oil-tool .input-hint {
     font-size: var(--tool-fs-base);
     opacity: 0.7;
     font-style: italic;
     margin-top: -4px;
     text-align: center;
   }
-
-  /* Oil title */
-  #oilTitle {
+/* Oil title */
+  .oil-tool #oilTitle {
     text-align: center;
     font-weight: var(--tool-fw-bold);
     margin: 15px 0 20px;
   }
+/* The page header lives outside this card now — see .tool-header. */
 
-  /* The page header lives outside this card now — see .tool-header. */
-
-  select, button {
+  .oil-tool select,
+.oil-tool button {
     margin: 10px 0;
   }
+/* Buttons come from .tool-page button in tools.css. */
 
-  /* Buttons come from .tool-page button in tools.css. */
-
-  .prop-unit-select {
+  .oil-tool .prop-unit-select {
     border-radius: var(--tool-radius-sm);
   }
-#properties{
+.oil-tool #properties {
   width:80%;
   max-width: 800px;
   margin: auto;
 }
-  table {
+.oil-tool table {
     border-radius: var(--tool-radius-sm);
     border-collapse: collapse;
     margin: 10px auto;
     width: 100%;
     overflow: hidden;
   }
-
-  th, td {
+.oil-tool th,
+.oil-tool td {
     border: none;
     border-left: 1px solid var(--tool-line-strong);
     border-right: 1px solid var(--tool-line-strong);
     text-align: center;
   }
-
-  th:first-child, td:first-child {
+.oil-tool th:first-child,
+.oil-tool td:first-child {
     border-left: none;
   }
-
-  th:last-child, td:last-child {
+.oil-tool th:last-child,
+.oil-tool td:last-child {
     border-right: none;
   }
-
-  thead th {
+.oil-tool thead th {
     background: var(--table-header);
     color: var(--text-primary);
     position: sticky;
     top: 0;
   }
-
-  tbody tr {
+.oil-tool tbody tr {
     transition: background-color 0.2s ease;
   }
-
-  tbody tr:hover {
+.oil-tool tbody tr:hover {
     background: var(--bg-third);
   }
-  
-  tbody td:nth-child(even) {
+.oil-tool tbody td:nth-child(even) {
   background: var(--table-even);
 }
-
-tbody td:nth-child(odd) {
+.oil-tool tbody td:nth-child(odd) {
   background: var(--table-odd);
 }
-
-tbody tr:hover td {
+.oil-tool tbody tr:hover td {
   opacity: 0.9;
 }
-
-tr.updated {
+.oil-tool tr.updated {
   animation: highlightRow 0.5s ease;
 }
-
 @keyframes highlightRow {
   0%, 100% {
     background-color: transparent;
@@ -115,6 +105,7 @@ tr.updated {
     background-color: var(--success-color);
   }
 }
-  .hidden {
+.oil-tool .hidden {
     display: none;
   }
+

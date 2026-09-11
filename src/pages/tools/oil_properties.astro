@@ -6,7 +6,9 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 
 <Layout title="Oil Property Search">
 
-<main class="tool-page">
+<!-- oil-tool namespaces styles/oil_properties.css, which is a plain import and
+     so gets bundled into a chunk the other tool pages load too. -->
+<main class="tool-page oil-tool">
   <div class="tool-shell">
 
     <header class="tool-header">
