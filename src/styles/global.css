@@ -598,6 +598,64 @@ body > main {
   text-transform: uppercase;
 }
 
+/* sample.css's toggle. Markup:
+     <label class="toggle">
+       <input type="checkbox"> <span class="toggle-track"></span>
+       <span class="toggle-thumb"></span>
+     </label>
+   The checked state uses --accent rather than sample's --brand, to match the
+   accent the rest of the site's controls already use. */
+.toggle {
+  position: relative;
+  display: inline-block;
+  width: 42px;
+  height: 24px;
+  flex-shrink: 0;
+  cursor: pointer;
+}
+
+.toggle input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+.toggle-track {
+  position: absolute;
+  inset: 0;
+  border-radius: 12px;
+  background: var(--border-strong);
+  transition: background-color var(--duration-standard) var(--ease-standard);
+}
+
+.toggle input:checked ~ .toggle-track {
+  background: var(--accent);
+}
+
+.toggle input:focus-visible ~ .toggle-track {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 2px;
+}
+
+.toggle-thumb {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #fff;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.18);
+  transition: transform var(--duration-standard) var(--ease-spring),
+              box-shadow var(--duration-fast) var(--ease-standard);
+}
+
+.toggle input:checked ~ .toggle-thumb {
+  transform: translateX(18px);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.22);
+}
+
 .field {
   display: flex;
   flex-direction: column;
