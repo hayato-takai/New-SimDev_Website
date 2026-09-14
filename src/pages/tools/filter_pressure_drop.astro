@@ -1,0 +1,406 @@
+---
+import Layout from '../../layouts/BaseLayout.astro';
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title="Filter Pressure Drop">
+  <main class="fpd-tool tool-page">
+    <div class="tool-shell">
+
+      <header class="tool-header">
+        <div class="tool-header-row">
+          <h1>Filter Pressure Drop</h1>
+        </div>
+        <p class="tool-subtitle">
+          For each filter series, take the smallest size rated for the operating
+          flow and compare the housing and element pressure drop of its elements
+          at a given viscosity.
+        </p>
+      </header>
+
+      <!-- ── Inputs ─────────────────────────────────────────── -->
+      <section class="tool-card">
+        <h2>Operating Point</h2>
+        <div class="fpd-grid">
+          <div class="fpd-field">
+            <label for="fpdFlow">Flow rate (Q)</label>
+            <div class="fpd-input-row">
+              <input type="number" id="fpdFlow" value="100" min="0" step="any" />
+              <span class="u">L/min</span>
+            </div>
+          </div>
+
+          <div class="fpd-field">
+            <label for="fpdVisc">Kinematic viscosity (ν)</label>
+            <div class="fpd-input-row">
+              <input type="number" id="fpdVisc" value="30" min="0" step="any" />
+              <span class="u">mm²/s</span>
+            </div>
+          </div>
+
+          <div class="fpd-field">
+            <label for="fpdMaxDp">Max pressure drop</label>
+            <div class="fpd-input-row">
+              <input type="number" id="fpdMaxDp" min="0" step="any" placeholder="No limit" />
+              <span class="u">bar</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="fpd-block">
+          <h2>Viscosity From Fluid</h2>
+          <div class="fpd-grid">
+            <div class="fpd-field">
+              <label for="fpdFluid">Fluid</label>
+              <select id="fpdFluid">
+                <option value="">-- Select --</option>
+              </select>
+            </div>
+
+            <div class="fpd-field">
+              <label for="fpdTemp">Temperature</label>
+              <div class="fpd-input-row">
+                <input type="number" id="fpdTemp" value="40" step="any" />
+                <span class="u">°C</span>
+              </div>
+            </div>
+          </div>
+          <p class="hint fpd-hint">
+            Selecting a fluid fills in the viscosity above. Typing a viscosity clears the fluid.
+          </p>
+        </div>
+
+        <div class="fpd-block">
+          <h2>Series</h2>
+          <div class="fpd-series" id="fpdSeries">
+            <span class="hint">Loading series…</span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── Summary ────────────────────────────────────────── -->
+      <section class="tool-card">
+        <h2>Results</h2>
+        <div class="fpd-stats">
+          <div class="fpd-stat">
+            <div class="fpd-stat-label">Matching elements</div>
+            <div class="fpd-stat-value" id="fpdCount">---</div>
+          </div>
+          <div class="fpd-stat">
+            <div class="fpd-stat-label">Lowest total ΔP</div>
+            <div class="fpd-stat-value"><span id="fpdBest">---</span> <span class="u">bar</span></div>
+          </div>
+          <div class="fpd-stat">
+            <div class="fpd-stat-label">Lowest-ΔP element</div>
+            <div class="fpd-stat-value" id="fpdBestElement">---</div>
+            <div class="fpd-stat-sub" id="fpdBestSize"></div>
+          </div>
+        </div>
+        <p class="hint fpd-note" id="fpdNote" hidden>
+          The viscosity is outside the tested range of at least one element
+          (typically 30 to 1,500 mm²/s). Those elements use the ΔP/Q of their
+          nearest test point, so treat their results as estimates.
+        </p>
+      </section>
+
+      <!-- ── Chart ──────────────────────────────────────────── -->
+      <section class="tool-card">
+        <h2>Pressure Drop vs Flow Rate</h2>
+        <p class="hint fpd-hint">
+          Total ΔP = housing (AX2/1000 · Q² + BX/100 · Q) + element (ΔP/Q at ν, from the dp-Q test points) · Q.
+          Solid lines run to each size's rated flow; dotted lines continue past it.
+        </p>
+        <div class="fpd-chart">
+          <div class="fpd-chart-placeholder" id="fpdPlaceholder">
+            <span>Loading filter data…</span>
+          </div>
+          <canvas id="fpdChart"></canvas>
+        </div>
+      </section>
+
+      <!-- ── Matching elements ──────────────────────────────── -->
+      <section class="tool-card">
+        <h2>Matching Elements</h2>
+        <div class="table-wrap">
+          <table class="fpd-table">
+            <thead>
+              <tr>
+                <th>Filter</th>
+                <th class="num">Max flow <span class="fpd-th-unit">(L/min)</span></th>
+                <th>Element</th>
+                <th class="num">Area <span class="fpd-th-unit">(cm²)</span></th>
+                <th class="num">Housing ΔP <span class="fpd-th-unit">(bar)</span></th>
+                <th class="num">Element ΔP <span class="fpd-th-unit">(bar)</span></th>
+                <th class="num">Total ΔP <span class="fpd-th-unit">(bar)</span></th>
+              </tr>
+            </thead>
+            <tbody id="fpdMatchBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- ── Eliminated ─────────────────────────────────────── -->
+      <section class="tool-card">
+        <div class="fpd-panel-head">
+          <h2>Eliminated <span id="fpdElimCount"></span></h2>
+          <button
+            class="btn-quiet table-toggle"
+            type="button"
+            aria-controls="fpdElimTable"
+            aria-expanded="false"
+            data-show="Show table"
+            data-hide="Hide table"
+          >Show table</button>
+        </div>
+        <div class="table-wrap" id="fpdElimTable" hidden>
+          <table class="fpd-table">
+            <thead>
+              <tr>
+                <th>Filter</th>
+                <th>Element</th>
+                <th>Reason</th>
+              </tr>
+            </thead>
+            <tbody id="fpdElimBody"></tbody>
+          </table>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <script define:vars={{ BASE_PATH }}>
+    window.BASE_URL = BASE_PATH;
+  </script>
+  <script is:inline src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+  <script is:inline src={`${BASE_PATH}/scripts/oil_properties/getOilProperties.js`}></script>
+  <script is:inline src={`${BASE_PATH}/scripts/filter_pressure_drop/filter_pressure_drop.js`}></script>
+</Layout>
+
+<!-- Global, namespaced under .fpd-tool: the series toggles and both table
+     bodies are written with innerHTML, which Astro's scope attribute never
+     reaches. -->
+<style is:global>
+  /* ── Inputs ──────────────────────────────────────────── */
+  .fpd-tool .fpd-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 14px 20px;
+    align-items: start;
+  }
+
+  .fpd-tool .fpd-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  .fpd-tool .fpd-input-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .fpd-tool .fpd-input-row input {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .fpd-tool .fpd-field select {
+    width: 100%;
+  }
+
+  .fpd-tool .u {
+    min-width: 3.4em;
+    color: var(--tool-muted);
+    font-weight: var(--tool-fw-semibold);
+    letter-spacing: 0.04em;
+    white-space: nowrap;
+  }
+
+  .fpd-tool .fpd-block {
+    margin-top: 24px;
+    padding-top: 20px;
+    border-top: 1px solid var(--tool-line);
+  }
+
+  .fpd-tool .fpd-hint {
+    margin: 10px 0 0;
+  }
+
+  .fpd-tool .fpd-series {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 28px;
+  }
+
+  .fpd-tool .fpd-series-item {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
+  }
+
+  .fpd-tool .fpd-series-name {
+    color: var(--tool-ink);
+    font-weight: var(--tool-fw-semibold);
+  }
+
+  .fpd-tool .fpd-series-meta {
+    color: var(--tool-muted);
+    font-weight: var(--tool-fw-regular);
+  }
+
+  @media (max-width: 720px) {
+    .fpd-tool .fpd-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ── Summary ─────────────────────────────────────────── */
+  .fpd-tool .fpd-stats {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 8px;
+  }
+
+  .fpd-tool .fpd-stat {
+    min-width: 0;
+    padding: 10px 14px;
+    border: 1px solid var(--tool-line);
+    border-radius: var(--tool-radius-sm);
+    background: var(--tool-field-bg);
+  }
+
+  .fpd-tool .fpd-stat-label {
+    color: var(--tool-muted);
+    font-size: var(--tool-fs-sm);
+    font-weight: var(--tool-fw-bold);
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+  }
+
+  .fpd-tool .fpd-stat-value {
+    margin-top: 3px;
+    font-family: var(--font-mono);
+    font-size: var(--tool-fs-lg);
+    /* Capped at 500: JetBrains Mono is only loaded at 400 and 500. */
+    font-weight: var(--tool-fw-medium);
+    overflow-wrap: anywhere;
+  }
+
+  .fpd-tool .fpd-stat-value .u {
+    font-family: var(--font-sans);
+  }
+
+  .fpd-tool .fpd-stat-sub {
+    color: var(--tool-muted);
+  }
+
+  .fpd-tool .fpd-note {
+    margin: 12px 0 0;
+  }
+
+  @media (max-width: 720px) {
+    .fpd-tool .fpd-stats {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  /* ── Chart ───────────────────────────────────────────── */
+  /* Definite height: with maintainAspectRatio:false Chart.js fills this box. */
+  .fpd-tool .fpd-chart {
+    position: relative;
+    height: 460px;
+    margin-top: 14px;
+    padding: 14px;
+    border: 1px solid var(--tool-line);
+    border-radius: var(--tool-radius-sm);
+  }
+
+  .fpd-tool .fpd-chart canvas {
+    display: block;
+  }
+
+  .fpd-tool .fpd-chart-placeholder {
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+  }
+
+  .fpd-tool .fpd-chart-placeholder span {
+    padding: 6px 14px;
+    border: 1px solid var(--tool-line);
+    border-radius: 20px;
+    background: var(--tool-panel);
+    color: var(--tool-muted);
+  }
+
+  /* ── Tables ──────────────────────────────────────────── */
+  .fpd-tool .fpd-panel-head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+
+  .fpd-tool .fpd-panel-head h2 {
+    margin: 0;
+  }
+
+  .fpd-tool .fpd-panel-head + .table-wrap {
+    margin-top: 14px;
+  }
+
+  .fpd-tool .fpd-table th {
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .fpd-tool .fpd-table thead th {
+    white-space: nowrap;
+  }
+
+  .fpd-tool .fpd-table .num {
+    text-align: right;
+    white-space: nowrap;
+  }
+
+  .fpd-tool .fpd-th-unit {
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: var(--tool-fw-medium);
+  }
+
+  .fpd-tool .fpd-table td[rowspan] {
+    vertical-align: top;
+  }
+
+  .fpd-tool .fpd-total {
+    font-weight: var(--tool-fw-semibold);
+  }
+
+  /* Lowest total ΔP. Only the row's own cells: the rowspan cells belong to the
+     whole group, not to this element. */
+  .fpd-tool .fpd-table tr.is-best td:not([rowspan]) {
+    background: var(--tool-accent-soft);
+  }
+
+  .fpd-tool .fpd-swatch {
+    display: inline-block;
+    width: 10px;
+    height: 10px;
+    margin-right: 8px;
+    border-radius: 2px;
+  }
+
+  .fpd-tool .fpd-empty {
+    color: var(--tool-muted);
+    text-align: center;
+  }
+</style>
