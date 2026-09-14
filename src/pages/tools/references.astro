@@ -1,0 +1,200 @@
+---
+import Layout from '../../layouts/BaseLayout.astro';
+
+interface ReferenceLink {
+  title: string;
+  description: string;
+  /** Leave empty until the address is known; the row renders as "not set". */
+  url: string;
+}
+
+interface ReferenceGroup {
+  heading: string;
+  links: ReferenceLink[];
+}
+
+// TODO: fill in the three URLs below.
+const groups: ReferenceGroup[] = [
+  {
+    heading: 'Filter Deaeration Analysis',
+    links: [
+      {
+        title: 'Filter Deaeration Analysis Request Form',
+        description: 'Request a deaeration analysis for a tank and filter system.',
+        url: 'https://hayato-takai.github.io/Filter-Deaeration-request-website/',
+      },
+    ],
+  },
+  {
+    heading: 'Finite Element Analysis',
+    links: [
+      {
+        title: 'FEA Request Form',
+        description: 'Request a finite element analysis.',
+        url: '',
+      },
+      {
+        title: 'FEA Request Template',
+        description: 'Prepare the information needed for an FEA request.',
+        url: '',
+      },
+    ],
+  },
+];
+---
+
+<Layout title="References">
+  <main class="tool-page">
+    <div class="tool-shell">
+
+      <header class="tool-header">
+        <div class="tool-header-row">
+          <h1>References</h1>
+        </div>
+        <p class="tool-subtitle">
+          Request forms and templates for simulation and analysis work.
+        </p>
+      </header>
+
+      {groups.map((group) => (
+        <section class="tool-card">
+          <h2>{group.heading}</h2>
+          <ul class="ref-list">
+            {group.links.map((link) => (
+              <li>
+                {link.url ? (
+                  <a
+                    class="ref-link"
+                    href={link.url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                  >
+                    <span class="ref-text">
+                      <span class="ref-title">{link.title}</span>
+                      <span class="ref-desc">{link.description}</span>
+                    </span>
+                    <span class="ref-meta">
+                      Opens in new tab
+                      <svg class="ref-icon" viewBox="0 0 16 16" aria-hidden="true">
+                        <path d="M6 3h7v7M13 3 4 12" fill="none" stroke="currentColor"
+                              stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/>
+                      </svg>
+                    </span>
+                  </a>
+                ) : (
+                  <div class="ref-link is-missing">
+                    <span class="ref-text">
+                      <span class="ref-title">{link.title}</span>
+                      <span class="ref-desc">{link.description}</span>
+                    </span>
+                    <span class="ref-meta">Link not set yet</span>
+                  </div>
+                )}
+              </li>
+            ))}
+          </ul>
+        </section>
+      ))}
+
+    </div>
+  </main>
+</Layout>
+
+<style>
+  .ref-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .ref-list li + li {
+    border-top: 1px solid var(--tool-line);
+  }
+
+  /* One row per link: title and description on the left, destination on the
+     right. The whole row is the hit area, not just the title. */
+  .ref-link {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    margin: 0 -12px;
+    padding: 14px 12px;
+    border-radius: var(--tool-radius-sm);
+    color: var(--tool-ink);
+    text-decoration: none;
+    transition: var(--transition-color);
+  }
+
+  a.ref-link:hover {
+    background: var(--tool-accent-soft);
+    text-decoration: none;
+  }
+
+  a.ref-link:hover .ref-title,
+  a.ref-link:hover .ref-meta {
+    color: var(--tool-accent);
+  }
+
+  a.ref-link:focus-visible {
+    outline: 3px solid var(--tool-focus);
+    outline-offset: 0;
+  }
+
+  .ref-text {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .ref-title {
+    font-size: var(--tool-fs-base);
+    font-weight: var(--tool-fw-semibold);
+  }
+
+  .ref-desc {
+    color: var(--tool-muted);
+    font-size: var(--tool-fs-base);
+  }
+
+  .ref-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    flex-shrink: 0;
+    color: var(--tool-muted);
+    font-size: var(--tool-fs-sm);
+    font-weight: var(--tool-fw-semibold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .ref-icon {
+    width: 14px;
+    height: 14px;
+  }
+
+  /* A link without an address yet: visibly unfinished, and not clickable. */
+  .ref-link.is-missing {
+    cursor: default;
+  }
+
+  .ref-link.is-missing .ref-title,
+  .ref-link.is-missing .ref-desc {
+    opacity: 0.6;
+  }
+
+  .ref-link.is-missing .ref-meta {
+    color: var(--tool-accent);
+  }
+
+  @media (max-width: 560px) {
+    .ref-link {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
+    }
+  }
+</style>
