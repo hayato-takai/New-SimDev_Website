@@ -992,5 +992,19 @@
     ],
     "DensityAt15C": 881.0,
     "ThermalExpansionCoeff": 0.00065
+  },
+  "Mobilfluid LT": {
+    "Kinematic Viscosity Limits": [
+      {
+        "temperature": 313.15,
+        "kinematicViscosity": 34.0
+      },
+      {
+        "temperature": 373.15,
+        "kinematicViscosity": 7.2
+      }
+    ],
+    "DensityAt15C": 875.0,
+    "ThermalExpansionCoeff": 0.00065
   }
 }

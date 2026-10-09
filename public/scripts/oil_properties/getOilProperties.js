@@ -8,6 +8,29 @@ const WALTHER_ERROR_THRESHOLD = 5; // percent
 const DEBUG_MODE = false; // Set to true to enable detailed logging
 
 // Load fluid data from JSON
+/**
+ * Fluid property database, loaded from components/fluid_data.json.
+ *
+ * Each top-level key is the fluid name shown in the fluid selector (sorted
+ * alphabetically by getFluidNames). Each value has the following fields:
+ *
+ * @property {Array<Object>} Kinematic Viscosity Limits
+ *           Exactly two reference points used to fit the Walther equation
+ *           (ASTM D341). Usually the datasheet values at 40 °C and 100 °C.
+ * @property {number} Kinematic Viscosity Limits[].temperature
+ *           Reference temperature in K (e.g. 313.15 for 40 °C, 373.15 for 100 °C).
+ * @property {number} Kinematic Viscosity Limits[].kinematicViscosity
+ *           Kinematic viscosity at that temperature in mm²/s (cSt).
+ * @property {number} DensityAt15C
+ *           Density at 15 °C in kg/m³ (datasheet kg/l × 1000).
+ * @property {number} [ThermalExpansionCoeff]
+ *           Volumetric thermal expansion coefficient in 1/K. Optional; falls
+ *           back to DEFAULT_THERMAL_EXPANSION_COEFF (typical mineral oil). Use
+ *           about 0.0007 for synthetics and 0.0004 for water-glycol fluids.
+ *
+ * @see getKinViscAtTemp
+ * @see getDensityAtTemp
+ */
 let fluidData = {}; // will be loaded from JSON
 let loadPromise = null; // Track loading promise to avoid race conditions
 
