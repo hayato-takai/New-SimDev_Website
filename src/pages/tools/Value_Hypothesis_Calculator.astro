@@ -1059,7 +1059,7 @@ import Layout from '../../layouts/BaseLayout.astro';
                   </td>
                 </tr>
                 <tr class="compare-total">
-                  <th scope="row">Annual Tank Cost for Machines</th>
+                  <th scope="row">Annual Tank Cost for <span id="fleetMachineLabel">1,000 Machines</span></th>
                   <td id="baseFleetSystemCost">0 USD</td>
                   <td class="airx-col">
                     <div class="airx-cell">
@@ -1317,6 +1317,7 @@ import Layout from '../../layouts/BaseLayout.astro';
   airxTotalCost: document.querySelector("#airxTotalCost"),
   baseTotalWeight: document.querySelector("#baseTotalWeight"),
   airxTotalWeight: document.querySelector("#airxTotalWeight"),
+  fleetMachineLabel: document.querySelector("#fleetMachineLabel"),
   baseFleetSystemCost: document.querySelector("#baseFleetSystemCost"),
   airxFleetSystemCost: document.querySelector("#airxFleetSystemCost"),
   airxFleetSystemCostDelta: document.querySelector("#airxFleetSystemCostDelta"),
@@ -2106,6 +2107,8 @@ function updateUi() {
   // Tank system cost across one year of production.
   const baseFleetSystemCost = savings.baseTotalCost * state.machinesPerYear;
   const airxFleetSystemCost = savings.airxTotalCost * state.machinesPerYear;
+  elements.fleetMachineLabel.textContent =
+    `${formatNumber(state.machinesPerYear)} ${state.machinesPerYear === 1 ? "Machine" : "Machines"}`;
   elements.baseFleetSystemCost.textContent = formatCurrency(baseFleetSystemCost);
   elements.airxFleetSystemCost.textContent = formatCurrency(airxFleetSystemCost);
 
