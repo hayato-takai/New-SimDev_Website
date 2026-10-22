@@ -1,5 +1,13 @@
 // ========== CONVERSION FACTORS ==========
-// All factors are relative to SI base units
+// All factors are relative to SI base units. The US customary ones are the
+// exact definitions (1 in = 0.0254 m, 1 lb = 0.45359237 kg, 1 gal = 231 in³).
+
+const IN_M      = 0.0254;
+const FT_M      = 0.3048;
+const LB_KG     = 0.45359237;
+const LBF_N     = LB_KG * 9.80665;
+const FT3_M3    = FT_M ** 3;
+const GAL_US_M3 = 231 * IN_M ** 3;
 
 /**
  * Length conversion factors (base unit: meter)
@@ -8,8 +16,8 @@ const lengthFactors = {
   "m": 1,
   "cm": 0.01,
   "mm": 0.001,
-  "in": 0.0254,
-  "ft": 0.3048
+  "in": IN_M,
+  "ft": FT_M
 };
 
 /**
@@ -19,8 +27,21 @@ const areaFactors = {
   "m^2": 1,
   "cm^2": 0.0001,
   "mm^2": 1e-6,
-  "in^2": 0.00064516,
-  "ft^2": 0.092903
+  "in^2": IN_M ** 2,
+  "ft^2": FT_M ** 2
+};
+
+/**
+ * Velocity conversion factors (base unit: m/s)
+ */
+const velocityFactors = {
+  "m/s": 1,
+  "cm/s": 0.01,
+  "mm/s": 0.001,
+  "m/min": 1 / 60,
+  "ft/s": FT_M,
+  "ft/min": FT_M / 60,
+  "in/s": IN_M
 };
 
 /**
@@ -29,7 +50,7 @@ const areaFactors = {
 const densityFactors = {
   "kg/m^3": 1,
   "g/cm^3": 1000,
-  "lb/ft^3": 16.0185
+  "lb/ft^3": LB_KG / FT3_M3
 };
 
 /**
@@ -57,24 +78,35 @@ const volumeFactors = {
   "m^3": 1,
   "L": 0.001,
   "mL": 1e-6,
-  "in^3": 1.6387e-5,
-  "ft^3": 0.0283168,
-  "gal(US)": 0.00378541,
+  "in^3": IN_M ** 3,
+  "ft^3": FT3_M3,
+  "gal(US)": GAL_US_M3,
   "gal(UK)": 0.00454609
 };
 
 /**
- * Flow rate conversion factors (base unit: m³/s)
+ * Volumetric flow rate conversion factors (base unit: m³/s)
  */
 const flowFactors = {
   "m^3/s": 1,
   "L/s": 0.001,
   "L/min": 0.001 / 60,
-  "gpm": 0.00378541 / 60,
-  "gal/h": 0.00378541 / 3600,
-  "ft^3/s": 0.0283168,
+  "gpm": GAL_US_M3 / 60,
+  "gal/h": GAL_US_M3 / 3600,
+  "ft^3/s": FT3_M3
+};
+
+/**
+ * Mass flow rate conversion factors (base unit: kg/s). Kept apart from
+ * volumetric flow: the two only relate through the fluid's density.
+ */
+const massFlowFactors = {
   "kg/s": 1,
-  "lb/s": 0.453592
+  "kg/min": 1 / 60,
+  "kg/h": 1 / 3600,
+  "lb/s": LB_KG,
+  "lb/min": LB_KG / 60,
+  "lb/h": LB_KG / 3600
 };
 
 /**
@@ -86,7 +118,7 @@ const pressureFactors = {
   "MPa": 1e6,
   "GPa": 1e9,
   "bar": 100000,
-  "psi": 6894.76,
+  "psi": LBF_N / IN_M ** 2,
   "atm": 101325
 };
 
@@ -96,7 +128,7 @@ const pressureFactors = {
 const forceFactors = {
   "N": 1,
   "kN": 1000,
-  "lbf": 4.44822,
+  "lbf": LBF_N,
   "kgf": 9.80665
 };
 
@@ -109,11 +141,13 @@ const temperatureUnits = ["C", "F", "K"];
 const unitTypeRegistry = {
   length: lengthFactors,
   area: areaFactors,
+  velocity: velocityFactors,
   density: densityFactors,
   kinematicViscosity: kinViscFactors,
   dynamicViscosity: dynViscFactors,
   volume: volumeFactors,
   flow: flowFactors,
+  massFlow: massFlowFactors,
   pressure: pressureFactors,
   force: forceFactors
 };
@@ -126,12 +160,14 @@ const unitTypeRegistry = {
 const measurementRegistry = {
   length:             { displayName: "Length",              unitType: "length",              defaultFrom: "in",      defaultTo: "m"       },
   area:               { displayName: "Area",                unitType: "area",                defaultFrom: "in^2",    defaultTo: "m^2"     },
-  temperature:        { displayName: "Temperature",         unitType: "temperature",         defaultFrom: "F",       defaultTo: "C"       },
+  velocity:           { displayName: "Velocity",            unitType: "velocity",            defaultFrom: "ft/s",    defaultTo: "m/s"     },
+  temperature:      { displayName: "Temperature",         unitType: "temperature",         defaultFrom: "F",       defaultTo: "C"       },
   density:            { displayName: "Density",             unitType: "density",             defaultFrom: "lb/ft^3", defaultTo: "kg/m^3"  },
   kinematicViscosity: { displayName: "Kinematic Viscosity", unitType: "kinematic viscosity", defaultFrom: "mm^2/s",  defaultTo: "cSt"     },
   dynamicViscosity:   { displayName: "Dynamic Viscosity",   unitType: "dynamic viscosity",   defaultFrom: "cP",      defaultTo: "Pa*s"    },
   volume:             { displayName: "Volume",              unitType: "volume",              defaultFrom: "gal(US)", defaultTo: "L"       },
   flow:               { displayName: "Flow Rate",           unitType: "flow",                defaultFrom: "gpm",     defaultTo: "L/min"   },
+  massFlow:           { displayName: "Mass Flow Rate",      unitType: "mass flow",           defaultFrom: "lb/min",  defaultTo: "kg/min"  },
   pressure:           { displayName: "Pressure",            unitType: "pressure",            defaultFrom: "Pa",      defaultTo: "bar"     },
   force:              { displayName: "Force",               unitType: "force",               defaultFrom: "N",       defaultTo: "lbf"     }
 };
@@ -146,6 +182,9 @@ const unitDisplayNames = {
   // Area
   "m^2": "Square Meter (m²)", "cm^2": "Square Centimeter (cm²)",
   "mm^2": "Square Millimeter (mm²)", "in^2": "Square Inch (in²)", "ft^2": "Square Foot (ft²)",
+  // Velocity
+  "m/s": "m/s", "cm/s": "cm/s", "mm/s": "mm/s", "m/min": "m/min",
+  "ft/s": "ft/s", "ft/min": "ft/min", "in/s": "in/s",
   // Temperature
   "C": "Celsius (°C)", "F": "Fahrenheit (°F)", "K": "Kelvin (K)",
   // Density
@@ -161,7 +200,10 @@ const unitDisplayNames = {
   // Flow
   "m^3/s": "m³/s", "L/s": "L/s", "L/min": "L/min",
   "gpm": "GPM (US gal/min)", "gal/h": "gal/h",
-  "ft^3/s": "ft³/s", "kg/s": "kg/s", "lb/s": "lb/s",
+  "ft^3/s": "ft³/s",
+  // Mass flow
+  "kg/s": "kg/s", "kg/min": "kg/min", "kg/h": "kg/h",
+  "lb/s": "lb/s", "lb/min": "lb/min", "lb/h": "lb/h",
   // Pressure
   "Pa": "Pascal (Pa)", "kPa": "Kilopascal (kPa)", "MPa": "Megapascal (MPa)",
   "GPa": "Gigapascal (GPa)", "bar": "Bar", "psi": "PSI", "atm": "Atmosphere (atm)",
@@ -190,6 +232,25 @@ function normalizeUnit(unit) {
   }
   
   return unit;
+}
+
+/**
+ * Format a result to a number of significant figures, rather than a fixed
+ * number of decimals that would round small values (1 Pa in GPa, 1 cSt in
+ * m²/s) to zero. Very small or large results come out in exponent form
+ * ("1e-9"), which number inputs accept.
+ *
+ * @param {number} value
+ * @param {number} [sigFigs=6]
+ * @returns {string} Formatted value, or "" if value is not finite
+ *
+ * @example
+ * formatSigFigs(3.785411784)  // "3.78541"
+ * formatSigFigs(1e-9)         // "1e-9"
+ */
+function formatSigFigs(value, sigFigs = 6) {
+  if (!Number.isFinite(value)) return "";
+  return String(Number(value.toPrecision(sigFigs)));
 }
 
 /**
@@ -309,6 +370,7 @@ function getAvailableUnits(unitType) {
   const unitTypeMap = {
     'length': lengthFactors,
     'area': areaFactors,
+    'velocity': velocityFactors,
     'temperature': temperatureUnits,
     'density': densityFactors,
     'kinematicviscosity': kinViscFactors,
@@ -316,6 +378,8 @@ function getAvailableUnits(unitType) {
     'volume': volumeFactors,
     'flow': flowFactors,
     'flowrate': flowFactors,
+    'massflow': massFlowFactors,
+    'massflowrate': massFlowFactors,
     'pressure': pressureFactors,
     'force': forceFactors
   };
@@ -380,7 +444,8 @@ function linearConversion(factorTable, fromUnit, toUnit, value) {
 
 /**
  * Convert a value from one unit to another.
- * Supports length, area, temperature, density, viscosity, volume, flow, pressure, and force.
+ * Supports length, area, velocity, temperature, density, viscosity, volume,
+ * volumetric and mass flow, pressure, and force.
  * 
  * @param {string} originalUnit - Source unit
  * @param {string} newUnit - Target unit
@@ -445,6 +510,7 @@ if (typeof window !== "undefined") {
   window.getFromDefault = getFromDefault;
   window.getToDefault = getToDefault;
   window.isValidUnit = isValidUnit;
+  window.formatSigFigs = formatSigFigs;
 }
 
 // ========== NODE.JS EXPORTS ==========
@@ -457,14 +523,17 @@ if (typeof module !== "undefined" && module.exports) {
     getFromDefault,
     getToDefault,
     isValidUnit,
+    formatSigFigs,
     // Export constants for testing
     lengthFactors,
     areaFactors,
+    velocityFactors,
     densityFactors,
     kinViscFactors,
     dynViscFactors,
     volumeFactors,
     flowFactors,
+    massFlowFactors,
     pressureFactors,
     forceFactors,
     temperatureUnits

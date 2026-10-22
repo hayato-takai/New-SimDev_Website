@@ -188,6 +188,40 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
   }
 
   /* ============================================
+     READOUTS AND HINTS
+     ============================================ */
+  .readout {
+    font-weight: var(--tool-fw-semibold);
+  }
+
+  .tool-card .hint {
+    margin: 8px 0 0;
+  }
+
+  /* ============================================
+     ISO 4406 TABLE
+     ============================================ */
+  .iso-table {
+    margin-top: 8px;
+  }
+
+  .iso-table th,
+  .iso-table td {
+    text-align: left;
+    white-space: nowrap;
+  }
+
+  .iso-table input {
+    width: 100%;
+    min-width: 90px;
+    box-sizing: border-box;
+  }
+
+  .iso-range {
+    color: var(--tool-muted);
+  }
+
+  /* ============================================
      RESPONSIVE
      ============================================ */
   @media (max-width: 900px) {
@@ -209,7 +243,7 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
       <h1>Unit Conversion</h1>
     </div>
     <p class="tool-subtitle">
-      Convert between engineering units, and size pipe velocity, Reynolds number and related quantities.
+      Convert between engineering units, size pipes and tanks, and translate filter beta ratios and ISO 4406 cleanliness codes.
     </p>
   </header>
 
@@ -244,6 +278,64 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
         </div>
       </div>
     </div>
+
+    <h2>Filtration</h2>
+
+    <!-- Beta Ratio -->
+    <div class="tool-card">
+      <h3>Beta Ratio</h3>
+      <div class="row-inline">
+        <label for="betaRatio">Beta Ratio (β):</label>
+        <input id="betaRatio" class="value" type="number" value="200" step="any" min="1"/>
+      </div>
+      <div class="row-inline">
+        <label for="betaEfficiency">Efficiency (%):</label>
+        <input id="betaEfficiency" class="value" type="number" step="any" min="0" max="100"/>
+      </div>
+      <p class="hint">β = upstream ÷ downstream particle count at one size. Efficiency = (1 − 1/β) × 100.</p>
+    </div>
+
+    <!-- ISO 4406 Code -->
+    <div class="tool-card">
+      <h3>ISO 4406 Code</h3>
+      <div class="row-inline">
+        <label for="isoCode">ISO Code:</label>
+        <input id="isoCode" class="value" type="text" value="18/16/13" placeholder="e.g. 18/16/13" spellcheck="false" autocomplete="off"/>
+      </div>
+      <div class="table-wrap">
+        <table class="iso-table">
+          <thead>
+            <tr>
+              <th scope="col">Size</th>
+              <th scope="col">Particles / mL</th>
+              <th scope="col">Scale No.</th>
+              <th scope="col">Range / mL</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row">≥4 µm(c)</th>
+              <td><input id="iso4Count" type="number" step="any" min="0" aria-label="Particles ≥4 µm(c) per mL"/></td>
+              <td id="iso4Scale"></td>
+              <td id="iso4Range" class="iso-range"></td>
+            </tr>
+            <tr>
+              <th scope="row">≥6 µm(c)</th>
+              <td><input id="iso6Count" type="number" step="any" min="0" aria-label="Particles ≥6 µm(c) per mL"/></td>
+              <td id="iso6Scale"></td>
+              <td id="iso6Range" class="iso-range"></td>
+            </tr>
+            <tr>
+              <th scope="row">≥14 µm(c)</th>
+              <td><input id="iso14Count" type="number" step="any" min="0" aria-label="Particles ≥14 µm(c) per mL"/></td>
+              <td id="iso14Scale"></td>
+              <td id="iso14Range" class="iso-range"></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <p class="hint">Entering a code fills each count with the top of its range. Use - for a size that was not counted.</p>
+    </div>
   </div>
 
   <!-- Right: Calculators -->
@@ -270,17 +362,46 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
       </div>
     </div>
 
+    <!-- Dash Size -->
+    <div class="tool-card">
+      <h3>Dash Size</h3>
+      <div class="row-inline">
+        <label for="dashNumber">Dash Size (-#):</label>
+        <input id="dashNumber" class="value" type="number" value="8" step="any" min="0"/>
+      </div>
+      <div class="row-inline">
+        <label for="dashSize">Size:</label>
+        <input id="dashSize" class="value" type="number" step="any" min="0"/>
+        <select id="dashSizeUnit" class="unit"></select>
+      </div>
+      <div class="row-inline">
+        <label>Fraction:</label>
+        <span id="dashFraction" class="readout"></span>
+      </div>
+      <p class="hint">The dash number is the size in sixteenths of an inch: hose ID or tube OD.</p>
+    </div>
+
     <!-- Circle Area -->
     <div class="tool-card">
       <h3>Circle Area</h3>
       <div class="row-inline">
-        <label>Diameter:</label>
+        <label for="circleDiameter">Diameter:</label>
         <input id="circleDiameter" class="value" type="number" value="1" step="any" min="0"/>
         <select id="circleDiameterUnit" class="unit"></select>
       </div>
       <div class="row-inline">
-        <label>Area:</label>
-        <input id="circleArea" class="value" type="number" value="1" step="any" min="0"/>
+        <label for="circleRadius">Radius:</label>
+        <input id="circleRadius" class="value" type="number" step="any" min="0"/>
+        <select id="circleRadiusUnit" class="unit"></select>
+      </div>
+      <div class="row-inline">
+        <label for="circleCircumference">Circumference:</label>
+        <input id="circleCircumference" class="value" type="number" step="any" min="0"/>
+        <select id="circleCircumferenceUnit" class="unit"></select>
+      </div>
+      <div class="row-inline">
+        <label for="circleArea">Area:</label>
+        <input id="circleArea" class="value" type="number" step="any" min="0"/>
         <select id="circleAreaUnit" class="unit"></select>
       </div>
     </div>
@@ -314,7 +435,8 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   <div class="row-inline">
     <label>Reynolds No.:</label>
-    <input id="reValue" class="value" type="number" value="0" readonly/>
+    <!-- text, not number: a zero viscosity shows "∞", which a number input rejects -->
+    <input id="reValue" class="value" type="text" value="0" readonly/>
   </div>
 
   <div class="row-inline">
@@ -322,6 +444,31 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
     <span id="reFlowStatus" class="re-flow-status"></span>
   </div>
 </div>
+
+    <!-- Turnover Ratio -->
+    <div class="tool-card">
+      <h3>Turnover Ratio</h3>
+      <div class="row-inline">
+        <label for="tankFlow">Flow Rate:</label>
+        <input id="tankFlow" class="value" type="number" value="10" step="any" min="0"/>
+        <select id="tankFlowUnit" class="unit"></select>
+      </div>
+      <div class="row-inline">
+        <label for="tankVolume">Tank Volume:</label>
+        <input id="tankVolume" class="value" type="number" value="30" step="any" min="0"/>
+        <select id="tankVolumeUnit" class="unit"></select>
+      </div>
+      <div class="row-inline">
+        <label for="tankTurnover">Turnover:</label>
+        <input id="tankTurnover" class="value" type="number" step="any" min="0"/>
+        <select id="tankTurnoverUnit" class="unit"></select>
+      </div>
+      <div class="row-inline">
+        <label for="tankDwell">Dwell Time (min):</label>
+        <input id="tankDwell" class="value" type="number" readonly/>
+      </div>
+      <p class="hint">Turnover = flow rate ÷ tank volume. Editing it solves for the tank volume. Dwell time is the inverse.</p>
+    </div>
 
     <!-- Percent Change -->
     <div class="tool-card">
@@ -336,8 +483,9 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
       </div>
       <div class="row-inline">
         <label>% Change:</label>
-        <input id="pctResult" class="value" type="text" readonly placeholder="---"/>
+        <input id="pctResult" class="value" type="text" placeholder="e.g. +50%"/>
       </div>
+      <p class="hint">Type a % change here to solve for the new value.</p>
     </div>
 
   </div>
@@ -350,9 +498,6 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 <script src={`${BASE_PATH}/scripts/calculators.js`}></script>
 
 <script>
-// ========== CONSTANTS ==========
-const DECIMAL_PLACES = 5;
-
 // ========== DOM REFS ==========
 const measurementSelect = document.getElementById('measurementType');
 const fromValue = document.getElementById('fromValue');
@@ -401,7 +546,7 @@ function convertFromTo() {
   if (Number.isFinite(value)) {
     try {
       const result = convertUnit(fromUnit.value, toUnit.value, value);
-      toValue.value = result.toFixed(DECIMAL_PLACES);
+      toValue.value = formatSigFigs(result);
     } catch (e) {
       toValue.value = 'Error';
     }
@@ -420,7 +565,7 @@ function convertToFrom() {
   if (Number.isFinite(value)) {
     try {
       const result = convertUnit(toUnit.value, fromUnit.value, value);
-      fromValue.value = result.toFixed(DECIMAL_PLACES);
+      fromValue.value = formatSigFigs(result);
     } catch (e) {
       fromValue.value = 'Error';
     }
