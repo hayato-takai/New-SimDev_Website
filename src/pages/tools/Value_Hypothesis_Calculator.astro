@@ -263,10 +263,29 @@ import Layout from '../../layouts/BaseLayout.astro';
 .vh-calc .cell-delta.is-flat {
   color: var(--muted);
 }
+/* auto-fit rather than a fixed count, so the four rates wrap onto a second
+   line before the 150px minimum would push them out of the card. */
 .vh-calc .tank-rate-row {
   display: grid;
-  grid-template-columns: repeat(3, minmax(150px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
   gap: 14px;
+}
+
+/* Steel ↔ Roto switch for each tank's material. Sized and placed like the
+   .input-unit boxes above and below, so the column stays aligned. The material
+   in use is in ink, the other muted. */
+.vh-calc .tank-compare .material-switch {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: min(150px, 100%);
+  margin-left: auto;
+  color: var(--muted);
+}
+.vh-calc .material-switch:not(:has(input:checked)) .material-steel,
+.vh-calc .material-switch:has(input:checked) .material-roto {
+  color: var(--ink);
 }
 /* Disclosure button sits beside Export CSV in the panel head. */
 .vh-calc .panel-actions {
@@ -874,12 +893,12 @@ import Layout from '../../layouts/BaseLayout.astro';
                 <tr class="optional-row" data-optional="Steel">
                   <th scope="row">
                     <span class="row-head">
-                      <span>Tank Steel Volume</span>
+                      <span>Tank Volume</span>
                     <label class="toggle">
                       <input type="checkbox" id="toggleSteel" data-toggles="Steel" checked>
                       <span class="toggle-track"></span>
                       <span class="toggle-thumb"></span>
-                      <span class="visually-hidden">Include tank steel volume</span>
+                      <span class="visually-hidden">Include tank volume</span>
                     </label>
                     </span>
                   </th>
@@ -899,8 +918,40 @@ import Layout from '../../layouts/BaseLayout.astro';
                     </div>
                   </td>
                 </tr>
+                <!-- Each tank's material sets the cost rate its volume is priced at. -->
                 <tr class="optional-row is-derived" data-optional="Steel">
-                  <th scope="row">Tank Steel Cost</th>
+                  <th scope="row">Tank Material</th>
+                  <td>
+                    <div class="material-switch">
+                      <span class="material-steel">Steel</span>
+                      <label class="toggle">
+                        <input type="checkbox" id="baseMaterialRoto">
+                        <span class="toggle-track"></span>
+                        <span class="toggle-thumb"></span>
+                        <span class="visually-hidden">Rotomolded baseline tank (off is steel)</span>
+                      </label>
+                      <span class="material-roto">Roto</span>
+                    </div>
+                  </td>
+                  <td class="airx-col">
+                    <div class="airx-cell">
+                      <div class="material-switch">
+                        <span class="material-steel">Steel</span>
+                        <label class="toggle">
+                          <input type="checkbox" id="airxMaterialRoto">
+                          <span class="toggle-track"></span>
+                          <span class="toggle-thumb"></span>
+                          <span class="visually-hidden">Rotomolded Air-X tank (off is steel)</span>
+                        </label>
+                        <span class="material-roto">Roto</span>
+                      </div>
+                      <!-- Empty, so the switch lines up with the inputs above and below -->
+                      <span class="cell-delta"></span>
+                    </div>
+                  </td>
+                </tr>
+                <tr class="optional-row is-derived" data-optional="Steel">
+                  <th scope="row">Tank Cost</th>
                   <td id="baseSteelCost">0 USD</td>
                   <td class="airx-col">
                     <div class="airx-cell">
@@ -1049,7 +1100,7 @@ import Layout from '../../layouts/BaseLayout.astro';
                   </td>
                 </tr>
                 <tr class="compare-total">
-                  <th scope="row">Total Weight (Steel + Oil) Per Machine</th>
+                  <th scope="row">Total Weight (Tank + Oil) Per Machine</th>
                   <td id="baseTotalWeight">0 lbs</td>
                   <td class="airx-col">
                     <div class="airx-cell">
@@ -1083,6 +1134,14 @@ import Layout from '../../layouts/BaseLayout.astro';
             </label>
 
             <label class="field">
+              <span>Roto Cost</span>
+              <div class="input-unit">
+                <input id="rotoCostPerVolume" type="number" min="0" step="0.0001" value="0.0167">
+                <span>USD/in³</span>
+              </div>
+            </label>
+
+            <label class="field">
               <span>Oil Cost per Gallon</span>
               <div class="input-unit">
                 <input id="oilCostPerGallon" type="number" min="0" step="0.1" value="20">
@@ -1100,7 +1159,7 @@ import Layout from '../../layouts/BaseLayout.astro';
           </div>
 
           <p class="tank-compare-note">
-            Weights assume 0.2836 lbs/in³ steel (490 lbs/ft³) and 7.5 lbs/gal hydraulic oil. CO₂ reduction uses 23.62 lbs CO₂ per gallon of oil saved.
+            Weights assume 0.2836 lbs/in³ steel (490 lbs/ft³), 0.034 lbs/in³ rotomolded polyethylene (59 lbs/ft³) and 7.5 lbs/gal hydraulic oil. CO₂ reduction uses 23.62 lbs CO₂ per gallon of oil saved.
           </p>
         </div> <!-- closes .savings-strip -->
       </section>
@@ -1307,6 +1366,9 @@ import Layout from '../../layouts/BaseLayout.astro';
   baseOilVolume: document.querySelector("#baseOilVolume"),
   airxOilVolume: document.querySelector("#airxOilVolume"),
   steelCostPerVolume: document.querySelector("#steelCostPerVolume"),
+  rotoCostPerVolume: document.querySelector("#rotoCostPerVolume"),
+  baseMaterialRoto: document.querySelector("#baseMaterialRoto"),
+  airxMaterialRoto: document.querySelector("#airxMaterialRoto"),
   oilCostPerGallon: document.querySelector("#oilCostPerGallon"),
   oilChangesPerMachineYear: document.querySelector("#oilChangesPerMachineYear"),
   baseSteelCost: document.querySelector("#baseSteelCost"),
@@ -1396,6 +1458,7 @@ let latestRows = [];
 
 // Physical assumptions used by the Baseline vs. Air-X comparison.
 const STEEL_DENSITY_LBS_PER_IN3 = 0.2836; // 490 lbs/ft³
+const ROTO_DENSITY_LBS_PER_IN3 = 0.034;   // rotomolded polyethylene, ~0.94 g/cm³ (59 lbs/ft³)
 const OIL_DENSITY_LBS_PER_GAL = 7.5;
 const CO2_LBS_PER_GAL_OIL = 23.62;
 
@@ -1423,6 +1486,11 @@ function currentState() {
     baseOilVolume: Math.max(0, numberValue(elements.baseOilVolume)),
     airxOilVolume: Math.max(0, numberValue(elements.airxOilVolume)),
     steelCostPerVolume: Math.max(0, numberValue(elements.steelCostPerVolume, 0.35)),
+    rotoCostPerVolume: Math.max(0, numberValue(elements.rotoCostPerVolume, 0.0167)),
+    // Each tank's material, steel or rotomolded. The tank line kept its
+    // original "Steel" names (baseSteelVolume, steelOn …) but covers either.
+    baseRoto: elements.baseMaterialRoto.checked,
+    airxRoto: elements.airxMaterialRoto.checked,
     oilCostPerGallon: Math.max(0, numberValue(elements.oilCostPerGallon, 20)),
     oilChangesPerMachineYear: Math.max(0, numberValue(elements.oilChangesPerMachineYear, 2)),
     forecastYears: Math.max(1, Math.round(numberValue(elements.forecastYears, 15))),
@@ -1448,10 +1516,16 @@ function currentState() {
 
 function savingsModel(state) {
   // Per-tank Baseline vs. Air-X comparison figures.
-  // Steel and oil costs are always shown — switching a line off excludes it
-  // from the totals, it does not pretend the steel is free.
-  const baseSteelCost = state.baseSteelVolume * state.steelCostPerVolume;
-  const airxSteelCost = state.airxSteelVolume * state.steelCostPerVolume;
+  // Tank and oil costs are always shown — switching a line off excludes it
+  // from the totals, it does not pretend the tank is free.
+  // Each tank is priced and weighed as its own material, so a steel baseline
+  // can be set against a rotomolded Air-X tank.
+  const baseTankRate = state.baseRoto ? state.rotoCostPerVolume : state.steelCostPerVolume;
+  const airxTankRate = state.airxRoto ? state.rotoCostPerVolume : state.steelCostPerVolume;
+  const baseTankDensity = state.baseRoto ? ROTO_DENSITY_LBS_PER_IN3 : STEEL_DENSITY_LBS_PER_IN3;
+  const airxTankDensity = state.airxRoto ? ROTO_DENSITY_LBS_PER_IN3 : STEEL_DENSITY_LBS_PER_IN3;
+  const baseSteelCost = state.baseSteelVolume * baseTankRate;
+  const airxSteelCost = state.airxSteelVolume * airxTankRate;
   const baseOilCost = state.baseOilVolume * state.oilCostPerGallon;
   const airxOilCost = state.airxOilVolume * state.oilCostPerGallon;
 
@@ -1476,13 +1550,13 @@ function savingsModel(state) {
 
   const baseTotalCost = baseSteelIncluded + baseOilIncluded + baseOptionalCost;
   const airxTotalCost = airxSteelIncluded + airxOilIncluded + airxOptionalCost;
-  // Weight counts only the lines that are switched on: no steel line, no steel
+  // Weight counts only the lines that are switched on: no tank line, no tank
   // weight; no oil line, no oil weight.
   const baseTotalWeight =
-    (state.steelOn ? state.baseSteelVolume * STEEL_DENSITY_LBS_PER_IN3 : 0) +
+    (state.steelOn ? state.baseSteelVolume * baseTankDensity : 0) +
     (state.oilOn ? state.baseOilVolume * OIL_DENSITY_LBS_PER_GAL : 0);
   const airxTotalWeight =
-    (state.steelOn ? state.airxSteelVolume * STEEL_DENSITY_LBS_PER_IN3 : 0) +
+    (state.steelOn ? state.airxSteelVolume * airxTankDensity : 0) +
     (state.oilOn ? state.airxOilVolume * OIL_DENSITY_LBS_PER_GAL : 0);
 
   const compare = {
@@ -1511,7 +1585,7 @@ function savingsModel(state) {
 
   // A line that is switched off claims no saving either, so the annual model
   // and the cost comparison never disagree about what is being counted.
-  // Complexity, flushing and filter are per-tank build costs like the steel,
+  // Complexity, flushing and filter are per-tank build costs like the tank,
   // so their difference joins the tank-build saving that drives the Tank
   // Reduction Impact panel and the Tank and Oil Savings table.
   const optionalSavingPerMachine = baseOptionalCost - airxOptionalCost;
@@ -1520,7 +1594,7 @@ function savingsModel(state) {
   const oilChangeSavingPerMachine = firstFillOilSavingPerMachine;
   const co2Reduction = reducedGallons * CO2_LBS_PER_GAL_OIL;
 
-  // Total system cost saving per tank = steel saving + first-fill oil saving.
+  // Total system cost saving per tank = tank saving + first-fill oil saving.
   const totalSystemCostSaving = baseTotalCost - airxTotalCost;
 
   return {
@@ -2124,7 +2198,8 @@ function updateUi() {
   // Optional rows: the Air-X filter cost mirrors Selling Price per Filter.
   showValue(elements.airxFilterCost, state.filterOn, formatCurrency(savings.airxFilterCost));
 
-  applyOptionalRow("Steel", state.steelOn, [elements.baseSteelVolume, elements.airxSteelVolume]);
+  applyOptionalRow("Steel", state.steelOn, [elements.baseSteelVolume, elements.airxSteelVolume,
+    elements.baseMaterialRoto, elements.airxMaterialRoto]);
   applyOptionalRow("Oil", state.oilOn, [elements.baseOilVolume, elements.airxOilVolume]);
   applyOptionalRow("Complexity", state.complexityOn, [elements.baseComplexityCost, elements.airxComplexityCost]);
   applyOptionalRow("Flushing", state.flushingOn, [elements.baseFlushingCost, elements.airxFlushingCost]);
