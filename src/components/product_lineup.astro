@@ -3,6 +3,9 @@ import RFT400_render from "../images/RFT400_render.png";
 import RFB210_render from "../images/RFB210_render.png";
 import RFB300_render from "../images/RFB300_render.png";
 import RFT210_render from "../images/RFT210_render.png";
+
+// HYDAC USA catalog PDFs; each card opens its filter's sheet in a new tab.
+const CATALOG_URL = "https://www.hydac.com/media/local_resources_usa/downloads/catalog/filters/pdfs";
 ---
 
 <!-- AIR-X LINEUP -->
@@ -12,7 +15,7 @@ import RFT210_render from "../images/RFT210_render.png";
     <h2 class="product-lineup__title">Explore our Air-X lineup</h2>
 </div>
     <div class="product-lineup__grid content">
-      <article class="product-lineup__card">
+      <a class="product-lineup__card" href={`${CATALOG_URL}/rfb_compact.pdf`} target="_blank" rel="noopener noreferrer">
         <span class="product-lineup__badge">Compact – Return from Bottom</span>
         <div class="product-lineup__image-wrapper">
           <img src={RFB210_render.src} alt="RFB Compact" />
@@ -21,9 +24,9 @@ import RFT210_render from "../images/RFT210_render.png";
         <p class="product-lineup__desc">
           Small to medium flowrate filter with tank bottom connection.
         </p>
-      </article>
+      </a>
 
-      <article class="product-lineup__card">
+      <a class="product-lineup__card" href={`${CATALOG_URL}/rfb.pdf`} target="_blank" rel="noopener noreferrer">
         <span class="product-lineup__badge">Return from Bottom</span>
         <div class="product-lineup__image-wrapper">
           <img src={RFB300_render.src} alt="RFB" />
@@ -32,9 +35,9 @@ import RFT210_render from "../images/RFT210_render.png";
         <p class="product-lineup__desc">
           Medium to large flowrate filter with tank bottom connection.
         </p>
-      </article>
+      </a>
 
-      <article class="product-lineup__card">
+      <a class="product-lineup__card" href={`${CATALOG_URL}/rft_compact.pdf`} target="_blank" rel="noopener noreferrer">
         <span class="product-lineup__badge">Compact – Return from Top</span>
         <div class="product-lineup__image-wrapper">
           <img src={RFT210_render.src} alt="RFT Compact" />
@@ -43,9 +46,9 @@ import RFT210_render from "../images/RFT210_render.png";
         <p class="product-lineup__desc">
           Small to medium flowrate filter with above tank connection.
         </p>
-      </article>
+      </a>
 
-      <article class="product-lineup__card">
+      <a class="product-lineup__card" href={`${CATALOG_URL}/rft.pdf`} target="_blank" rel="noopener noreferrer">
         <span class="product-lineup__badge">Return from Top</span>
         <div class="product-lineup__image-wrapper">
           <img src={RFT400_render.src} alt="RFT" />
@@ -54,7 +57,7 @@ import RFT210_render from "../images/RFT210_render.png";
         <p class="product-lineup__desc">
           Medium to large flowrate filter with above tank connection.
         </p>
-      </article>
+      </a>
     </div>
   </div>
 </section>
@@ -78,10 +81,27 @@ import RFT210_render from "../images/RFT210_render.png";
   gap: clamp(24px, 4vw, 48px);
 }
 
-/* Card */
+/* Card — the whole card is the link to its catalog PDF. The global link
+   colour and hover underline are reset so the card's own text colours hold;
+   the name taking the accent colour is the hover cue. */
 .product-lineup__card {
   display: flex;
   flex-direction: column;
+  color: inherit;
+  text-decoration: none;
+}
+
+.product-lineup__card:hover {
+  text-decoration: none;
+}
+
+.product-lineup__card:hover .product-lineup__name {
+  color: var(--accent);
+}
+
+.product-lineup__card:focus-visible {
+  outline: 3px solid var(--border-focus);
+  outline-offset: 4px;
 }
 
 /* Badge */
@@ -106,6 +126,14 @@ import RFT210_render from "../images/RFT210_render.png";
   width: 100%;
   height: 100%;
   object-fit: contain;
+  transition: transform var(--duration-moderate) var(--ease-standard);
+}
+
+/* The render grows a little as a second hover cue; keyboard focus gets the
+   same. global.css's reduced-motion rule turns the transition off. */
+.product-lineup__card:hover .product-lineup__image-wrapper img,
+.product-lineup__card:focus-visible .product-lineup__image-wrapper img {
+  transform: scale(1.05);
 }
 
 /* Text */
