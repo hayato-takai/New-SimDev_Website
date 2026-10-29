@@ -1,0 +1,24 @@
+---
+import { render } from 'astro:content';
+import CaseStudyLayout from '../../layouts/CaseStudyLayout.astro';
+import { getAllCaseStudies, type CaseStudy } from '../../lib/caseStudies';
+
+// One page per case study, named after its Markdown file. Drafts get a page
+// too, so the links on /case-studies/admin work; they just aren't listed on
+// the overview.
+export async function getStaticPaths() {
+  const entries = await getAllCaseStudies();
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: CaseStudy;
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+---
+
+<CaseStudyLayout entry={entry}>
+  <Content />
+</CaseStudyLayout>

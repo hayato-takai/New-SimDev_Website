@@ -1,0 +1,67 @@
+---
+import Layout from '../../layouts/BaseLayout.astro';
+import CaseStudyCard from '../../components/case-studies/CaseStudyCard.astro';
+import { getPublishedCaseStudies } from '../../lib/caseStudies';
+
+// Only case studies with draft: false. Drafts are listed on /case-studies/admin.
+const entries = await getPublishedCaseStudies();
+---
+
+<Layout title="Case studies">
+  <main>
+    <section class="section">
+      <div class="wrapper">
+        <header class="title">
+          <h1>Case studies</h1>
+          <p class="cs-intro">
+            Past filter optimization projects: what the deaeration analysis found, what changed in the design, and
+            what it saved.
+          </p>
+        </header>
+
+        {entries.length > 0 ? (
+          <ul class="cs-grid">
+            {entries.map((entry) => (
+              <li>
+                <CaseStudyCard entry={entry} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="cs-empty">No case studies are published yet.</p>
+        )}
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .cs-intro {
+    max-width: 60ch;
+    margin: 12px 0 0;
+    color: var(--text-2);
+    font-size: 17px;
+  }
+
+  .cs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Stretch each card to its row's height so the result lines align. */
+  .cs-grid li {
+    display: flex;
+  }
+
+  .cs-grid li > :global(*) {
+    flex: 1;
+  }
+
+  .cs-empty {
+    color: var(--text-muted);
+  }
+</style>

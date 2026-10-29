@@ -1,0 +1,21 @@
+# Dependencies — installed from package-lock.json by `npm install` / `npm ci`.
+node_modules/
+
+# Build output — GitHub Actions builds the site fresh on every push.
+dist/
+
+# Astro's generated types and content cache, rebuilt by `astro dev` / `astro build`.
+.astro/
+
+# Environment files.
+.env
+.env.*
+
+# Logs and OS clutter.
+npm-debug.log*
+.DS_Store
+Thumbs.db
+
+# Internal notes kept on this machine, never pushed to GitHub.
+CASE_STUDIES.md
+SECURITY_CHANGES.md

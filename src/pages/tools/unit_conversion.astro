@@ -494,8 +494,10 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 </div>
 </main>
 
-<script src={`${BASE_PATH}/scripts/unit_converter.js`}></script>
-<script src={`${BASE_PATH}/scripts/calculators.js`}></script>
+<!-- is:inline: Astro 7 drops a <script> whose src is an expression unless it
+     is marked inline; these are plain scripts from public/, output as written. -->
+<script is:inline src={`${BASE_PATH}/scripts/unit_converter.js`}></script>
+<script is:inline src={`${BASE_PATH}/scripts/calculators.js`}></script>
 
 <script>
 // ========== DOM REFS ==========

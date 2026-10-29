@@ -22,33 +22,53 @@ function toLinks(modules: Record<string, unknown>, urlPrefix: string) {
 
 const topLevelLinks = toLinks(import.meta.glob('../pages/*.astro'), '');
 const toolLinks = toLinks(import.meta.glob('../pages/tools/*.astro'), '/tools');
+
+/** Sections with a folder and an overview page, e.g. pages/case-studies/index.astro. */
+const sectionLinks = Object.keys(import.meta.glob('../pages/*/index.astro')).map((path) => {
+  const slug = path.split('/').at(-2)!;
+  return { url: `${BASE_PATH}/${slug}`, title: cleanName(slug) };
+});
+
+const pageLinks = [...topLevelLinks, ...sectionLinks];
 ---
 
 <header class="site-header">
-  <nav class="site-navbar">
-    {topLevelLinks.map((link) => (
-      <a href={link.url} class="nav-link">{link.title}</a>
-    ))}
+  <div class="site-navbar">
+    <a href={`${BASE_PATH}/`} class="brand">
+      <img src={`${BASE_PATH}/hydac-logo.svg`} alt="HYDAC" class="brand-logo" width="137" height="32" />
+    </a>
 
-    <div class="nav-dropdown">
-      <button type="button" class="dropdown-trigger">Tools ▼</button>
-      <div class="dropdown-content">
-        {toolLinks.map((tool) => (
-          <a href={tool.url} class="dropdown-link">{tool.title}</a>
-        ))}
+    <nav class="nav-links" aria-label="Site">
+      {pageLinks.map((link) => (
+        <a href={link.url} class="nav-link">{link.title}</a>
+      ))}
+
+      <div class="nav-dropdown">
+        <button type="button" class="dropdown-trigger">Tools ▼</button>
+        <div class="dropdown-content">
+          {toolLinks.map((tool) => (
+            <a href={tool.url} class="dropdown-link">{tool.title}</a>
+          ))}
+        </div>
       </div>
-    </div>
-  </nav>
+    </nav>
+  </div>
 </header>
 
 <style>
+  /* Formatting from the Filter Deaeration request site's header: a frosted
+     light bar with the HYDAC logo on the left, and outlined pills — that
+     site's badge — for the navigation on the right. */
   .site-header {
     --header-height: 56px;
-    --header-bg: #2c3e50;
-    --header-fg: #ffffff;
-    --header-accent: #c60000;
-    --dropdown-bg: #34495e;
-    --dropdown-hover-bg: #3d566e;
+    --header-bg: rgba(248, 249, 250, 0.5);
+    --header-fg: #000000;
+    --header-accent: #d9000d;               /* HYDAC red, as in the logo */
+    --header-accent-soft: rgba(217, 0, 13, 0.125);
+    --header-line: rgba(30, 45, 69, 0.35);
+    --header-pill-line: #1e2d45;
+    --header-pill-bg: #f8f9fa;
+    --header-shadow: 0 4px 24px rgba(0, 0, 0, 0.2);
 
     /* Holds open the space that the fixed navbar below takes out of flow.
        flex:none keeps that exact height as a flex item in BaseLayout's column. */
@@ -64,56 +84,107 @@ const toolLinks = toLinks(import.meta.glob('../pages/tools/*.astro'), '/tools');
     z-index: 9999;
     height: var(--header-height);
 
-    display: flex;
-    justify-content: center;
+    /* Logo | nav | empty. The two 1fr columns match, so the nav pills sit in
+       the true centre of the bar. A 1fr column never shrinks below its
+       content, so when the bar is too narrow to centre them the pills slide
+       right of centre instead of running into the logo. */
+    display: grid;
+    grid-template-columns: 1fr auto 1fr;
     align-items: center;
-    gap: 20px;
-    padding: 0 20px;
+    column-gap: 20px;
+    padding: 0 32px;
 
     background: var(--header-bg);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    backdrop-filter: blur(10px) saturate(180%);
+    border-bottom: 1px solid var(--header-line);
+    box-shadow: var(--header-shadow);
     color: var(--header-fg);
     font-family: var(--font-sans);
-    font-size: var(--font-ui);
+  }
+
+  /* ---------- Brand: the logo, linking home ---------- */
+  .brand {
+    display: flex;
+    align-items: center;
+    justify-self: start;
+  }
+
+  /* max-width:none overrides global.css's img { max-width: 100% }, which let
+     the logo be squeezed narrower than its 32px height allows. */
+  .brand-logo {
+    display: block;
+    width: auto;
+    max-width: none;
+    height: 32px;
+  }
+
+  /* ---------- Navigation pills ---------- */
+  .nav-links {
+    display: flex;
+    align-items: center;
+    gap: 10px;
   }
 
   .nav-link,
   .dropdown-trigger {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 10px;
+    border: 1px solid var(--header-pill-line);
+    border-radius: 20px;
+    background: var(--header-pill-bg);
     color: var(--header-fg);
+    font: inherit;
+    font-size: 0.8rem;
+    line-height: 1.6;
     text-decoration: none;
-    cursor: pointer;
     white-space: nowrap;
-    transition: color 0.2s ease;
+    cursor: pointer;
+    transition: var(--transition-color), border-color var(--duration-fast) var(--ease-standard);
   }
 
   .nav-link:hover,
-  .dropdown-trigger:hover {
+  .dropdown-trigger:hover,
+  .nav-dropdown:focus-within .dropdown-trigger {
+    border-color: var(--header-accent);
+    background: var(--header-accent-soft);
     color: var(--header-accent);
+    text-decoration: none;
   }
 
-  /* Strip the UA button styling so the trigger matches the plain nav links. */
-  .dropdown-trigger {
-    padding: 0;
-    border: 0;
-    background: none;
-    font: inherit;
-  }
-
+  /* ---------- Tools dropdown ---------- */
   .nav-dropdown {
     position: relative;
   }
 
+  /* Bridges the gap between the pill and the menu, so the pointer can cross
+     it without leaving .nav-dropdown and closing the menu. */
+  .nav-dropdown::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    right: 0;
+    left: 0;
+    height: 8px;
+  }
+
+  /* Anchored to the trigger's right edge: on phones the pills sit near the
+     right of the bar, where a menu opening rightwards would run off screen. */
   .dropdown-content {
     position: absolute;
-    /* 1px overlap so the menu survives the pointer crossing the seam. */
-    top: calc(100% - 1px);
-    left: 0;
+    top: calc(100% + 8px);
+    right: 0;
     display: none;
     flex-direction: column;
-    min-width: 180px;
-    padding: 10px 0;
-    background: var(--dropdown-bg);
-    border-radius: 6px;
-    box-shadow: 0 4px 12px rgb(0 0 0 / 0.3);
+    min-width: 200px;
+    padding: 6px 0;
+    background: rgba(248, 249, 250, 0.95);
+    -webkit-backdrop-filter: blur(10px) saturate(180%);
+    backdrop-filter: blur(10px) saturate(180%);
+    border: 1px solid var(--header-line);
+    border-radius: 8px;
+    box-shadow: var(--header-shadow);
   }
 
   .nav-dropdown:hover .dropdown-content,
@@ -121,26 +192,61 @@ const toolLinks = toLinks(import.meta.glob('../pages/tools/*.astro'), '/tools');
     display: flex;
   }
 
-  /* Stated rather than inherited from .site-navbar, so the menu keeps its
-     size if the bar's ever changes. */
   .dropdown-link {
     padding: 8px 16px;
     color: var(--header-fg);
-    font-size: var(--font-ui);
+    font-size: 0.8rem;
     text-decoration: none;
-    transition: background-color 0.2s ease;
+    white-space: nowrap;
+    transition: var(--transition-color);
   }
 
   .dropdown-link:hover {
-    background: var(--dropdown-hover-bg);
+    background: var(--header-accent-soft);
     color: var(--header-accent);
+    text-decoration: none;
   }
 
+  /* ---------- Small screens ---------- */
   @media (max-width: 768px) {
     .site-navbar {
-      justify-content: flex-start;
-      gap: 12px;
-      padding: 0 12px;
+      column-gap: 12px;
+      padding: 0 16px;
+    }
+  }
+
+  /* Phones: two rows, the logo above and the pills centred below it. Beside
+     the logo there was only room for the pills by wrapping their names onto
+     two or three lines. --header-height grows to match, so the spacer in
+     .site-header still clears the fixed bar. */
+  @media (max-width: 640px) {
+    .site-header {
+      --header-height: 92px;
+    }
+
+    .site-navbar {
+      grid-template-columns: 1fr;
+      align-content: center;
+      justify-items: center;
+      row-gap: 8px;
+    }
+
+    .brand {
+      justify-self: center;
+    }
+
+    .brand-logo {
+      height: 24px;
+    }
+
+    .nav-links {
+      gap: 6px;
+    }
+
+    .nav-link,
+    .dropdown-trigger {
+      padding: 3px 9px;
+      font-size: 0.75rem;
     }
   }
 </style>

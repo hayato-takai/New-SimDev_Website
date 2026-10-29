@@ -12,8 +12,8 @@ const CATALOG_URL = "https://www.hydac.com/media/local_resources_usa/downloads/c
 <section class="product-lineup-section section">
   <div class="product-lineup-wrapper wrapper">
     <div class="title">
-    <h2 class="product-lineup__title">Explore our Air-X lineup</h2>
-</div>
+      <h2 class="product-lineup__title">Explore our Air-X lineup</h2>
+    </div>
     <div class="product-lineup__grid content">
       <a class="product-lineup__card" href={`${CATALOG_URL}/rfb_compact.pdf`} target="_blank" rel="noopener noreferrer">
         <span class="product-lineup__badge">Compact – Return from Bottom</span>
@@ -68,27 +68,37 @@ const CATALOG_URL = "https://www.hydac.com/media/local_resources_usa/downloads/c
    Product Lineup (Grid)
 ---------------------------------- */
 
-.product-lineup-section {
-  padding: clamp(48px, 8vw, 96px) 0;
-  background: var(--bg-second);
-  /* color: var(--gray-100); */
-}
+/* Vertical rhythm comes from .section and the background stays white, so this
+   band alternates with the grey sections above and below it. */
 
-/* Grid layout */
+/* Grid layout. No row gap: the grid's rows are the cards' parts (see the card
+   below), so a row gap would open up inside every card. Spacing within a card
+   comes from each part's margin-bottom, and a second row of cards gets its own
+   padding-top. */
 .product-lineup__grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: clamp(24px, 4vw, 48px);
+  column-gap: clamp(24px, 4vw, 48px);
 }
 
 /* Card — the whole card is the link to its catalog PDF. The global link
    colour and hover underline are reset so the card's own text colours hold;
-   the name taking the accent colour is the hover cue. */
+   the name taking the accent colour is the hover cue.
+   Each card spans four rows (badge, image, name, description) and shares
+   them with its neighbours through subgrid, so a badge that wraps onto two
+   lines moves the whole row down together and the images and names stay
+   level across it. */
 .product-lineup__card {
-  display: flex;
-  flex-direction: column;
+  display: grid;
+  grid-row: span 4;
+  grid-template-rows: subgrid;
   color: inherit;
   text-decoration: none;
+}
+
+/* Space above a second row of cards, four to a row. */
+.product-lineup__card:nth-child(n + 5) {
+  padding-top: clamp(32px, 5vw, 48px);
 }
 
 .product-lineup__card:hover {
@@ -112,17 +122,19 @@ const CATALOG_URL = "https://www.hydac.com/media/local_resources_usa/downloads/c
   margin-bottom: 12px;
 }
 
-/* Image */
+/* Image. The render is positioned out of flow so it can't size the box: a
+   tall, narrow render used to stretch its wrapper past square, which left the
+   names below at different heights from card to card. */
 .product-lineup__image-wrapper {
+  position: relative;
   width: 100%;
   aspect-ratio: 1 / 1;
-  display: flex;
-  align-items: center;
-  justify-content: center;
   margin-bottom: 24px;
 }
 
 .product-lineup__image-wrapper img {
+  position: absolute;
+  inset: 0;
   width: 100%;
   height: 100%;
   object-fit: contain;
@@ -145,6 +157,7 @@ const CATALOG_URL = "https://www.hydac.com/media/local_resources_usa/downloads/c
 }
 
 .product-lineup__desc {
+  margin-bottom: 0;
   font-size: 0.95rem;
   line-height: 1.6;
   color: var(--text-secondary);
@@ -152,10 +165,16 @@ const CATALOG_URL = "https://www.hydac.com/media/local_resources_usa/downloads/c
 
 /* ----------------------------------
    Tablet / Mobile
+   Two columns from tablet width down; four were down to ~150px each.
 ---------------------------------- */
-@media (max-width: 640px) {
+@media (max-width: 900px) {
   .product-lineup__grid {
     grid-template-columns: repeat(2, 1fr);
+  }
+
+  /* Two to a row now, so the second row starts at the third card. */
+  .product-lineup__card:nth-child(n + 3) {
+    padding-top: clamp(32px, 5vw, 48px);
   }
 }
 </style>

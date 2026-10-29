@@ -2,6 +2,9 @@
   "name": "simdev-website",
   "type": "module",
   "version": "0.0.1",
+  "engines": {
+    "node": ">=22.23.4"
+  },
   "scripts": {
     "dev": "astro dev",
     "build": "astro build",
@@ -9,10 +12,19 @@
     "astro": "astro"
   },
   "dependencies": {
-    "astro": "^5.7.0"
+    "@astrojs/markdown-remark": "^7.3.5",
+    "@fontsource/plus-jakarta-sans": "^5.3.0",
+    "astro": "^7.4.4",
+    "chart.js": "^4.6.1",
+    "katex": "^0.19.1",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.10",
+    "@astrojs/check": "^0.9.12",
     "typescript": "^5.9.3"
+  },
+  "overrides": {
+    "katex": "$katex"
   }
 }

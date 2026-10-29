@@ -142,11 +142,15 @@
   --table-odd:    #ffffff;
   --table-even:   #fafafa;
 
-  /* ── Type. Both families load in BaseLayout's <head>.
+  /* ── Type. Plus Jakarta Sans is the one site font, self-hosted from npm
+        (@fontsource, imported in BaseLayout) — headings, body, controls,
+        figures and chart labels alike.
+        --font-mono is the system monospace, kept only for code (code, pre,
+        kbd, samp), where columns of characters have to line up.
         --font-body is a size, not a stack: ValueHypothesisTable already
         used it as `font-size: var(--font-body)`. ── */
   --font-sans: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
-  --font-mono: "JetBrains Mono", ui-monospace, "SFMono-Regular", Consolas, monospace;
+  --font-mono: ui-monospace, "SFMono-Regular", Consolas, monospace;
   --font-body: 15px;
   /* Chrome — nav, menus, buttons. sample.css sizes .nav-item and .btn at 13px
      against its 15px body; the header was using the body size. */

@@ -3,18 +3,19 @@
 ---
 
 <!-- FEATURE SECTION -->
-<section class="airx-feature-section section ">
+<section class="airx-feature-section section">
   <div class="airx-feature-inner wrapper">
     <div class="title">
-    <h2>Less air = Smaller Tank</h2>
+      <h2>Less air = Smaller Tank</h2>
+      <h4 class="airx-feature-caption">
+        Air-X filters reduce aeration, enabling more compact tank designs without
+        compromising performance.
+      </h4>
+    </div>
 
-    <h4 class="airx-feature-caption">
-      Air-X filters reduce aeration, enabling more compact tank designs without
-      compromising performance.
-    </h4>
-</div>
     <div class="airx-feature-video-wrapper content">
-      <video class="video"
+      <video
+        class="video"
         src="https://pub-fa810e0d43204e26baa3ea906dc3c529.r2.dev/tank%20shrink.mp4"
         autoplay
         loop
@@ -25,3 +26,18 @@
   </div>
 </section>
 
+<style>
+  /* Grey, so it reads as its own band between the white sections either side. */
+  .airx-feature-section {
+    background: var(--bg-second);
+  }
+
+  /* The clip is only 640px wide, so it is stretched to the column rather than
+     sitting at its native size against the left edge. */
+  .airx-feature-video-wrapper video {
+    display: block;
+    width: 100%;
+    height: auto;
+    border-radius: var(--radius);
+  }
+</style>

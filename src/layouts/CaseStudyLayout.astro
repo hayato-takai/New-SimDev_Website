@@ -1,0 +1,341 @@
+---
+/**
+ * One filter optimization case study. The page is built from the entry's
+ * frontmatter (see src/content.config.ts); the Markdown body arrives in the
+ * slot as the written story.
+ *
+ *   banner      title and summary beside the preview image (the overview
+ *               card's image), then the savings cards (oil volume, tank
+ *               weight, oil cost, CO₂)
+ *   comparison  baseline vs. concept tank images and the oil volume bar
+ *   main        the story, with the project facts beside it
+ *   contact     the site's contact call to action
+ */
+import { Image } from 'astro:assets';
+import Layout from './BaseLayout.astro';
+import Contact from '../components/Contact.astro';
+import ImagePlaceholder from '../components/case-studies/ImagePlaceholder.astro';
+import ResultCards from '../components/case-studies/ResultCards.astro';
+import TankComparison from '../components/case-studies/TankComparison.astro';
+import { AIR_X_CATALOG } from '../lib/airx';
+import { formatProjectDate, type CaseStudy } from '../lib/caseStudies';
+
+interface Props {
+  entry: CaseStudy;
+}
+
+const { entry } = Astro.props;
+const { data } = entry;
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title={`${data.title} | Case studies`} noindex={data.draft}>
+  <main class="cs-page">
+    <section class="section cs-hero">
+      <div class="wrapper">
+        <div class="cs-hero__top">
+          <div class="cs-hero__text">
+            {/* A draft isn't on the overview, so its way back is the drafts page. */}
+            {data.draft ? (
+              <a class="cs-back" href={`${BASE_PATH}/case-studies/admin`}>← Draft case studies</a>
+            ) : (
+              <a class="cs-back" href={`${BASE_PATH}/case-studies`}>← All case studies</a>
+            )}
+            <h1>{data.title}</h1>
+            <p class="cs-lead">{data.summary}</p>
+            {data.draft && (
+              <p class="cs-draft-note">Draft: not listed on the case studies page. Set draft: false in its file to publish it.</p>
+            )}
+          </div>
+
+          <figure class="cs-hero__preview">
+            {data.preview ? (
+              <Image src={data.preview.src} alt={data.preview.alt} widths={[600, 1200]} sizes="(max-width: 900px) 100vw, 580px" />
+            ) : (
+              <ImagePlaceholder label="Preview image" />
+            )}
+          </figure>
+        </div>
+
+        <ResultCards results={data.results} />
+      </div>
+    </section>
+
+    <section class="section cs-comparison" aria-labelledby="cs-comparison-heading">
+      <div class="wrapper">
+        <h2 id="cs-comparison-heading" class="cs-section-title">Baseline vs. concept</h2>
+        <TankComparison images={data.images} oilVolume={data.results.oilVolume} />
+      </div>
+    </section>
+
+    <section class="section cs-main">
+      <div class="wrapper cs-main__grid">
+        <article class="cs-prose">
+          <slot />
+        </article>
+
+        <aside class="cs-facts" aria-labelledby="cs-facts-heading">
+          <h2 id="cs-facts-heading" class="cs-facts__title">Project facts</h2>
+          <dl>
+            <div>
+              <dt>Customer</dt>
+              <dd>{data.customer}</dd>
+            </div>
+            <div>
+              <dt>Industry</dt>
+              <dd>{data.industry}</dd>
+            </div>
+            <div>
+              <dt>Application</dt>
+              <dd>{data.application}</dd>
+            </div>
+            {data.filter && (
+              <div>
+                <dt>Filter</dt>
+                <dd>
+                  <a href={AIR_X_CATALOG[data.filter]} target="_blank" rel="noopener noreferrer">Air-X {data.filter}</a>
+                  <span class="cs-facts__note">catalog PDF</span>
+                </dd>
+              </div>
+            )}
+            {data.scope.length > 0 && (
+              <div>
+                <dt>Scope</dt>
+                <dd>
+                  <ul>
+                    {data.scope.map((item) => <li>{item}</li>)}
+                  </ul>
+                </dd>
+              </div>
+            )}
+            <div>
+              <dt>Completed</dt>
+              <dd>
+                <time datetime={data.date.toISOString().slice(0, 10)}>{formatProjectDate(data.date)}</time>
+              </dd>
+            </div>
+          </dl>
+        </aside>
+      </div>
+    </section>
+
+    <Contact />
+  </main>
+</Layout>
+
+<style>
+  /* ---------- Banner ---------- */
+  .cs-hero__top {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 40px;
+  }
+
+  /* The preview fills a 4:3 frame, cropped to fit, the same as on the
+     overview card. */
+  .cs-hero__preview {
+    margin: 0;
+    overflow: hidden;
+    aspect-ratio: 4 / 3;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .cs-hero__preview img {
+    display: block;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .cs-back {
+    display: inline-block;
+    margin-bottom: 36px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  .cs-back:hover {
+    color: var(--accent);
+  }
+
+  .cs-hero h1 {
+    max-width: 24ch;
+    margin-bottom: 16px;
+  }
+
+  .cs-lead {
+    max-width: 60ch;
+    margin: 0;
+    color: var(--text-2);
+    font-size: 17px;
+    line-height: 1.6;
+  }
+
+  .cs-draft-note {
+    display: inline-block;
+    margin: 20px 0 0;
+    padding: 6px 12px;
+    border: 1px dashed var(--border-strong);
+    border-radius: var(--radius-sm);
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* ---------- Shared section heading ---------- */
+  .cs-section-title {
+    margin-bottom: 24px;
+  }
+
+  /* ---------- Baseline vs. concept ---------- */
+  .cs-comparison {
+    background: var(--bg-second);
+  }
+
+  /* ---------- Main: story and facts ---------- */
+  .cs-main__grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) 280px;
+    gap: 56px;
+    align-items: start;
+  }
+
+  /* Facts stay in view beside a long story; top clears the fixed header. */
+  .cs-facts {
+    position: sticky;
+    top: 88px;
+    padding: 20px 22px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+  }
+
+  .cs-facts__title {
+    margin-bottom: 12px;
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .cs-facts dl {
+    display: grid;
+    gap: 14px;
+    margin: 0;
+  }
+
+  .cs-facts dt {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .cs-facts dd {
+    margin: 2px 0 0;
+    font-size: 15px;
+  }
+
+  .cs-facts dd ul {
+    margin: 0;
+    padding-left: 1.1em;
+  }
+
+  .cs-facts__note {
+    margin-left: 6px;
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  /* ---------- The written story (Markdown) ---------- */
+  .cs-prose {
+    max-width: 68ch;
+    color: var(--text-2);
+    font-size: 16px;
+    line-height: 1.7;
+  }
+
+  .cs-prose :global(h2) {
+    margin: 40px 0 12px;
+    color: var(--text);
+  }
+
+  .cs-prose :global(h2:first-child) {
+    margin-top: 0;
+  }
+
+  .cs-prose :global(h3) {
+    margin: 28px 0 8px;
+    color: var(--text);
+    font-size: 17px;
+    font-weight: 700;
+  }
+
+  .cs-prose :global(p),
+  .cs-prose :global(ul),
+  .cs-prose :global(ol) {
+    margin: 0 0 16px;
+  }
+
+  .cs-prose :global(ul),
+  .cs-prose :global(ol) {
+    padding-left: 1.3em;
+  }
+
+  .cs-prose :global(li + li) {
+    margin-top: 6px;
+  }
+
+  .cs-prose :global(strong) {
+    color: var(--text);
+  }
+
+  .cs-prose :global(img),
+  .cs-prose :global(video) {
+    display: block;
+    max-width: 100%;
+    height: auto;
+    margin: 24px 0;
+    border-radius: var(--radius);
+  }
+
+  .cs-prose :global(blockquote) {
+    margin: 24px 0;
+    padding-left: 18px;
+    border-left: 3px solid var(--accent);
+    color: var(--text);
+  }
+
+  .cs-prose :global(table) {
+    width: 100%;
+    margin: 0 0 16px;
+    border-collapse: collapse;
+    font-size: 14px;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .cs-prose :global(th),
+  .cs-prose :global(td) {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    text-align: left;
+  }
+
+  /* ---------- Narrow screens ---------- */
+  @media (max-width: 900px) {
+    .cs-hero__top {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    .cs-main__grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
+    }
+
+    /* The facts are short context, so on one column they lead the story. */
+    .cs-facts {
+      position: static;
+      order: -1;
+    }
+  }
+</style>

@@ -1,4 +1,11 @@
 ---
+// The site font, served from this site (npm @fontsource) rather than Google
+// Fonts, so visitors' browsers don't contact Google. Same weights as before.
+import "@fontsource/plus-jakarta-sans/400.css";
+import "@fontsource/plus-jakarta-sans/500.css";
+import "@fontsource/plus-jakarta-sans/600.css";
+import "@fontsource/plus-jakarta-sans/700.css";
+import "@fontsource/plus-jakarta-sans/800.css";
 import "../styles/global.css";
 import "../styles/tools.css";
 import BaseHead from '../components/header.astro';
@@ -6,9 +13,11 @@ import Footer from '../components/footer.astro';
 
 interface Props {
   title?: string;
+  /** Ask search engines not to index the page (unlisted pages such as drafts). */
+  noindex?: boolean;
 }
 
-const { title = 'Simulation and Development' } = Astro.props;
+const { title = 'Simulation and Development', noindex = false } = Astro.props;
 ---
 <html lang="en">
 	<head>
@@ -16,13 +25,8 @@ const { title = 'Simulation and Development' } = Astro.props;
 		<link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/favicon.svg`} />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<link rel="preconnect" href="https://fonts.googleapis.com" />
-		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link
-			rel="stylesheet"
-			href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap"
-		/>
 		<title>{title}</title>
+		{noindex && <meta name="robots" content="noindex, nofollow" />}
 	</head>
 	<body>
   		<BaseHead />

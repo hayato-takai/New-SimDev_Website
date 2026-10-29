@@ -1,96 +1,36 @@
 
 <footer class="site-footer">
-  <div class="footer-content">
-    <div class="footer-info">
-      <h6>The copyrights and industrial property rights to the content published here are reserved by HYDAC International GmbH.</h6>
-    </div>
-
-    <div class="footer-contact">
-      <h6>Email: hayato.takai@hydacusa.com</h6>
-    </div>
-  </div>
+  <p>The copyrights and industrial property rights to the content published here are reserved by HYDAC International GmbH.</p>
+  <p>Email: hayato.takai@hydacusa.com</p>
 </footer>
 
 <style>
-  /* ============================================
-     FOOTER LAYOUT
-     ============================================ */
+  /* Formatting from the Filter Deaeration request site's footer: a thin light
+     bar with two small centred lines. That site pins it to the bottom of the
+     viewport because its slides never scroll; here it stays at the end of the
+     page instead of covering content. margin-top:auto still pushes it to the
+     bottom of a short page, since BaseLayout's body is a min-height column. */
+  /* 24px of padding rather than the reference's 40px-tall strip: at that
+     height `npm run dev`'s toolbar, which peeks up from the bottom centre of
+     the window, covered the email line and left only the copyright showing. */
   .site-footer {
-    /* Soaks up the leftover height in BaseLayout's column, so the footer sits
-       at the bottom of the viewport on short pages and directly after the
-       content on tall ones. */
     margin-top: auto;
-    min-height: 10vh;
     display: flex;
+    flex-direction: column;
     align-items: center;
     justify-content: center;
-    padding: clamp(24px, 4vw, 48px) 20px;
-    background: #111111;
-    color: #dddddd;
+    gap: 4px;
+    padding: 24px 16px;
+    background: #f8f9fa;
+    border-top: 1px solid rgba(30, 45, 69, 0.35);
+    color: #000000;
     font-family: var(--font-sans);
   }
 
-  .footer-content {
-    width: 100%;
-    max-width: 800px;
-    margin: auto;
-  }
-
-  /* ============================================
-     FOOTER SECTIONS
-     ============================================ */
-  .footer-info,
-  .footer-contact {
-    margin-bottom: clamp(1rem, 3vw, 2rem);
-  }
-
-  .footer-info h6,
-  .footer-contact h6 {
+  .site-footer p {
+    margin: 0;
+    font-size: 0.65rem;
+    line-height: 1.4;
     text-align: center;
-    line-height: 1.6;
-  }
-
-  .footer-info a,
-  .footer-contact a {
-    color: var(--red, #ff3b3b);
-    text-decoration: none;
-    transition: text-decoration 0.2s ease;
-  }
-
-  .footer-info a:hover,
-  .footer-contact a:hover {
-    text-decoration: underline;
-  }
-
-  /* ============================================
-     DIVIDER
-     ============================================ */
-  .footer-contact::before {
-    content: "";
-    display: block;
-    width: clamp(40px, 10vw, 60px);
-    height: 1px;
-    background: #444444;
-    margin: clamp(16px, 3vw, 24px) auto;
-  }
-
-  /* ============================================
-     RESPONSIVE
-     ============================================ */
-  @media (max-width: 1024px) {
-    .site-footer {
-      padding: 32px 20px;
-    }
-  }
-
-  @media (max-width: 640px) {
-    .site-footer {
-      padding: 24px 16px;
-    }
-
-    .footer-info h6,
-    .footer-contact h6 {
-      font-size: 0.85rem;
-    }
   }
 </style>

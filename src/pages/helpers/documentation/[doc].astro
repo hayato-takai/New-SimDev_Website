@@ -1,0 +1,172 @@
+---
+/**
+ * One tool README, rendered when the site builds:
+ * /helpers/documentation/<tool>, from public/scripts/<tool>/README.md.
+ *
+ * This replaced a viewer that fetched whatever README the address named
+ * (?readme=…), rendered it through GitHub's API in the browser and typeset
+ * it with MathJax from a CDN. Nothing is fetched or rendered at runtime now,
+ * so a link can no longer make the page show another site's content.
+ */
+import { getCollection, render, type CollectionEntry } from 'astro:content';
+import Layout from '../../../layouts/readmeViewer.astro';
+
+export async function getStaticPaths() {
+  const docs = await getCollection('docs');
+  return docs.map((entry) => ({ params: { doc: entry.id }, props: { entry } }));
+}
+
+interface Props {
+  entry: CollectionEntry<'docs'>;
+}
+
+const { entry } = Astro.props;
+const { Content, headings } = await render(entry);
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+
+// The README's own "# …" heading is the page title; the contents list
+// covers the sections below it.
+const title = headings.find((h) => h.depth === 1)?.text ?? entry.id;
+const sections = headings.filter((h) => h.depth >= 2 && h.depth <= 4);
+---
+
+<Layout title={`${title} | Documentation`}>
+  <div class="doc-layout markdown-body">
+    <aside class="toc-sidebar" aria-labelledby="toc-title">
+      <p id="toc-title" class="toc-title">Contents</p>
+      <ul class="toc-list">
+        {sections.map((h) => (
+          <li class={`toc-depth-${h.depth}`}>
+            <a href={`#${h.slug}`}>{h.text}</a>
+          </li>
+        ))}
+      </ul>
+    </aside>
+
+    <main class="doc-content">
+      <a id="backLink" class="back-link" href={`${BASE_PATH}/helpers/documentation`}>← Back</a>
+      <Content />
+    </main>
+  </div>
+</Layout>
+
+<script>
+  // Tool pages open their README in a new tab, so often there's nothing to go
+  // back to; the link then falls through to the documentation index.
+  document.getElementById('backLink')?.addEventListener('click', (event) => {
+    if (history.length > 1) {
+      event.preventDefault();
+      history.back();
+    }
+  });
+</script>
+
+<style>
+  /* Colours come from github-markdown.css's variables (the wrapper carries
+     .markdown-body), so the sidebar follows the README into dark mode. */
+  .doc-layout {
+    display: grid;
+    grid-template-columns: 280px minmax(0, 1fr);
+    min-height: 100vh;
+  }
+
+  /* github-markdown.css gives .markdown-body clearfix ::before/::after boxes.
+     In a grid they become items and take the first cells, pushing the
+     sidebar into the second column, so they're switched off here. */
+  .doc-layout::before,
+  .doc-layout::after {
+    content: none;
+  }
+
+  .toc-sidebar {
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    overflow-y: auto;
+    box-sizing: border-box;
+    padding: 20px 16px;
+    border-right: 1px solid var(--borderColor-default);
+  }
+
+  .toc-title {
+    margin: 0 0 8px;
+    color: var(--fgColor-default);
+    font-size: 14px;
+    font-weight: 600;
+  }
+
+  .toc-list {
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    font-size: 13px;
+  }
+
+  .toc-list li {
+    margin: 4px 0;
+    line-height: 1.4;
+  }
+
+  .toc-list a {
+    display: block;
+    padding: 2px 0;
+    text-decoration: none;
+  }
+
+  .toc-list a:hover {
+    text-decoration: underline;
+  }
+
+  .toc-depth-2 a {
+    font-weight: 600;
+  }
+
+  .toc-depth-3 {
+    padding-left: 16px;
+  }
+
+  .toc-depth-4 {
+    padding-left: 32px;
+  }
+
+  .doc-content {
+    box-sizing: border-box;
+    width: 100%;
+    max-width: 900px;
+    padding: 20px 32px 48px;
+  }
+
+  .back-link {
+    display: inline-block;
+    margin-bottom: 16px;
+    padding: 8px 16px;
+    border-radius: 4px;
+    background: var(--fgColor-accent);
+    color: #ffffff;
+    font-size: 14px;
+    text-decoration: none;
+  }
+
+  /* Wide display equations scroll inside the column instead of the page. */
+  .doc-content :global(.katex-display) {
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
+
+  @media (max-width: 900px) {
+    .doc-layout {
+      grid-template-columns: 1fr;
+    }
+
+    .toc-sidebar {
+      position: static;
+      height: auto;
+      border-right: 0;
+      border-bottom: 1px solid var(--borderColor-default);
+    }
+
+    .doc-content {
+      padding: 20px 16px 40px;
+    }
+  }
+</style>

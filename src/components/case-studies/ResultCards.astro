@@ -1,0 +1,121 @@
+---
+/**
+ * The banner's savings cards: oil volume, tank weight, oil cost and CO₂, each
+ * baseline vs. concept with the change. A result the entry leaves out is
+ * skipped.
+ */
+import { RESULT_CARDS, formatValue, resultChange, type CaseStudyResults } from '../../lib/caseStudies';
+
+interface Props {
+  results: CaseStudyResults;
+}
+
+const { results } = Astro.props;
+const cards = RESULT_CARDS.flatMap(({ key, label }) => {
+  const result = results[key];
+  return result ? [{ label, result, change: resultChange(result) }] : [];
+});
+---
+
+<ul class="result-cards">
+  {cards.map(({ label, result, change }) => (
+    <li class="result-card">
+      <div class="result-card__head">
+        <h2>{label}</h2>
+        {change && <span class="result-card__change">{change}</span>}
+      </div>
+      <dl class="result-card__values">
+        <div>
+          <dt>Baseline</dt>
+          <dd>{formatValue(result, result.baseline)}</dd>
+        </div>
+        <div>
+          <dt>Concept</dt>
+          <dd class="is-concept">{formatValue(result, result.concept)}</dd>
+        </div>
+      </dl>
+    </li>
+  ))}
+</ul>
+
+<style>
+  .result-cards {
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    gap: 16px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .result-card {
+    padding: 18px 20px;
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .result-card__head {
+    display: flex;
+    align-items: baseline;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 14px;
+  }
+
+  .result-card__head h2 {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 700;
+    letter-spacing: 0;
+  }
+
+  /* An improvement, so the status green, darkened to pass contrast on white. */
+  .result-card__change {
+    padding: 2px 10px;
+    border-radius: 999px;
+    background: rgba(16, 185, 129, 0.12);
+    color: #047857;
+    font-size: 13px;
+    font-weight: 700;
+    white-space: nowrap;
+  }
+
+  .result-card__values {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin: 0;
+  }
+
+  .result-card__values dt {
+    color: var(--text-muted);
+    font-size: 13px;
+  }
+
+  .result-card__values dd {
+    margin: 2px 0 0;
+    color: var(--text-2);
+    font-size: 20px;
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  .result-card__values dd.is-concept {
+    color: var(--text);
+    font-weight: 700;
+  }
+
+  @media (max-width: 1100px) {
+    .result-cards {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+
+  @media (max-width: 520px) {
+    .result-cards {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>

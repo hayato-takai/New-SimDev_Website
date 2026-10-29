@@ -2,8 +2,8 @@
 import contact_img from "../images/contact_img.png";
 ---
 
-<section class="contact-cta-section">
-  <div class="contact-cta-card">
+<section class="contact-cta-section section">
+  <div class="contact-cta-card wrapper">
     <div class="contact-cta-image">
       <img src={contact_img.src} alt="Contact specialist" />
     </div>
@@ -31,25 +31,20 @@ import contact_img from "../images/contact_img.png";
   /* ============================================
      CONTACT CTA SECTION
      ============================================ */
+  /* Vertical rhythm from .section; the card's width and side gutters from
+     .wrapper, so it lines up with the content column of every section above
+     instead of running out to 1800px. */
   .contact-cta-section {
-    width: 100%;
-    padding: 80px 20px;
-    background: #111111;
-    display: flex;
-    justify-content: center;
-    box-sizing: border-box;
+    background: var(--gray-darker);
   }
 
   .contact-cta-card {
     display: flex;
-    flex-direction: row;
-    width: 100%;
-    max-width: 1800px;
     min-height: 500px;
-    background: var(--white, #ffffff);
-    border-radius: 12px;
     overflow: hidden;
-    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+    border-radius: var(--radius);
+    background: var(--surface);
+    box-shadow: var(--shadow-lg);
   }
 
   /* ============================================
@@ -66,7 +61,7 @@ import contact_img from "../images/contact_img.png";
     height: 100%;
     object-fit: cover;
     display: block;
-    transition: transform 0.3s ease;
+    transition: transform var(--duration-moderate) var(--ease-standard);
   }
 
   .contact-cta-image:hover img {
@@ -83,7 +78,6 @@ import contact_img from "../images/contact_img.png";
     justify-content: center;
     padding: 60px 48px;
     min-width: 300px;
-    box-sizing: border-box;
   }
 
   .contact-cta-eyebrow {
@@ -92,7 +86,7 @@ import contact_img from "../images/contact_img.png";
     letter-spacing: 0.15em;
     text-transform: uppercase;
     margin: 0 0 16px 0;
-    color: var(--black, #000000);
+    color: var(--text);
   }
 
   .contact-cta-content h2 {
@@ -100,7 +94,7 @@ import contact_img from "../images/contact_img.png";
     font-weight: 500;
     line-height: 1.4;
     margin: 0 0 32px 0;
-    color: var(--black, #000000);
+    color: var(--text);
   }
 
   /* ============================================
@@ -117,7 +111,7 @@ import contact_img from "../images/contact_img.png";
     padding-left: 28px;
     margin-bottom: 12px;
     font-size: 14px;
-    color: var(--black, #000000);
+    color: var(--text);
   }
 
   .contact-cta-benefits li::before {
@@ -127,7 +121,7 @@ import contact_img from "../images/contact_img.png";
     top: 0;
     font-size: 14px;
     font-weight: bold;
-    color: var(--red, #c60000);
+    color: var(--accent);
   }
 
   /* ============================================
@@ -137,17 +131,18 @@ import contact_img from "../images/contact_img.png";
     display: inline-block;
     align-self: flex-start;
     padding: 14px 40px;
-    background: var(--black, #000000);
-    color: var(--white, #ffffff);
+    background: var(--text);
+    color: var(--text-inverse);
     font-size: 14px;
     font-weight: 500;
     text-decoration: none;
     border-radius: 999px;
-    transition: background 0.2s ease, transform 0.2s ease;
+    transition: var(--transition-color), var(--transition-lift);
   }
 
   .contact-cta-button:hover {
-    background: #222222;
+    background: var(--gray-800);
+    text-decoration: none;
     transform: translateY(-2px);
   }
 
@@ -188,10 +183,6 @@ import contact_img from "../images/contact_img.png";
   }
 
   @media (max-width: 480px) {
-    .contact-cta-section {
-      padding: 60px 12px;
-    }
-
     .contact-cta-image {
       height: 200px;
     }

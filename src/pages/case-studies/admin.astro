@@ -1,0 +1,84 @@
+---
+/**
+ * Draft case studies, for review before publishing. Not linked anywhere on
+ * the site: reach it at /case-studies/admin. It is a static page, so anyone
+ * with the address can open it; noindex only keeps it out of search results.
+ */
+import Layout from '../../layouts/BaseLayout.astro';
+import CaseStudyCard from '../../components/case-studies/CaseStudyCard.astro';
+import { getDraftCaseStudies } from '../../lib/caseStudies';
+
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+const drafts = await getDraftCaseStudies();
+---
+
+<Layout title="Draft case studies" noindex>
+  <main>
+    <section class="section">
+      <div class="wrapper">
+        <header class="title">
+          <a class="cs-back" href={`${BASE_PATH}/case-studies`}>← Published case studies</a>
+          <h1>Draft case studies</h1>
+          <p class="cs-intro">
+            These are hidden from the case studies page. To publish one, set <strong>draft: false</strong> in its file
+            in src/content/case-studies/.
+          </p>
+        </header>
+
+        {drafts.length > 0 ? (
+          <ul class="cs-grid">
+            {drafts.map((entry) => (
+              <li>
+                <CaseStudyCard entry={entry} />
+              </li>
+            ))}
+          </ul>
+        ) : (
+          <p class="cs-empty">No drafts at the moment.</p>
+        )}
+      </div>
+    </section>
+  </main>
+</Layout>
+
+<style>
+  .cs-back {
+    display: inline-block;
+    margin-bottom: 36px;
+    color: var(--text-muted);
+    font-size: 14px;
+  }
+
+  .cs-back:hover {
+    color: var(--accent);
+  }
+
+  .cs-intro {
+    max-width: 60ch;
+    margin: 12px 0 0;
+    color: var(--text-2);
+    font-size: 17px;
+  }
+
+  .cs-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  /* Stretch each card to its row's height so the result lines align. */
+  .cs-grid li {
+    display: flex;
+  }
+
+  .cs-grid li > :global(*) {
+    flex: 1;
+  }
+
+  .cs-empty {
+    color: var(--text-muted);
+  }
+</style>

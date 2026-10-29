@@ -32,10 +32,12 @@ import Comparison from '../components/Comparison.astro';
      it was left-aligned and flush to the viewport edge. Centred inside the site
      container, matching the gutters the sections below it use.
      global.css already gives headings text-wrap: balance, which keeps the two
-     halves even if it ever wraps. */
+     halves even if it ever wraps.
+     The bottom margin is the same title-to-content gap the sections use; the
+     comparison video below drops its own top padding to rely on it. */
   h1 {
     width: min(var(--max-width), 100% - var(--gutter) * 2);
-    margin: 60px auto 0;
+    margin: 60px auto var(--space-block);
     text-align: center;
   }
 </style>

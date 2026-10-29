@@ -1,5 +1,6 @@
 ---
 import Layout from '../../layouts/BaseLayout.astro';
+import { chartJsUrl } from '../../lib/vendor';
 const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 ---
 
@@ -215,11 +216,10 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 
   .results-grid :global(.result-stat .rs-value) {
     font-size: var(--tool-fs-lg);
-    /* Capped at 500: JetBrains Mono is only loaded at 400 and 500. */
     font-weight: var(--tool-fw-medium);
+    font-variant-numeric: tabular-nums;
     color: var(--text-primary);
     margin-top: 3px;
-    font-family: var(--font-mono);
   }
 
   /* ── Chart panel ───────────────────────────────────────── */
@@ -315,7 +315,7 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
   <div class="tool-header-row">
     <h1>Porous Media Property Calculator</h1>
     <a class="btn-docs"
-       href={`${BASE_PATH}/helpers/documentation?readme=${BASE_PATH}/scripts/porous_media/README.md`}
+       href={`${BASE_PATH}/helpers/documentation/porous_media`}
        target="_blank" rel="noopener noreferrer">
       Documentation
     </a>
@@ -527,12 +527,19 @@ const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
 </main>
 </Layout>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js" is:inline></script>
-<script src={`${BASE_PATH}/scripts/oil_properties/getOilProperties.js`}></script>
-<script src={`${BASE_PATH}/scripts/unit_converter.js`}></script>
-<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js" is:inline></script>
-<script src={`${BASE_PATH}/scripts/porous_media/porous_media.js`}></script>
-<script src={`${BASE_PATH}/scripts/curve_fitting/curve_fitting.js`}></script>
+<script src={chartJsUrl} is:inline></script>
+<script is:inline>
+  // Chart labels in the site font rather than Chart.js's Helvetica/Arial
+  // default. Set before any chart exists, so every chart below picks it up.
+  Chart.defaults.font.family =
+    getComputedStyle(document.documentElement).getPropertyValue("--font-sans").trim();
+</script>
+<!-- is:inline: Astro 7 drops a <script> whose src is an expression unless it
+     is marked inline; these are plain scripts from public/, output as written. -->
+<script is:inline src={`${BASE_PATH}/scripts/oil_properties/getOilProperties.js`}></script>
+<script is:inline src={`${BASE_PATH}/scripts/unit_converter.js`}></script>
+<script is:inline src={`${BASE_PATH}/scripts/porous_media/porous_media.js`}></script>
+<script is:inline src={`${BASE_PATH}/scripts/curve_fitting/curve_fitting.js`}></script>
 
 <script is:inline>
 // ── Shared chart state ───────────────────────────────────

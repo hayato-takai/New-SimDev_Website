@@ -1,6 +1,21 @@
 ---
+/**
+ * Layout for the tool READMEs under /helpers/documentation/: GitHub's
+ * Markdown styling, the site font, and KaTeX's stylesheet for the equations
+ * (rendered to HTML at build time — see markdown.processor in
+ * astro.config.mjs). Everything is served from this site.
+ */
+import "@fontsource/plus-jakarta-sans/400.css";
+import "@fontsource/plus-jakarta-sans/600.css";
+import "@fontsource/plus-jakarta-sans/700.css";
+import "katex/dist/katex.min.css";
 import "../styles/github-markdown.css";
-// const { title } = Astro.props;
+
+interface Props {
+  title?: string;
+}
+
+const { title = 'Documentation' } = Astro.props;
 ---
 <html lang="en">
 	<head>
@@ -8,12 +23,33 @@ import "../styles/github-markdown.css";
 		<link rel="icon" type="image/svg+xml" href={`${import.meta.env.BASE_URL}/favicon.svg`} />
 		<meta name="viewport" content="width=device-width" />
 		<meta name="generator" content={Astro.generator} />
-		<title>simdev</title>
+		<title>{title}</title>
 	</head>
 	<body>
-  		<!-- <BaseHead /> -->
 		<slot />
-      		<!-- <Footer /> -->
 	</body>
 </html>
 
+<style is:global>
+	/* The site font. This layout skips global.css, so the stack is repeated
+	   here: on the body for the contents sidebar and Back link, and through
+	   github-markdown.css's own font variable for the rendered README (the
+	   extra `body` outranks that file's .markdown-body). Code blocks keep
+	   their monospace stack. */
+	body {
+		margin: 0;
+		font-family: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+	}
+
+	/* Form controls don't inherit the page font unless told to. */
+	button,
+	input,
+	select,
+	textarea {
+		font-family: inherit;
+	}
+
+	body .markdown-body {
+		--fontStack-sansSerif: "Plus Jakarta Sans", system-ui, -apple-system, "Segoe UI", sans-serif;
+	}
+</style>

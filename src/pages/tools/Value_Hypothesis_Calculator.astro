@@ -428,10 +428,8 @@ import Layout from '../../layouts/BaseLayout.astro';
 }
 .vh-calc .metric strong {
   align-self: end;
-  /* JetBrains Mono is loaded at 400/500 only, so the weight is capped at 500
-     — anything heavier would be faux-bolded by the browser. */
-  font-family: var(--font-mono);
   font-weight: var(--tool-fw-medium);
+  font-variant-numeric: tabular-nums;
   font-size: var(--tool-fs-lg);
   line-height: 1.1;
 }
@@ -528,7 +526,7 @@ import Layout from '../../layouts/BaseLayout.astro';
 }
 .vh-calc .protected .bar-track b {
   border-radius: 0 999px 999px 0;
-  background: linear-gradient(90deg, var(--coral), var(--gold));
+  background: linear-gradient(90deg, var(--coral), var(--red));
 }
 /* Tank bars show savings only: the baseline earns none,
    Air-X splits tank vs oil. */
@@ -570,7 +568,7 @@ import Layout from '../../layouts/BaseLayout.astro';
   background: var(--blue);
 }
 .vh-calc .bar-split-legend .key-delta::before {
-  background: linear-gradient(90deg, var(--coral), var(--gold));
+  background: linear-gradient(90deg, var(--coral), var(--red));
 }
 .vh-calc .bar-split-legend strong {
   color: var(--ink);
@@ -1450,6 +1448,10 @@ const chartColors = {
 const DOTTED_LINE = [1, 6];
 const DASHED_LINE = [2, 5];
 
+// Chart labels in the site font, read from the same variable the page uses.
+const CHART_FONT =
+  getComputedStyle(document.documentElement).getPropertyValue("--font-sans").trim() || "sans-serif";
+
 // Geometry of the last chart render, so hover can map a mouse x back to a year.
 let chartGeometry = null;
 let chartHoverIndex = null;
@@ -1896,7 +1898,7 @@ function drawChart(rows, state) {
   ctx.strokeStyle = "#d8e0df";
   ctx.lineWidth = 1;
   ctx.fillStyle = "#5f6c70";
-  ctx.font = "700 12px Inter, system-ui, sans-serif";
+  ctx.font = `700 12px ${CHART_FONT}`;
 
   ctx.save();
   ctx.textAlign = "right";
@@ -1928,7 +1930,7 @@ function drawChart(rows, state) {
   });
 
   // Axis titles.
-  ctx.font = "800 12px Inter, system-ui, sans-serif";
+  ctx.font = `800 12px ${CHART_FONT}`;
   ctx.fillText("Year", padding.left + plotWidth / 2, height - 12);
   ctx.translate(18, padding.top + plotHeight / 2);
   ctx.rotate(-Math.PI / 2);
@@ -2345,5 +2347,13 @@ elements.chart.addEventListener("mouseleave", () => {
 });
 
 updateUi();
+
+// Canvas text is painted once and never re-rendered when a web font arrives,
+// so a first draw made before the chart's weights have loaded would keep the
+// fallback font. Redraw once they are in.
+Promise.all([
+  document.fonts.load(`700 12px ${CHART_FONT}`),
+  document.fonts.load(`800 12px ${CHART_FONT}`)
+]).then(updateUi, () => {});
   </script>
 </Layout>

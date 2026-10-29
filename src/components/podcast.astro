@@ -25,9 +25,8 @@ const autoplayParams = autoplay
 
     <div class="youtube-embed content">
       <iframe
-        src={`https://www.youtube.com/embed/${videoId}${autoplayParams}`}
+        src={`https://www.youtube-nocookie.com/embed/${videoId}${autoplayParams}`}
         title={title}
-        frameborder="0"
         allow="autoplay; accelerometer; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
         allowfullscreen
         loading="lazy"
@@ -37,29 +36,22 @@ const autoplayParams = autoplay
 </section>
 
 <style>
-/* FULL-WIDTH SECTION */
+/* Full-width grey band. Side gutters and vertical rhythm come from .wrapper
+   and .section, the same as every other section on the page. */
 .podcast {
-  background-color: var(--gray-200);
+  background: var(--bg-second);
 }
 
-
 .youtube-embed {
-  width: 100%;
   aspect-ratio: 16 / 9;
   overflow: hidden;
-  border-radius: 12px;
+  border-radius: var(--radius);
 }
 
 .youtube-embed iframe {
+  display: block;
   width: 100%;
   height: 100%;
-  border: none;
-}
-
-/* Mobile */
-@media (max-width: 768px) {
-  .youtube-outer {
-    padding: 32px 16px;
-  }
+  border: 0;
 }
 </style>
