@@ -1,0 +1,365 @@
+---
+import Layout from '../../layouts/BaseLayout.astro';
+const BASE_PATH = import.meta.env.BASE_URL.replace(/\/$/, '');
+---
+
+<Layout title="Pressure Thrust Calculator">
+  <main class="pt-tool tool-page">
+    <div class="tool-shell">
+
+      <header class="tool-header">
+        <div class="tool-header-row">
+          <h1>Pressure Thrust Calculator</h1>
+        </div>
+        <p class="tool-subtitle">
+          Pressure thrust on connection ports: port area × pressure. Add a row
+          per port, pick the units, and export the table as CSV.
+        </p>
+      </header>
+
+      <section class="tool-card">
+        <div class="pt-toolbar">
+          <div class="pt-field pt-name">
+            <label for="ptCalcName">Calculation name</label>
+            <input type="text" id="ptCalcName" value="Pressure Thrust Calculation" spellcheck="false" />
+          </div>
+
+          <div class="pt-units">
+            <div class="pt-field">
+              <span class="pt-label" id="ptLengthLabel">Length</span>
+              <div class="segmented" data-group="length" role="group" aria-labelledby="ptLengthLabel">
+                <button type="button" data-value="mm" class="active" aria-pressed="true">mm</button>
+                <button type="button" data-value="in" aria-pressed="false">in</button>
+              </div>
+            </div>
+            <div class="pt-field">
+              <span class="pt-label" id="ptPressureLabel">Pressure</span>
+              <div class="segmented" data-group="pressure" role="group" aria-labelledby="ptPressureLabel">
+                <button type="button" data-value="bar" class="active" aria-pressed="true">bar</button>
+                <button type="button" data-value="psi" aria-pressed="false">psi</button>
+                <button type="button" data-value="MPa" aria-pressed="false">MPa</button>
+              </div>
+            </div>
+            <div class="pt-field">
+              <span class="pt-label" id="ptForceLabel">Force</span>
+              <div class="segmented" data-group="force" role="group" aria-labelledby="ptForceLabel">
+                <button type="button" data-value="N" class="active" aria-pressed="true">N</button>
+                <button type="button" data-value="lbf" aria-pressed="false">lbf</button>
+              </div>
+            </div>
+          </div>
+
+          <div class="pt-actions">
+            <button type="button" class="btn-quiet" id="exportBtn">Export CSV</button>
+            <button type="button" id="addRowBtnTop">Add row</button>
+          </div>
+        </div>
+
+        <div class="table-wrap pt-table-wrap">
+          <table class="pt-table">
+            <thead>
+              <tr>
+                <th class="col-drag"><span class="visually-hidden">Reorder</span></th>
+                <th>Name</th>
+                <th class="num" id="diameterHeader">Diameter (mm)</th>
+                <th class="num" id="areaHeader">Area (mm²)</th>
+                <th class="num" id="pressureHeader">Pressure (bar)</th>
+                <th class="num" id="thrustHeader">Pressure Thrust (N)</th>
+                <th class="col-actions"><span class="visually-hidden">Delete</span></th>
+              </tr>
+            </thead>
+            <tbody id="tableBody"></tbody>
+          </table>
+          <p id="emptyState" class="pt-empty" hidden>No ports yet. Add a row to get started.</p>
+          <button type="button" class="pt-add-row" id="addRowBtnBottom">+ Add row</button>
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- is:inline: Astro 7 drops a <script> whose src is an expression unless it
+       is marked inline; this is a plain script from public/, output as written. -->
+  <script is:inline src={`${BASE_PATH}/scripts/pressure_thrust/pressure_thrust.js`}></script>
+</Layout>
+
+<!-- Global, namespaced under .pt-tool: the table rows, their inputs and delete
+     buttons are created by the script, which Astro's scope attribute never
+     reaches. Several rules also override tools.css, which styles every
+     .tool-page button as a red pill and every input as a padded field. -->
+<style is:global>
+  /* ── Toolbar ─────────────────────────────────────────── */
+  .pt-tool .pt-toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: flex-end;
+    gap: 16px 24px;
+    margin-bottom: 20px;
+  }
+
+  .pt-tool .pt-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .pt-tool .pt-name {
+    flex: 1 1 240px;
+    min-width: 200px;
+  }
+
+  .pt-tool .pt-name input {
+    width: 100%;
+  }
+
+  /* Matches .tool-page label, for the unit groups' captions. */
+  .pt-tool .pt-label {
+    color: var(--tool-muted);
+    font-size: var(--tool-fs-base);
+    font-weight: var(--tool-fw-medium);
+    letter-spacing: 0.01em;
+  }
+
+  .pt-tool .pt-units {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px 20px;
+  }
+
+  .pt-tool .pt-actions {
+    display: flex;
+    gap: 10px;
+    margin-left: auto;
+  }
+
+  /* ── Unit switches (segmented) ───────────────────────── */
+  .pt-tool .segmented {
+    display: inline-flex;
+    padding: 2px;
+    border: 1px solid var(--tool-line-strong);
+    border-radius: var(--tool-radius-sm);
+    background: var(--tool-panel);
+  }
+
+  .pt-tool .segmented button {
+    padding: 6px 12px;
+    border: 0;
+    border-radius: 4px;
+    background: transparent;
+    color: var(--tool-muted);
+    box-shadow: none;
+  }
+
+  .pt-tool .segmented button:hover {
+    background: var(--tool-accent-soft);
+    color: var(--tool-accent);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .pt-tool .segmented button.active {
+    background: var(--tool-accent);
+    color: var(--tool-accent-ink);
+  }
+
+  /* ── Table ───────────────────────────────────────────── */
+  /* position:relative contains the header's .visually-hidden labels, which
+     are absolutely positioned: without it they escape the scrolling frame
+     and widen the whole page on phones. */
+  .pt-tool .pt-table-wrap {
+    position: relative;
+    border: 1px solid var(--tool-line);
+    border-radius: var(--tool-radius-sm);
+  }
+
+  /* Headings sit over their values: text columns left, numbers right. */
+  .pt-tool .pt-table th {
+    text-align: left;
+  }
+
+  .pt-tool .pt-table th.num,
+  .pt-tool .pt-table td.num {
+    text-align: right;
+  }
+
+  .pt-tool .pt-table tbody td {
+    padding: 6px 12px;
+    vertical-align: middle;
+  }
+
+  .pt-tool .pt-table tbody tr:hover {
+    background: var(--tool-field-bg);
+  }
+
+  /* In-cell inputs read as text until hovered or focused. */
+  .pt-tool .pt-table input.cell-input {
+    width: 100%;
+    min-width: 0;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    background: transparent;
+    text-align: right;
+    box-shadow: none;
+  }
+
+  .pt-tool .pt-table input.cell-input.name-input {
+    min-width: 120px;
+    text-align: left;
+  }
+
+  .pt-tool .pt-table input.cell-input:hover {
+    border-color: var(--tool-line-strong);
+  }
+
+  .pt-tool .pt-table input.cell-input:focus {
+    border-color: var(--tool-accent);
+    background: var(--tool-panel);
+    box-shadow: 0 0 0 3px var(--tool-focus);
+  }
+
+  .pt-tool .pt-table input.cell-input::-webkit-outer-spin-button,
+  .pt-tool .pt-table input.cell-input::-webkit-inner-spin-button {
+    margin: 0;
+    -webkit-appearance: none;
+  }
+
+  .pt-tool .pt-table input[type="number"].cell-input {
+    -moz-appearance: textfield;
+  }
+
+  .pt-tool .pt-table .computed {
+    color: var(--tool-muted);
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* The thrust is the answer, so it reads in ink. */
+  .pt-tool .pt-table .thrust-cell {
+    color: var(--tool-ink);
+    font-weight: var(--tool-fw-semibold);
+  }
+
+  .pt-tool .pt-table th.col-actions,
+  .pt-tool .pt-table td.col-actions {
+    width: 36px;
+    padding-right: 12px;
+    padding-left: 4px;
+  }
+
+  .pt-tool .pt-table th.col-drag,
+  .pt-tool .pt-table td.col-drag {
+    width: 28px;
+    padding-right: 0;
+    padding-left: 12px;
+  }
+
+  /* ── Row reordering ──────────────────────────────────── */
+  .pt-tool .drag-handle {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 20px;
+    color: var(--tool-muted);
+    cursor: grab;
+  }
+
+  .pt-tool .drag-handle:hover {
+    color: var(--tool-ink);
+  }
+
+  .pt-tool .drag-handle:active {
+    cursor: grabbing;
+  }
+
+  /* Six dots drawn from one dot and its shadows. */
+  .pt-tool .drag-handle::before {
+    content: "";
+    width: 3.5px;
+    height: 3.5px;
+    border-radius: 50%;
+    background: currentColor;
+    box-shadow:
+      0 -7px 0 0 currentColor,
+      0 7px 0 0 currentColor,
+      6px 0 0 0 currentColor,
+      6px -7px 0 0 currentColor,
+      6px 7px 0 0 currentColor;
+  }
+
+  .pt-tool .pt-table tbody tr.dragging {
+    opacity: 0.4;
+  }
+
+  body.row-dragging,
+  body.row-dragging * {
+    cursor: grabbing !important;
+  }
+
+  .pt-tool .pt-table tbody tr.drag-over-top {
+    box-shadow: inset 0 2px 0 0 var(--tool-accent);
+  }
+
+  .pt-tool .pt-table tbody tr.drag-over-bottom {
+    box-shadow: inset 0 -2px 0 0 var(--tool-accent);
+  }
+
+  /* ── Row and table buttons ───────────────────────────── */
+  .pt-tool .row-delete {
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    padding: 0;
+    border: 0;
+    border-radius: var(--tool-radius-sm);
+    background: transparent;
+    color: var(--tool-muted);
+    box-shadow: none;
+    font-size: 16px;
+    line-height: 1;
+  }
+
+  .pt-tool .row-delete:hover {
+    background: var(--tool-accent-soft);
+    color: var(--tool-accent);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .pt-tool .pt-add-row {
+    display: block;
+    width: 100%;
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 0;
+    background: transparent;
+    color: var(--tool-muted);
+    box-shadow: none;
+    text-align: left;
+  }
+
+  .pt-tool .pt-add-row:hover {
+    background: var(--tool-accent-soft);
+    color: var(--tool-accent);
+    box-shadow: none;
+    transform: none;
+  }
+
+  .pt-tool .pt-empty {
+    margin: 0;
+    padding: 48px 16px;
+    color: var(--tool-muted);
+    text-align: center;
+  }
+
+  /* Narrow screens: the table keeps its columns and scrolls inside its
+     frame (.table-wrap in tools.css provides the scrolling). */
+  @media (max-width: 720px) {
+    .pt-tool .pt-table {
+      min-width: 640px;
+    }
+
+    .pt-tool .pt-actions {
+      margin-left: 0;
+    }
+  }
+</style>
